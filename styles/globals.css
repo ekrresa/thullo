@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  box-sizing: inherit;
+}
+
 html {
   box-sizing: border-box;
 }
@@ -10,7 +14,6 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: @apply font-noto-sans;
 }
 
 a {
@@ -18,6 +21,8 @@ a {
   text-decoration: none;
 }
 
-* {
-  box-sizing: inherit;
+@layer base {
+  body {
+    @apply font-noto-sans;
+  }
 }
