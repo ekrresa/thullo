@@ -1,4 +1,6 @@
 import { useEffect, useRef } from 'react';
+import { FaFacebook, FaGithub } from 'react-icons/fa';
+import { FcGoogle } from 'react-icons/fc';
 import { Footer } from '../../components/Footer';
 
 import Logo from '../../public/logo-small.svg';
@@ -45,13 +47,16 @@ export default function Login() {
 
           <div className="my-8 text-center">OR</div>
 
-          <button className="text-center text-sm py-3 rounded-md w-full shadow">
+          <button className="flex justify-center items-center text-sm py-3 rounded-md w-full shadow">
+            <FcGoogle className="mr-2 text-xl" />
             Sign in with Google
           </button>
-          <button className="text-center text-sm mt-4 py-3 rounded-md w-full shadow">
+          <button className="flex justify-center items-center text-center text-sm mt-4 py-3 rounded-md w-full shadow">
+            <FaFacebook className="mr-2 text-xl" color="#0375E6" />
             Sign in with Facebook
           </button>
-          <button className="text-center text-sm mt-3 py-3 rounded-md w-full shadow">
+          <button className="flex justify-center items-center text-center text-sm mt-3 py-3 rounded-md w-full shadow">
+            <FaGithub className="mr-2 text-xl" />
             Sign in with GitHub
           </button>
         </div>
