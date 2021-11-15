@@ -1,6 +1,7 @@
 import React from 'react';
 import Logo from '../public/logo.svg';
 import { FaCaretDown } from 'react-icons/fa';
+import { Footer } from './Footer';
 
 interface LayoutProps extends React.PropsWithChildren<unknown> {}
 
@@ -34,11 +35,7 @@ export function Layout({ children }: LayoutProps) {
 
       <div className="">{children}</div>
 
-      <div className="py-2 px-4 flex justify-center text-light-pencil">
-        <span>&copy;</span>
-        <span className="ml-2">{new Date().getFullYear()}</span>
-        <span className="ml-2">Ochuko Ekrresa</span>
-      </div>
+      <Footer />
     </div>
   );
 }

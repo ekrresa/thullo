@@ -1,13 +1,16 @@
 import type { AppProps } from 'next/app';
-import { Layout } from '../components/Layout';
+
+import type { Page } from '../types/app';
 import '../styles/globals.css';
 
-function MyApp({ Component, pageProps }: AppProps) {
-  return (
-    <Layout>
-      <Component {...pageProps} />
-    </Layout>
-  );
+type Props = AppProps & {
+  Component: Page;
+};
+
+function MyApp({ Component, pageProps }: Props) {
+  const renderLayout = Component.getLayout ?? (page => page);
+
+  return renderLayout(<Component {...pageProps} />);
 }
 
 export default MyApp;

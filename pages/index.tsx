@@ -1,3 +1,6 @@
+import { ComponentType } from 'react';
+
+import { Layout } from '../components/Layout';
 import { NewBoard } from '../modules/Board/NewBoard';
 
 export default function Home() {
@@ -25,3 +28,5 @@ export default function Home() {
     </section>
   );
 }
+
+Home.getLayout = (page: ComponentType) => <Layout>{page}</Layout>;
