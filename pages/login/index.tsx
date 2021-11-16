@@ -1,16 +1,33 @@
-import { useEffect, useRef } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { FaFacebook, FaGithub } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 import { Footer } from '../../components/Footer';
+import { supabase } from '../../lib/supabase';
 
 import Logo from '../../public/logo-small.svg';
 
 export default function Login() {
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const { user, error } = await supabase.auth.signIn({ email });
+      console.log({ user, error });
+      setLoading(false);
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="container grid grid-rows-layout grid-cols-1 min-h-screen">
@@ -27,7 +44,7 @@ export default function Login() {
             Sign in to Thullo
           </h3>
 
-          <form className="mt-8">
+          <form className="mt-8" onSubmit={handleSubmit}>
             <div>
               <label className="block text-pencil" htmlFor="email">
                 Email
@@ -36,6 +53,7 @@ export default function Login() {
                 className="px-3 py-3 mt-2 rounded-md w-full text-sm shadow focus:outline-none"
                 id="email"
                 type="email"
+                onChange={e => setEmail(e.currentTarget.value)}
                 ref={inputRef}
               />
             </div>
