@@ -1,16 +1,32 @@
 import React from 'react';
-import Logo from '../public/logo.svg';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { FaCaretDown } from 'react-icons/fa';
+
+import Logo from '../public/logo.svg';
 import { Footer } from './Footer';
 
 interface LayoutProps extends React.PropsWithChildren<unknown> {}
 
 export function Layout({ children }: LayoutProps) {
+  const router = useRouter();
+
   return (
     <div className="grid grid-rows-layout grid-cols-1 min-h-screen">
-      <header className="bg-white py-4 shadow-sm">
+      <header className="bg-white py-4 shadow-sm mb-1">
         <div className="container flex items-center">
-          <Logo className="w-28" />
+          <Link href="/" passHref>
+            <a>
+              <Logo className="w-28" />
+            </a>
+          </Link>
+
+          {router.query.board && (
+            <div className="mx-auto">
+              <span className="text-pencil text-lg">DevChallenges Board</span>
+              {/* <span className="mx-2">&#124;</span> */}
+            </div>
+          )}
 
           <form className="flex flex-1 max-w-xs ml-auto p-[2px] rounded-lg shadow-md">
             <input
@@ -33,7 +49,7 @@ export function Layout({ children }: LayoutProps) {
         </div>
       </header>
 
-      <div className="">{children}</div>
+      <div className="bg-white">{children}</div>
 
       <Footer />
     </div>
