@@ -15,6 +15,7 @@ module.exports = {
         pencil: '#333333',
         ash: '#E0E0E0',
         gray3: '#828282',
+        gray4: '#4f4f4f',
         'off-white': '#f2f2f2',
         'off-white2': '#F8F9FD',
         'off-white3': '#DAE4FD',
