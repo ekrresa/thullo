@@ -43,12 +43,12 @@ export default function Login() {
       <section className="flex items-start justify-center mt-24">
         <div className="flex-1 max-w-md px-8 pt-6 pb-12 bg-white rounded-lg shadow-md">
           <h3 className="text-2xl font-medium text-center text-pencil">
-            Sign in to Thullo
+            Welcome to Thullo
           </h3>
 
           <form className="mt-12" onSubmit={handleSubmit}>
-            <div>
-              <label className="block text-sm text-pencil" htmlFor="email">
+            <div className="mb-4">
+              <label className="block text-sm text-gray4" htmlFor="email">
                 Email
               </label>
               <input
@@ -59,9 +59,21 @@ export default function Login() {
                 ref={inputRef}
               />
             </div>
+            <div className="mb-4">
+              <label className="block text-sm text-gray4" htmlFor="email">
+                Password
+              </label>
+              <input
+                className="w-full px-3 py-3 mt-2 text-sm rounded-md shadow focus:outline-none"
+                id="password"
+                type="password"
+                onChange={e => setEmail(e.currentTarget.value)}
+                ref={inputRef}
+              />
+            </div>
 
             <button className="w-full py-4 mt-4 text-center text-white rounded-md shadow bg-corn-blue">
-              Send me a magic link
+              Sign up
             </button>
           </form>
 
@@ -81,10 +93,10 @@ export default function Login() {
           </button>
 
           <p className="mt-6 text-xs text-center text-gray3">
-            First time here?{' '}
-            <Link href="/register" passHref>
+            Have an account?{' '}
+            <Link href="/login" passHref>
               <a>
-                <span className="font-semibold text-corn-blue">Sign up</span>
+                <span className="font-semibold text-corn-blue">Login</span>
               </a>
             </Link>
           </p>
