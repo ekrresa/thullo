@@ -10,32 +10,32 @@ export function NewBoard() {
   return (
     <>
       <button
-        className="bg-corn-blue flex items-center text-white text-xs rounded-lg px-3 py-2"
+        className="flex items-center px-3 py-2 text-xs text-white rounded-lg bg-corn-blue"
         onClick={() => setIsOpen(true)}
       >
         <BiPlus className="mr-2 text-sm" />
         Add
       </button>
 
-      <Modal isOpen={isOpen} closeModal={() => setIsOpen(false)}>
+      <Modal isOpen={isOpen} className="max-w-md" closeModal={() => setIsOpen(false)}>
         <form>
-          <div className="bg-corn-blue h-28 rounded-lg"></div>
+          <div className="rounded-lg bg-corn-blue h-28"></div>
           <input
-            className="bg-white border border-ash w-full focus:outline-none mt-4 px-3 py-3 rounded-lg text-xs text-light-pencil shadow-lg"
+            className="w-full px-3 py-3 mt-4 text-xs bg-white border rounded-lg shadow-lg border-ash focus:outline-none text-light-pencil"
             placeholder="Add board title"
           />
-          <div className="flex font-poppins justify-between mt-6">
-            <button className="bg-gray-100 flex items-center rounded-lg px-12 py-3 text-xs text-gray3">
+          <div className="flex justify-between mt-6 font-poppins">
+            <button className="flex items-center px-12 py-3 text-xs bg-gray-100 rounded-lg text-gray3">
               <BsImage className="mr-2" />
               Cover
             </button>
-            <button className="bg-gray-100 flex items-center rounded-lg px-12 py-3 text-xs text-gray3">
+            <button className="flex items-center px-12 py-3 text-xs bg-gray-100 rounded-lg text-gray3">
               <IoMdLock className="mr-2" />
               Private
             </button>
           </div>
 
-          <div className="flex font-poppins justify-end mt-8">
+          <div className="flex justify-end mt-8 font-poppins">
             <button
               className="rounded-lg px-3 py-3 text-[0.625rem] text-gray3 hover:bg-gray-100"
               onClick={() => setIsOpen(false)}
