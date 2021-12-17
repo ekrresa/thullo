@@ -2,6 +2,7 @@ import React from 'react';
 import { FaPen } from 'react-icons/fa';
 import { IoClose, IoPersonCircle } from 'react-icons/io5';
 import { MdStickyNote2 } from 'react-icons/md';
+import useOnClickOutside from 'use-onclickoutside';
 import { useLockBodyScroll } from '../../hooks/useLockBodyScroll';
 
 interface SideMenuProps {
@@ -10,6 +11,9 @@ interface SideMenuProps {
 }
 
 export function SideMenu({ open, closeSideMenu }: SideMenuProps) {
+  const sideMenuRef = React.useRef(null);
+
+  useOnClickOutside(sideMenuRef, closeSideMenu);
   useLockBodyScroll({ mounted: open });
 
   return (
@@ -17,6 +21,7 @@ export function SideMenu({ open, closeSideMenu }: SideMenuProps) {
       className={`absolute right-0 top-0 bg-white w-full max-w-md h-full p-6 font-poppins shadow-lg transition duration-500 ease-in-out overflow-y-auto ${
         open ? 'opacity-100 translate-x-0' : ' opacity-0 translate-x-full'
       }`}
+      ref={sideMenuRef}
     >
       <div className="flex items-center justify-between pb-2 border-b border-ash">
         <h4 className="text-sm font-semibold text-pencil">DevChallenges Board</h4>
