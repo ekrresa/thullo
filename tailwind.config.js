@@ -26,7 +26,7 @@ module.exports = {
         'noto-sans': ['Noto Sans', 'sans-serif'],
       },
       gridTemplateColumns: {
-        200: 'repeat(auto-fill, minmax(min(14rem, 100%), 1fr))',
+        list: 'repeat(auto-fill, minmax(min(14rem, 100%), 1fr))',
       },
       gridTemplateRows: {
         layout: 'auto 1fr auto',
