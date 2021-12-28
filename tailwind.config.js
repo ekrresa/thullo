@@ -1,11 +1,9 @@
 module.exports = {
-  mode: 'jit',
-  purge: [
-    './pages/**/*.{js,ts,jsx,tsx}',
-    './components/**/*.{js,ts,jsx,tsx}',
-    './modules/**/*.{js,ts,jsx,tsx}',
+  content: [
+    './src/pages/**/*.{js,ts,jsx,tsx}',
+    './src/components/**/*.{js,ts,jsx,tsx}',
+    './src/modules/**/*.{js,ts,jsx,tsx}',
   ],
-  darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
       boxShadow: { card: ' 0px 4px 12px rgba(0, 0, 0, 0.05)' },
@@ -33,9 +31,6 @@ module.exports = {
         stack: 'repeat(auto-fit, minmax(min(14rem, 100%), 1fr))',
       },
     },
-  },
-  variants: {
-    extend: {},
   },
   plugins: [],
 };

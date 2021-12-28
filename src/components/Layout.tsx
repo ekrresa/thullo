@@ -1,15 +1,13 @@
-import React from 'react';
+import * as React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FaCaretDown } from 'react-icons/fa';
 
-import Logo from '../public/logo.svg';
+import Logo from '../../public/logo.svg';
 import { Footer } from './Footer';
 import { BsGridFill } from 'react-icons/bs';
 
-interface LayoutProps extends React.PropsWithChildren<unknown> {}
-
-export function Layout({ children }: LayoutProps) {
+export function Layout({ children }: React.PropsWithChildren<unknown>) {
   const router = useRouter();
 
   return (
