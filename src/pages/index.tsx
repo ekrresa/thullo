@@ -1,8 +1,8 @@
 import { ComponentType } from 'react';
 import Link from 'next/link';
 
-import { Layout } from '../components/Layout';
-import { NewBoard } from '../modules/Board/NewBoard';
+import { Layout } from '../components/common/Layout';
+import { NewBoard } from '../components/modules/Board/NewBoard';
 
 export default function Home() {
   return (

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { BsGridFill } from 'react-icons/bs';
 import { FaCaretDown } from 'react-icons/fa';
 
-import Logo from '../../public/logo.svg';
+import Logo from '../../../public/logo.svg';
 import { Footer } from './Footer';
-import { BsGridFill } from 'react-icons/bs';
 
 export function Layout({ children }: React.PropsWithChildren<unknown>) {
   const router = useRouter();
@@ -50,7 +50,7 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
           </form>
 
           <div className="flex items-center ml-8">
-            <div className="w-8 h-8 bg-yellow-700 rounded"></div>
+            <div className="w-8 h-8 rounded bg-cyan-600"></div>
             <p className="ml-3 text-sm">Xanthe Neal</p>
             <FaCaretDown className="ml-3" />
           </div>

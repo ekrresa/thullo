@@ -3,7 +3,7 @@ import { FaPen } from 'react-icons/fa';
 import { IoClose, IoPersonCircle } from 'react-icons/io5';
 import { MdStickyNote2 } from 'react-icons/md';
 import useOnClickOutside from 'use-onclickoutside';
-import { useLockBodyScroll } from '../../hooks/useLockBodyScroll';
+import { useLockBodyScroll } from '@hooks/useLockBodyScroll';
 
 interface SideMenuProps {
   open: boolean;

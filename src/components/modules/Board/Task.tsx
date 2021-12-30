@@ -1,7 +1,7 @@
 import { Draggable } from 'react-beautiful-dnd';
 import { BiPlus } from 'react-icons/bi';
 import { IoAttachSharp } from 'react-icons/io5';
-import { useTaskContext } from '../../context/taskContext';
+import { useTaskContext } from '@context/taskContext';
 
 interface BoardCardProps {
   image?: boolean;

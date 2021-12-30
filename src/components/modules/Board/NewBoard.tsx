@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { BiPlus } from 'react-icons/bi';
 import { BsImage } from 'react-icons/bs';
 import { IoMdLock } from 'react-icons/io';
-import { Modal } from '../../components/Modal';
+import { Modal } from '../../common/Modal';
 
 export function NewBoard() {
   const [isOpen, setIsOpen] = useState(false);

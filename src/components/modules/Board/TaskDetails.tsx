@@ -1,8 +1,8 @@
 import React from 'react';
 import { FaPen, FaUserCircle } from 'react-icons/fa';
 import { MdStickyNote2 } from 'react-icons/md';
-import { Modal } from '../../components/Modal';
-import { useTaskContext } from '../../context/taskContext';
+import { Modal } from '../../common/Modal';
+import { useTaskContext } from '@context/taskContext';
 
 export function TaskDetails() {
   const { taskId, handleTaskId } = useTaskContext();

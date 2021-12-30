@@ -1,15 +1,16 @@
 import React, { ComponentType, useState } from 'react';
 import { IoEllipsisHorizontalSharp } from 'react-icons/io5';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
-import { Layout } from '../../components/Layout';
-import { Task } from '../../modules/Board/Task';
-import { Column } from '../../modules/Board/Column';
-import { SideMenu } from '../../modules/Board/SideMenu';
-import { VisibilitySwitch } from '../../modules/Board/VisibilitySwitch';
-import { BoardInvite } from '../../modules/Board/BoardInvite';
+
+import { Layout } from '@components/common/Layout';
+import { Task } from '@components/modules/Board/Task';
+import { Column } from '@components/modules/Board/Column';
+import { SideMenu } from '@components/modules/Board/SideMenu';
+import { VisibilitySwitch } from '@components/modules/Board/VisibilitySwitch';
+import { BoardInvite } from '@components/modules/Board/BoardInvite';
 import { TaskProvider } from '../../context/taskContext';
-import { TaskDetails } from '../../modules/Board/TaskDetails';
-import { AddNewItem } from '../../modules/Board/AddNewItem';
+import { TaskDetails } from '@components/modules/Board/TaskDetails';
+import { AddNewItem } from '@components/modules/Board/AddNewItem';
 
 export default function Board() {
   const [sideMenu, setSideMenu] = useState(false);
