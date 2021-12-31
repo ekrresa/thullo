@@ -1,14 +1,18 @@
 import { FormEvent, useRef, useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { FaFacebook, FaGithub } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
-import Link from 'next/link';
+import { toast } from 'react-hot-toast';
 
 import { Button } from '@components/common/Button';
 import { Footer } from '@components/common/Footer';
 import { supabase } from '../../lib/supabase';
 import Logo from '../../../public/logo-small.svg';
+import { UserProfile } from 'types/database';
 
 export default function Login() {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -25,11 +29,31 @@ export default function Login() {
       }
 
       try {
-        const { user, error } = await supabase.auth.signIn({
+        const result = await supabase.auth.signIn({
           email: formData.get('email') as string,
           password: formData.get('password') as string,
         });
-        console.log({ user, error });
+
+        if (result.error) {
+          toast.error(result.error.message);
+          return;
+        }
+
+        const userProfileResult = await supabase
+          .from<UserProfile>('profiles')
+          .select('is_profile_setup')
+          .limit(1)
+          .single();
+
+        if (userProfileResult.error) {
+          toast.error(userProfileResult.error.message);
+        }
+
+        if (userProfileResult.data?.is_profile_setup) {
+          router.push('/');
+        } else {
+          router.push('/new-profile');
+        }
       } catch (error) {
       } finally {
         setLoading(false);
@@ -85,6 +109,7 @@ export default function Login() {
               <input
                 className="w-full px-3 py-3 mt-2 text-sm rounded-md shadow focus:outline-none"
                 id="password"
+                name="password"
                 type="password"
               />
             </div>
