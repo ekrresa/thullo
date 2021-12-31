@@ -1,5 +1,6 @@
 import { FormEvent, useRef, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
 import { FaFacebook, FaGithub } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
@@ -10,6 +11,7 @@ import { supabase } from '../../lib/supabase';
 import Logo from '../../../public/logo-small.svg';
 
 export default function Register() {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -26,23 +28,17 @@ export default function Register() {
       }
 
       try {
-        const { user, error } = await supabase.auth.signUp(
-          {
-            email: formData.get('email') as string,
-            password: formData.get('password') as string,
-          },
-          // use base url from env
-          { redirectTo: 'http://localhost:3000/new-profile' }
-        );
+        const { error, session } = await supabase.auth.signUp({
+          email: formData.get('email') as string,
+          password: formData.get('password') as string,
+        });
 
         if (error) {
           toast.error(error.message, { duration: 4000 });
         }
 
-        if (user) {
-          toast.success('Please check your email to confirm your account', {
-            duration: Infinity,
-          });
+        if (session) {
+          router.push('/new-profile');
         }
       } catch (error) {
       } finally {
@@ -112,10 +108,6 @@ export default function Register() {
               Sign up
             </Button>
           </form>
-
-          <Button className="justify-center w-full mt-6 text-sm text-corn-blue">
-            Sign up as demo user
-          </Button>
 
           <p className="mt-6 text-xs text-center text-gray3">
             Have an account?{' '}

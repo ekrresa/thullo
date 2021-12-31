@@ -25,7 +25,7 @@ export function Button({
       type={type}
     >
       {children}
-      {loading && <AiOutlineLoading className="ml-4 text-xl text-white animate-spin" />}
+      {loading && <AiOutlineLoading className="ml-4 text-xl text-inherit animate-spin" />}
     </button>
   );
 }

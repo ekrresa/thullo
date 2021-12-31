@@ -7,9 +7,9 @@ import { toast } from 'react-hot-toast';
 
 import { Button } from '@components/common/Button';
 import { Footer } from '@components/common/Footer';
-import { supabase } from '../../lib/supabase';
-import Logo from '../../../public/logo-small.svg';
+import { supabase } from '@lib/supabase';
 import { UserProfile } from 'types/database';
+import Logo from '../../../public/logo-small.svg';
 
 export default function Login() {
   const router = useRouter();
@@ -123,10 +123,6 @@ export default function Login() {
               Login
             </Button>
           </form>
-
-          <Button className="justify-center w-full mt-6 text-sm text-corn-blue">
-            Sign in as demo user
-          </Button>
 
           <p className="mt-6 text-xs text-center text-gray3">
             First time here?{' '}
