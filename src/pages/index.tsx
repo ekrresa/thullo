@@ -33,3 +33,4 @@ export default function Home() {
 }
 
 Home.getLayout = (page: ComponentType) => <Layout>{page}</Layout>;
+Home.protected = true;

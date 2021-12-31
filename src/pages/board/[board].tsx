@@ -8,7 +8,7 @@ import { Column } from '@components/modules/Board/Column';
 import { SideMenu } from '@components/modules/Board/SideMenu';
 import { VisibilitySwitch } from '@components/modules/Board/VisibilitySwitch';
 import { BoardInvite } from '@components/modules/Board/BoardInvite';
-import { TaskProvider } from '../../context/taskContext';
+import { TaskProvider } from '@context/taskContext';
 import { TaskDetails } from '@components/modules/Board/TaskDetails';
 import { AddNewItem } from '@components/modules/Board/AddNewItem';
 
@@ -69,3 +69,4 @@ Board.getLayout = (page: ComponentType) => (
     <TaskProvider>{page}</TaskProvider>
   </Layout>
 );
+Board.protected = true;
