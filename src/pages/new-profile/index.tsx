@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
+import toast from 'react-hot-toast';
 
 import { Footer } from '@components/common/Footer';
 import { Button } from '@components/common/Button';
@@ -28,10 +29,12 @@ export default function NewProfile() {
       const formData = new FormData(formRef.current);
 
       if (!formData.get('name') || !formData.get('username')) {
+        setLoading(false);
         return;
       }
 
       if (!user) {
+        setLoading(false);
         return;
       }
 
@@ -42,12 +45,22 @@ export default function NewProfile() {
             {
               name: formData.get('name'),
               username: formData.get('username'),
+              is_profile_setup: true,
             },
             { returning: 'minimal' }
           )
           .match({ id: user.id });
 
-        setLoading(false);
+        if (result.error) {
+          toast.error(result.error.message, { duration: 3000 });
+        }
+
+        if (result.status === 204) {
+          toast.success('profile updated successfully', { duration: 3000 });
+          setTimeout(() => {
+            router.replace('/');
+          }, 2000);
+        }
       } catch (error) {
       } finally {
         setLoading(false);
@@ -70,7 +83,7 @@ export default function NewProfile() {
             Setup your Profile
           </h3>
 
-          <form className="mt-12" onSubmit={handleSubmit}>
+          <form className="mt-12" onSubmit={handleSubmit} ref={formRef}>
             <div className="mb-4">
               <label className="block text-sm text-gray4" htmlFor="username">
                 Username
