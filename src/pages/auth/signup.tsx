@@ -7,7 +7,7 @@ import { FcGoogle } from 'react-icons/fc';
 
 import { Button } from '@components/common/Button';
 import { Footer } from '@components/common/Footer';
-import { supabase } from '../../lib/supabase';
+import { signUpUser } from '@lib/auth';
 import Logo from '../../../public/logo-small.svg';
 
 export default function Register() {
@@ -28,17 +28,15 @@ export default function Register() {
       }
 
       try {
-        const { error, session } = await supabase.auth.signUp({
-          email: formData.get('email') as string,
-          password: formData.get('password') as string,
-        });
-
-        if (error) {
-          toast.error(error.message, { duration: 4000 });
-        }
+        const session = await signUpUser(
+          formData.get('email') as string,
+          formData.get('password') as string
+        );
 
         if (session) {
           router.push('/new-profile');
+        } else {
+          toast.error('An error occurred. Please try again.');
         }
       } catch (error) {
       } finally {
@@ -108,6 +106,10 @@ export default function Register() {
               Sign up
             </Button>
           </form>
+
+          <Button className="justify-center w-full mt-6 text-sm text-corn-blue">
+            Sign up as demo user
+          </Button>
 
           <p className="mt-6 text-xs text-center text-gray3">
             Have an account?{' '}

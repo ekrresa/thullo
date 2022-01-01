@@ -7,14 +7,41 @@ import { toast } from 'react-hot-toast';
 
 import { Button } from '@components/common/Button';
 import { Footer } from '@components/common/Footer';
-import { supabase } from '@lib/supabase';
-import { UserProfile } from 'types/database';
+import axios, { axiosClient } from '@lib/axios';
+import { handleSignIn } from '@lib/auth';
+import { SupabaseUser } from 'types/database';
 import Logo from '../../../public/logo-small.svg';
 
 export default function Login() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [creatingDemoUser, setDemoUserStatus] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+
+  const handleDemoUserLogin = async () => {
+    setDemoUserStatus(true);
+
+    try {
+      const result = await axiosClient.post<SupabaseUser>('/api/auth/user');
+      const signInResult = await handleSignIn(result.data.email, result.data.password!);
+
+      if (signInResult.is_profile_setup) {
+        router.push('/');
+      } else {
+        router.push('/new-profile');
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error.response?.data);
+      }
+
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    } finally {
+      setDemoUserStatus(false);
+    }
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -29,32 +56,20 @@ export default function Login() {
       }
 
       try {
-        const result = await supabase.auth.signIn({
-          email: formData.get('email') as string,
-          password: formData.get('password') as string,
-        });
+        const signInResult = await handleSignIn(
+          formData.get('email') as string,
+          formData.get('password') as string
+        );
 
-        if (result.error) {
-          toast.error(result.error.message);
-          return;
-        }
-
-        const userProfileResult = await supabase
-          .from<UserProfile>('profiles')
-          .select('is_profile_setup')
-          .limit(1)
-          .single();
-
-        if (userProfileResult.error) {
-          toast.error(userProfileResult.error.message);
-        }
-
-        if (userProfileResult.data?.is_profile_setup) {
+        if (signInResult.is_profile_setup) {
           router.push('/');
         } else {
           router.push('/new-profile');
         }
       } catch (error) {
+        if (error instanceof Error) {
+          toast.error(error.message);
+        }
       } finally {
         setLoading(false);
       }
@@ -123,6 +138,15 @@ export default function Login() {
               Login
             </Button>
           </form>
+
+          <Button
+            className="justify-center w-full mt-6 text-sm text-corn-blue"
+            onClick={handleDemoUserLogin}
+            disabled={creatingDemoUser}
+            loading={creatingDemoUser}
+          >
+            Sign in as demo user
+          </Button>
 
           <p className="mt-6 text-xs text-center text-gray3">
             First time here?{' '}

@@ -12,7 +12,9 @@ export default async function AuthHandler(req: NextApiRequest, res: NextApiRespo
         const result = await supabase.auth.api.createUser({
           email,
           password,
-          data: { is_demo_user: true },
+          //@ts-expect-error
+          user_metadata: { is_demo_user: true },
+          email_confirm: true,
         });
 
         if (result.error) {
@@ -20,7 +22,7 @@ export default async function AuthHandler(req: NextApiRequest, res: NextApiRespo
           return;
         }
 
-        res.status(200).json({ data: { ...result.data, password } });
+        res.status(200).json({ ...result.data, password });
       } catch (error) {
         if (error instanceof Error) {
           res.status(400).json({ message: error.message });
