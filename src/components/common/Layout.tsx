@@ -4,11 +4,14 @@ import { useRouter } from 'next/router';
 import { BsGridFill } from 'react-icons/bs';
 import { FaCaretDown } from 'react-icons/fa';
 
+import { useUserProfile } from '@hooks/user';
 import Logo from '../../../public/logo.svg';
 import { Footer } from './Footer';
+import { Dropdown } from './Dropdown';
 
 export function Layout({ children }: React.PropsWithChildren<unknown>) {
   const router = useRouter();
+  const userProfileResult = useUserProfile();
 
   return (
     <div className="grid min-h-screen grid-cols-1 grid-rows-layout">
@@ -49,11 +52,18 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
             </button>
           </form>
 
-          <div className="flex items-center ml-8">
-            <div className="w-8 h-8 rounded bg-cyan-600"></div>
-            <p className="ml-3 text-sm">Xanthe Neal</p>
-            <FaCaretDown className="ml-3" />
-          </div>
+          <Dropdown
+            className="ml-8"
+            panel={
+              <div className="flex items-center">
+                <div className="w-8 rounded h-9 bg-cyan-600"></div>
+                <p className="w-24 ml-3 text-sm truncate">
+                  {userProfileResult.data?.data?.name}
+                </p>
+                <FaCaretDown className="ml-3" />
+              </div>
+            }
+          />
         </div>
       </header>
 

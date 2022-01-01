@@ -2,7 +2,7 @@ import * as React from 'react';
 import { AiOutlineLoading } from 'react-icons/ai';
 
 interface ButtonProps extends React.PropsWithChildren<unknown> {
-  className: string;
+  className?: string;
   disabled?: boolean;
   loading?: boolean;
   onClick?: () => void;
