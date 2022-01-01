@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import type { AppProps } from 'next/app';
 import { Toaster } from 'react-hot-toast';
@@ -17,23 +17,20 @@ export default function MyApp({ Component, pageProps }: Props) {
 
   return (
     <>
-      {renderLayout(
-        isComponentProtected ? (
-          <Auth>
-            <Component {...pageProps} />
-          </Auth>
-        ) : (
-          <Component {...pageProps} />
-        )
+      {isComponentProtected ? (
+        <Auth>{renderLayout(<Component {...pageProps} />)}</Auth>
+      ) : (
+        renderLayout(<Component {...pageProps} />)
       )}
       <Toaster toastOptions={{ duration: 3000 }} />
     </>
   );
 }
 
-function Auth({ children }: { children: JSX.Element }) {
+function Auth({ children }: { children: any }) {
   const router = useRouter();
   const session = supabase.auth.session();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     const authSubscription = supabase.auth.onAuthStateChange((event, session) => {
@@ -47,10 +44,17 @@ function Auth({ children }: { children: JSX.Element }) {
     };
   }, [router]);
 
-  if (!session?.user) {
-    router.push('/auth/login');
-    return null;
+  useEffect(() => {
+    if (!session?.user) {
+      router.push('/auth/login');
+    } else {
+      setIsAuthenticated(true);
+    }
+  }, [router, session?.user]);
+
+  if (isAuthenticated) {
+    return children;
   }
 
-  return children;
+  return <div>Loading...</div>;
 }
