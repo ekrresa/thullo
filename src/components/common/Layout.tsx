@@ -60,7 +60,7 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
             panel={
               <div className="flex items-center">
                 {userProfileResult.isSuccess && (
-                  <div className="grid px-1 py-1 text-white rounded w-9 place-items-center bg-corn-blue">
+                  <div className="grid px-1 py-1 text-white rounded-lg w-9 place-items-center bg-corn-blue">
                     {getInitials(userProfileResult.data.data!.name)}
                   </div>
                 )}
@@ -72,13 +72,13 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
             }
             list={[
               <Link key="profile" href="/profile">
-                <a className="block w-full px-3 py-2 text-sm transition-colors duration-200 ease-linear text-gray3 border-inherit hover:bg-gray-100">
+                <a className="block w-full px-3 py-2 text-sm transition-colors duration-200 ease-linear border-inherit hover:bg-gray-100">
                   Profile
                 </a>
               </Link>,
               <Button
                 key="logout"
-                className="w-full px-3 py-2 text-sm transition-colors duration-200 ease-linear text-gray3 border-inherit hover:bg-gray-100"
+                className="w-full px-3 py-2 text-sm transition-colors duration-200 ease-linear border-inherit hover:bg-gray-100"
                 onClick={() => supabase.auth.signOut()}
               >
                 Log out
