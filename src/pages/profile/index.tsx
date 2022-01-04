@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useRef, useState } from 'react';
+import { FormEvent, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
 
@@ -11,14 +11,6 @@ export default function NewProfile() {
   const [loading, setLoading] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const router = useRouter();
-
-  useEffect(() => {
-    const user = supabase.auth.user();
-
-    if (!user) {
-      router.back();
-    }
-  }, [router]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -121,3 +113,5 @@ export default function NewProfile() {
     </div>
   );
 }
+
+NewProfile.protected = true;
