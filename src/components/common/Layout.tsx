@@ -25,14 +25,14 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
 
           {router.query.board && (
             <div className="flex items-center mx-auto">
-              <span className="text-lg text-pencil">DevChallenges Board</span>
+              <h1 className="text-lg text-pencil">DevChallenges Board</h1>
               <span className="mx-2 text-3xl text-ash">&#124;</span>
 
               <Link href="/" passHref>
                 <a>
                   <button className="flex items-center px-4 py-2 rounded-xl bg-off-white">
-                    <BsGridFill className="" color="#828282" />
-                    <span className="ml-2 text-sm text-gray3">All Boards</span>
+                    <BsGridFill className="text-xs" color="#828282" />
+                    <span className="ml-3 text-xs text-gray3">All Boards</span>
                   </button>
                 </a>
               </Link>

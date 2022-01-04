@@ -23,7 +23,7 @@ export function Task({ id, image }: BoardCardProps) {
         >
           {image && <div className="h-40 mb-3 rounded-lg bg-corn-blue"></div>}
 
-          <h3 className="text-base">New phone: Who this?</h3>
+          <h3 className="text-base font-open-sans">New phone: Who this?</h3>
 
           <div className="flex items-center my-4">
             <span className="bg-[#EBDCF9] px-2 py-[0.09rem] rounded-lg text-xs text-[#9B51E0]">

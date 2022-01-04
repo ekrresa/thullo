@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply font-noto-sans;
+    @apply font-open-sans;
     @apply bg-white;
   }
 

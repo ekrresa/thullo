@@ -12,7 +12,7 @@ export function Column({ children, title }: BoardProps) {
   return (
     <div className="flex-grow max-w-[20rem] min-w-[17rem]">
       <header className="flex items-center justify-between mb-4">
-        <div className="">{title}</div>
+        <h2 className="">{title}</h2>
         <Ellipsis />
       </header>
 
