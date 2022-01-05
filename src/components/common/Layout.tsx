@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { CgLayoutGridSmall } from 'react-icons/cg';
 import { FaCaretDown } from 'react-icons/fa';
@@ -10,7 +11,7 @@ import { Button } from './Button';
 import { useUserProfile } from '@hooks/user';
 import { supabase } from '@lib/supabase';
 import Logo from '../../../public/logo.svg';
-import { getInitials } from '@lib/utils';
+import { getCloudinaryUrl, getInitials } from '@lib/utils';
 
 export function Layout({ children }: React.PropsWithChildren<unknown>) {
   const router = useRouter();
@@ -57,17 +58,32 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
 
           <Dropdown
             className="ml-8"
+            header={
+              <div className="px-3 py-2 mb-2 text-sm opacity-60">
+                {userProfileResult.data?.data?.username}
+              </div>
+            }
             panel={
               <div className="flex items-center">
-                {userProfileResult.isSuccess && (
-                  <div className="grid px-1 py-1 text-white rounded-lg w-9 place-items-center bg-corn-blue">
-                    {getInitials(userProfileResult.data.data!.name)}
-                  </div>
-                )}
+                {userProfileResult.isSuccess ? (
+                  userProfileResult.data.data?.image_id ? (
+                    <div className="relative overflow-hidden rounded-lg h-9 w-9">
+                      <Image
+                        src={getCloudinaryUrl(userProfileResult.data.data.image_id)}
+                        layout="fill"
+                        alt=""
+                      />
+                    </div>
+                  ) : (
+                    <div className="grid px-1 py-1 text-white rounded-lg w-9 place-items-center bg-corn-blue">
+                      {getInitials(userProfileResult.data.data!.name)}
+                    </div>
+                  )
+                ) : null}
                 <p className="w-24 ml-3 text-sm truncate">
                   {userProfileResult.data?.data?.name}
                 </p>
-                <FaCaretDown className="ml-3" />
+                <FaCaretDown className="ml-2" />
               </div>
             }
             list={[
