@@ -7,14 +7,14 @@ import { IoMdLock } from 'react-icons/io';
 
 import { Modal } from '@components/common/Modal';
 import { Button } from '@components/common/Button';
-import { Dropdown } from '@components/common/Dropdown';
 import { ImageWidget } from './ImageWidget';
+import { VisibilitySelect } from './VisibilitySelect';
 
 export function NewBoard() {
   const [isOpen, setIsOpen] = React.useState(false);
   const [isWidgetOpen, setWidgetOpen] = React.useState(false);
   const formik = useFormik({
-    initialValues: { image: null, cover: '', title: '' },
+    initialValues: { image: null, cover: '', title: '', visibility: 'public' },
     onSubmit: () => {},
   });
 
@@ -68,7 +68,7 @@ export function NewBoard() {
             onChange={formik.handleChange}
             placeholder="Add board title"
           />
-          <div className="flex justify-between mt-6">
+          <div className="flex items-center justify-between mt-6">
             <Button
               className="flex items-center px-12 py-3 text-xs bg-gray-100 rounded-lg text-gray3"
               onClick={() => setWidgetOpen(true)}
@@ -77,10 +77,10 @@ export function NewBoard() {
               Cover
             </Button>
 
-            <Button className="flex items-center px-12 py-3 text-xs bg-gray-100 rounded-lg text-gray3">
-              <IoMdLock className="mr-2" />
-              Private
-            </Button>
+            <VisibilitySelect
+              getVisibility={(val: any) => formik.setFieldValue('visibility', val)}
+              value={formik.values.visibility}
+            />
           </div>
 
           <div className="flex justify-end mt-8">
