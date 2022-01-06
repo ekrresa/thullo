@@ -9,7 +9,7 @@ export const userQueryKeys = {
 export function useUserProfile() {
   return useQuery(
     userQueryKeys.profile(),
-    async () => supabase.from<UserProfile>('profiles').select().limit(1).single(),
+    async () => supabase.from<UserProfile>('profiles').select().single(),
     { staleTime: Infinity }
   );
 }

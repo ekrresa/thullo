@@ -69,18 +69,21 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
                   userProfileResult.data.data?.image_id ? (
                     <div className="relative overflow-hidden rounded-lg h-9 w-9">
                       <Image
-                        src={getCloudinaryUrl(userProfileResult.data.data.image_id)}
+                        src={getCloudinaryUrl(
+                          userProfileResult.data.data.image_id,
+                          userProfileResult.data.data.image_version
+                        )}
                         layout="fill"
                         alt=""
                       />
                     </div>
                   ) : (
-                    <div className="grid px-1 py-1 text-white rounded-lg w-9 place-items-center bg-corn-blue">
+                    <div className="grid px-1 py-1 text-white uppercase rounded-lg w-9 place-items-center bg-corn-blue">
                       {getInitials(userProfileResult.data.data!.name)}
                     </div>
                   )
                 ) : null}
-                <p className="w-24 ml-3 text-sm truncate">
+                <p className="w-24 ml-3 text-sm capitalize truncate">
                   {userProfileResult.data?.data?.name}
                 </p>
                 <FaCaretDown className="ml-2" />

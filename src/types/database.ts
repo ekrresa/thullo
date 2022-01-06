@@ -3,6 +3,8 @@ export interface UserProfile {
   name: string;
   username: string;
   is_profile_setup: boolean;
+  image_id: string;
+  image_version: string;
 }
 
 export interface SupabaseUser {
