@@ -18,7 +18,7 @@ export function BoardInvite() {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute left-0 z-20 px-3 py-2 mt-2 origin-top-right bg-white border shadow-lg font-poppins rounded-xl border-ash ">
+        <Menu.Items className="absolute left-0 z-20 px-3 py-2 mt-2 origin-top-right bg-white border shadow-lg rounded-xl border-ash ">
           <div className="mb-8">
             <h3 className="text-lg font-medium text-gray4">Invite to Board</h3>
             <p className="text-sm font-light text-gray3 whitespace-nowrap">

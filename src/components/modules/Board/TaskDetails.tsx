@@ -10,7 +10,7 @@ export function TaskDetails() {
   return (
     <Modal
       isOpen={Boolean(taskId)}
-      className="max-w-2xl pb-10 font-poppins"
+      className="max-w-2xl pb-10"
       closeModal={() => handleTaskId('')}
     >
       <div className="h-32 rounded bg-corn-blue"></div>
