@@ -27,7 +27,6 @@ export async function handleSignIn(email: string, password: string) {
   const userProfileResult = await supabase
     .from<UserProfile>('profiles')
     .select('is_profile_setup')
-    .limit(1)
     .single();
 
   if (userProfileResult.error) {

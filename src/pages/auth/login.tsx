@@ -28,7 +28,7 @@ export default function Login() {
       if (signInResult.is_profile_setup) {
         router.push('/');
       } else {
-        router.push('/new-profile');
+        router.push('/profile');
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
