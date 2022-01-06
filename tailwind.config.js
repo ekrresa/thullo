@@ -25,6 +25,7 @@ module.exports = {
       },
       gridTemplateColumns: {
         list: 'repeat(auto-fill, minmax(min(14rem, 100%), 1fr))',
+        colors: 'repeat(auto-fill, minmax(min(8rem, 100%), 1fr))',
       },
       gridTemplateRows: {
         layout: 'auto 1fr auto',

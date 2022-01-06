@@ -1,13 +1,22 @@
 import { Fragment, PropsWithChildren } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
+import { Button } from './Button';
+import { IoClose } from 'react-icons/io5';
 
 interface ModalProps extends PropsWithChildren<unknown> {
   isOpen: boolean;
   closeModal: () => void;
-  className: string;
+  closeIcon?: boolean;
+  className?: string;
 }
 
-export function Modal({ children, className, closeModal, isOpen }: ModalProps) {
+export function Modal({
+  children,
+  className,
+  closeIcon = false,
+  closeModal,
+  isOpen,
+}: ModalProps) {
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog
@@ -36,8 +45,16 @@ export function Modal({ children, className, closeModal, isOpen }: ModalProps) {
           leaveTo="opacity-0 scale-95"
         >
           <div
-            className={`inline-block w-full p-6 mt-24 mb-8 overflow-hidden transition-all transform bg-white shadow-xl rounded-2xl ${className}`}
+            className={`inline-block relative w-full p-6 mt-24 mb-8 overflow-hidden transition-all transform bg-white shadow-xl rounded-2xl ${className}`}
           >
+            {closeIcon && (
+              <Button
+                className="absolute p-1 text-white rounded-lg -top-2 -right-2 bg-corn-blue"
+                onClick={closeModal}
+              >
+                <IoClose className="text-xl" />
+              </Button>
+            )}
             {children}
           </div>
         </Transition.Child>
