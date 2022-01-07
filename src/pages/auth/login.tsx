@@ -8,7 +8,7 @@ import { toast } from 'react-hot-toast';
 import { Button } from '@components/common/Button';
 import { Footer } from '@components/common/Footer';
 import axios, { axiosClient } from '@lib/axios';
-import { handleSignIn } from '@lib/auth';
+import { handleSignIn } from '@lib/api/auth';
 import { SupabaseUser } from 'types/database';
 import Logo from '../../../public/logo-small.svg';
 
