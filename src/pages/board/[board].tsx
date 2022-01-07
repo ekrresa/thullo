@@ -1,4 +1,6 @@
 import React, { ComponentType, useState } from 'react';
+import { useRouter } from 'next/router';
+import Image from 'next/image';
 import { IoEllipsisHorizontalSharp } from 'react-icons/io5';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 
@@ -11,16 +13,34 @@ import { BoardInvite } from '@components/modules/Board/BoardInvite';
 import { TaskProvider } from '@context/taskContext';
 import { TaskDetails } from '@components/modules/Board/TaskDetails';
 import { AddNewItem } from '@components/modules/Board/AddNewItem';
+import { useFetchSingleBoard } from '@hooks/board';
+import { getCloudinaryUrl, getInitials } from '@lib/utils';
 
 export default function Board() {
+  const router = useRouter();
+  const board = useFetchSingleBoard(router.query.board as string);
   const [sideMenu, setSideMenu] = useState(false);
   const handleDragEnd = (result: DropResult) => {
     console.log(result);
   };
 
+  if (board.isLoading) {
+    return <div className="text-center mt-9">Loading...</div>;
+  }
+
+  if (board.isError || board.data?.error) {
+    return <div className="text-center mt-9">An error occurred...</div>;
+  }
+
   return (
     <section className="container relative overflow-hidden mt-9">
-      <SideMenu open={sideMenu} closeSideMenu={() => setSideMenu(false)} />
+      {board.data?.body && (
+        <SideMenu
+          open={sideMenu}
+          closeSideMenu={() => setSideMenu(false)}
+          board={board.data.body}
+        />
+      )}
       <TaskDetails />
 
       <div className="flex justify-between">
@@ -28,9 +48,22 @@ export default function Board() {
           <VisibilitySwitch />
 
           <div className="flex items-center ml-4 mr-4 space-x-4">
-            <div className="w-8 h-8 rounded-lg bg-corn-blue"></div>
-            <div className="w-8 h-8 rounded-lg bg-corn-blue"></div>
-            <div className="w-8 h-8 rounded-lg bg-corn-blue"></div>
+            <div className="relative w-8 h-8 overflow-hidden rounded-lg bg-corn-blue">
+              {board.data?.body && board.data?.body.owner.image_id ? (
+                <Image
+                  src={getCloudinaryUrl(
+                    board.data?.body.owner.image_id as string,
+                    board.data?.body.owner.image_version as string
+                  )}
+                  layout="fill"
+                  alt=""
+                />
+              ) : (
+                <div className="w-full h-full">
+                  {getInitials(board.data?.body.owner.name as string)}
+                </div>
+              )}
+            </div>
           </div>
 
           <BoardInvite />

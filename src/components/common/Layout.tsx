@@ -10,14 +10,16 @@ import { Footer } from './Footer';
 import { Dropdown } from './Dropdown';
 import { Button } from './Button';
 import { useUserProfile } from '@hooks/user';
+import { useFetchSingleBoard } from '@hooks/board';
 import { supabase } from '@lib/supabase';
-import Logo from '../../../public/logo.svg';
 import { getCloudinaryUrl, getInitials } from '@lib/utils';
+import Logo from '../../../public/logo.svg';
 
 export function Layout({ children }: React.PropsWithChildren<unknown>) {
   const router = useRouter();
   const userProfileResult = useUserProfile();
   const queryClient = useQueryClient();
+  const board = useFetchSingleBoard(router.query.board as string);
 
   return (
     <div className="grid min-h-screen grid-cols-1 grid-rows-layout">
@@ -29,9 +31,9 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
             </a>
           </Link>
 
-          {router.query.board && (
+          {router.query.board && board.isSuccess && !board.data.error && (
             <div className="flex items-center mx-auto">
-              <h1 className="text-lg text-pencil">DevChallenges Board</h1>
+              <h1 className="text-lg text-pencil">{board.data.body.title}</h1>
               <span className="mx-2 text-3xl text-ash">&#124;</span>
 
               <Link href="/" passHref>
