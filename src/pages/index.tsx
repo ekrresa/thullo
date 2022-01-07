@@ -1,6 +1,7 @@
 import { ComponentType } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { IoMdLock } from 'react-icons/io';
 
 import { Layout } from '../components/common/Layout';
 import { NewBoard } from '../components/modules/Board/NewBoard';
@@ -26,7 +27,12 @@ export default function Home() {
         <div className="grid mt-10 gap-x-8 gap-y-6 grid-cols-list">
           {boards.data!.body!.map(board => (
             <Link key={board.id} href={`/board/${board.id}`} passHref>
-              <a className="flex flex-col rounded-lg shadow">
+              <a className="relative flex flex-col rounded-lg shadow">
+                {board.visibility === 'private' && (
+                  <span className="absolute z-10 p-1 rounded-full opacity-60 right-1 top-1 bg-slate-300 hover:opacity-90">
+                    <IoMdLock className="text-xl" />
+                  </span>
+                )}
                 <div className="relative h-32 overflow-hidden rounded-t-lg">
                   {board.cover ? (
                     <div
