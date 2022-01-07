@@ -38,7 +38,7 @@ export function VisibilitySwitch() {
 
   return (
     <Listbox value={selected} onChange={val => setSelected(val)}>
-      <div className="relative mt-1 font-poppins">
+      <div className="relative mt-1">
         <Listbox.Button className="relative w-full px-4 py-2 rounded-lg cursor-pointer bg-off-white sm:text-sm text-gray3">
           <span className="flex items-center capitalize">
             {selected === 'private' ? (

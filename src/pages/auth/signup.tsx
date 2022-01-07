@@ -34,7 +34,7 @@ export default function Register() {
         );
 
         if (session) {
-          router.push('/new-profile');
+          router.push('/profile');
         } else {
           toast.error('An error occurred. Please try again.');
         }

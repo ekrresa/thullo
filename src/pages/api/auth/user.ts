@@ -1,12 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import faker from 'faker';
+import Chance from 'chance';
 import { supabase } from '@lib/supabaseServer';
+
+const chance = new Chance();
 
 export default async function AuthHandler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case 'POST':
-      const email = faker.internet.email();
-      const password = faker.internet.password();
+      const email = chance.email({ domain: 'example.com' });
+      const password = chance.word({ length: 8 });
 
       try {
         const result = await supabase.auth.api.createUser({
@@ -22,7 +24,7 @@ export default async function AuthHandler(req: NextApiRequest, res: NextApiRespo
           return;
         }
 
-        res.status(200).json({ ...result.data, password });
+        res.status(200).send({ ...result.data, password });
       } catch (error) {
         if (error instanceof Error) {
           res.status(400).json({ message: error.message });

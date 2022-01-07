@@ -6,6 +6,7 @@
   body {
     @apply font-open-sans;
     @apply bg-white;
+    @apply text-gray-700;
   }
 
   h1,

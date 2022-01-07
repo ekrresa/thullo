@@ -1,4 +1,6 @@
 import axios from 'axios';
 
-export const axiosClient = axios.create({});
+const controller = new AbortController();
+
+export const axiosClient = axios.create({ signal: controller.signal });
 export default axios;

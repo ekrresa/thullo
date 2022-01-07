@@ -18,7 +18,7 @@ export function SideMenu({ open, closeSideMenu }: SideMenuProps) {
 
   return (
     <div
-      className={`absolute right-0 top-0 bg-white w-full max-w-md h-full p-6 font-poppins shadow-lg transition duration-500 ease-in-out overflow-y-auto ${
+      className={`absolute right-0 top-0 bg-white w-full max-w-md h-full p-6 shadow-lg transition duration-500 ease-in-out overflow-y-auto ${
         open ? 'opacity-100 translate-x-0' : ' opacity-0 translate-x-full'
       }`}
       ref={sideMenuRef}
