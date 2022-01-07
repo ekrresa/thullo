@@ -1,10 +1,15 @@
 import { ComponentType } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 import { Layout } from '../components/common/Layout';
 import { NewBoard } from '../components/modules/Board/NewBoard';
+import { useFetchBoards } from '@hooks/board';
+import { getCloudinaryUrl } from '@lib/utils';
 
 export default function Home() {
+  const boards = useFetchBoards();
+
   return (
     <section className="max-w-5xl px-4 mx-auto mt-16">
       <div className="flex items-center justify-between">
@@ -13,21 +18,42 @@ export default function Home() {
         <NewBoard />
       </div>
 
-      <div className="grid mt-10 gap-x-8 gap-y-6 grid-cols-list">
-        {new Array(6).fill('oh').map((_, index) => (
-          <Link key={index} href={`/board/${index}`} passHref>
-            <a className="flex flex-col p-3 rounded-lg shadow">
-              <div className="rounded-lg bg-corn-blue h-28"></div>
-              <p className="mt-2 text-sm">Devchallenges Board</p>
-              <div className="flex items-center">
-                <div className="w-8 h-8 mt-3 mr-3 rounded-lg bg-corn-blue"></div>
-                <div className="w-8 h-8 mt-3 mr-3 rounded-lg bg-corn-blue"></div>
-                <div className="w-8 h-8 mt-3 mr-3 rounded-lg bg-corn-blue"></div>
-              </div>
-            </a>
-          </Link>
-        ))}
-      </div>
+      {boards.isLoading ? (
+        <div className="text-center">Loading...</div>
+      ) : boards.isError ? (
+        <div className="text-center">An error occurred while fetching boards</div>
+      ) : boards.data?.body && boards.data.body.length > 0 ? (
+        <div className="grid mt-10 gap-x-8 gap-y-6 grid-cols-list">
+          {boards.data!.body!.map(board => (
+            <Link key={board.id} href={`/board/${board.id}`} passHref>
+              <a className="flex flex-col rounded-lg shadow">
+                <div className="relative h-32 overflow-hidden rounded-t-lg">
+                  {board.cover ? (
+                    <div
+                      style={{ backgroundColor: board.cover }}
+                      className="w-full h-full"
+                    ></div>
+                  ) : (
+                    <Image
+                      src={getCloudinaryUrl(board.image_id, board.image_version)}
+                      layout="fill"
+                      alt=""
+                    />
+                  )}
+                </div>
+                <p className="px-3 mt-2 text-sm truncate">{board.title}</p>
+                <div className="flex items-center px-3 pb-3">
+                  <div className="mt-3 mr-3 rounded-lg w-7 h-7 bg-corn-blue"></div>
+                  <div className="mt-3 mr-3 rounded-lg w-7 h-7 bg-corn-blue"></div>
+                  <div className="mt-3 mr-3 rounded-lg w-7 h-7 bg-corn-blue"></div>
+                </div>
+              </a>
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center">There are no boards right now.</div>
+      )}
     </section>
   );
 }

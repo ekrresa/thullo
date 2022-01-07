@@ -13,14 +13,14 @@ export function PhotosGallery({ selectImage }: PhotosGalleryProps) {
   const photos = usePexelsPhotos(page);
 
   if (photos.isLoading) {
-    return <div className="">Loading...</div>;
+    return <p className="text-center">Loading...</p>;
   }
 
   if (photos.data?.error) {
     return (
-      <div className="">
+      <p className="text-center">
         There was a problem with fetching photos from Pexels. Please try again.
-      </div>
+      </p>
     );
   }
 
@@ -30,7 +30,7 @@ export function PhotosGallery({ selectImage }: PhotosGalleryProps) {
         <Button
           key={photo.url}
           className="relative overflow-hidden rounded-lg cursor-pointer h-28 hover:opacity-70 focus:ring-offset-1 focus:ring-2 focus:ring-cyan-700"
-          onClick={() => selectImage(photo.src.large2x)}
+          onClick={() => selectImage(photo.src.landscape)}
         >
           <Image src={photo.src.large2x} layout="fill" alt="" unoptimized />
         </Button>

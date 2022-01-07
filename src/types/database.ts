@@ -20,3 +20,16 @@ export interface SupabaseUser {
   identities: null;
   password?: string;
 }
+
+export interface Board {
+  id: string;
+  title: string;
+  owner: UserProfile;
+  members: UserProfile[];
+  visibility: 'public' | 'private';
+  image_id: string;
+  image_version: string;
+  cover: string;
+  created_at: string;
+  updated_at: string;
+}

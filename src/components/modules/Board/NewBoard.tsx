@@ -1,21 +1,55 @@
 import * as React from 'react';
 import Image from 'next/image';
 import { useFormik } from 'formik';
+import { useMutation, useQueryClient } from 'react-query';
 import { BiPlus } from 'react-icons/bi';
 import { BsImage } from 'react-icons/bs';
-import { IoMdLock } from 'react-icons/io';
+import toast from 'react-hot-toast';
 
 import { Modal } from '@components/common/Modal';
 import { Button } from '@components/common/Button';
 import { ImageWidget } from './ImageWidget';
 import { VisibilitySelect } from './VisibilitySelect';
+import { useUserProfile } from '@hooks/user';
+import { BoardInput, createBoard } from '@lib/api/board';
+import { boardsQueryKeys } from '@hooks/board';
 
 export function NewBoard() {
   const [isOpen, setIsOpen] = React.useState(false);
   const [isWidgetOpen, setWidgetOpen] = React.useState(false);
+  const user = useUserProfile();
+  const queryClient = useQueryClient();
+  const newProfileMutation = useMutation((data: BoardInput) =>
+    createBoard(data, user.data?.body?.id as string)
+  );
+
   const formik = useFormik({
-    initialValues: { image: null, cover: '', title: '', visibility: 'public' },
-    onSubmit: () => {},
+    initialValues: {
+      image: undefined,
+      cover: undefined,
+      title: '',
+      visibility: 'public',
+    },
+    onSubmit: async values => {
+      newProfileMutation.mutate(
+        {
+          title: values.title,
+          image: values.image,
+          cover: values.cover,
+          visibility: values.visibility as 'public' | 'private',
+        },
+        {
+          onError: (error: any) => {
+            toast.error(error.message);
+          },
+          onSuccess: async () => {
+            toast.success('Board created!');
+            await queryClient.invalidateQueries(boardsQueryKeys.all());
+            setIsOpen(false);
+          },
+        }
+      );
+    },
   });
 
   const boardCover = formik.values.cover || null;
@@ -44,10 +78,12 @@ export function NewBoard() {
             selectCover={(cover: string) => {
               formik.setFieldValue('cover', cover);
               formik.setFieldValue('image', null);
+              toast.success('Color selected!');
             }}
             selectImage={(image: string) => {
               formik.setFieldValue('image', image);
               formik.setFieldValue('cover', null);
+              toast.success('Image selected!');
             }}
           />
 
@@ -63,7 +99,7 @@ export function NewBoard() {
           </div>
 
           <input
-            className="w-full px-3 py-3 mt-4 text-xs bg-white border rounded-lg shadow-lg border-ash focus:outline-none text-light-pencil"
+            className="w-full px-3 py-3 mt-4 text-xs bg-white border rounded-lg shadow-lg border-ash focus:outline-none text-pencil"
             id="title"
             onChange={formik.handleChange}
             placeholder="Add board title"
@@ -94,6 +130,8 @@ export function NewBoard() {
             <Button
               className="bg-corn-blue flex items-center ml-4 rounded-lg px-3 py-3 text-[0.625rem] text-white"
               type="submit"
+              disabled={newProfileMutation.isLoading}
+              loading={newProfileMutation.isLoading}
             >
               <BiPlus className="mr-2 text-sm" />
               Create
