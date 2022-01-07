@@ -2,6 +2,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { useQueryClient } from 'react-query';
 import { CgLayoutGridSmall } from 'react-icons/cg';
 import { FaCaretDown } from 'react-icons/fa';
 
@@ -16,6 +17,7 @@ import { getCloudinaryUrl, getInitials } from '@lib/utils';
 export function Layout({ children }: React.PropsWithChildren<unknown>) {
   const router = useRouter();
   const userProfileResult = useUserProfile();
+  const queryClient = useQueryClient();
 
   return (
     <div className="grid min-h-screen grid-cols-1 grid-rows-layout">
@@ -98,7 +100,10 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
               <Button
                 key="logout"
                 className="w-full px-3 py-2 text-sm transition-colors duration-200 ease-linear border-inherit hover:bg-gray-100"
-                onClick={() => supabase.auth.signOut()}
+                onClick={() => {
+                  supabase.auth.signOut();
+                  queryClient.removeQueries();
+                }}
               >
                 Log out
               </Button>,

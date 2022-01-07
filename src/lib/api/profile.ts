@@ -2,9 +2,6 @@ import { axiosClient } from '@lib/axios';
 import { supabase } from '@lib/supabase';
 import { UploadApiResponse } from 'cloudinary';
 
-const NEXT_PUBLIC_CLOUDINARY_API_KEY = process.env
-  .NEXT_PUBLIC_CLOUDINARY_API_KEY as string;
-
 export async function updateProfile(data: Partial<UserProfileInput>) {
   let imageId: string | undefined;
   let imageVersion: string | undefined;
