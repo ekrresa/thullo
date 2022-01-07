@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Layout } from '../components/common/Layout';
 import { NewBoard } from '../components/modules/Board/NewBoard';
 import { useFetchBoards } from '@hooks/board';
-import { getCloudinaryUrl } from '@lib/utils';
+import { getCloudinaryUrl, getInitials } from '@lib/utils';
 
 export default function Home() {
   const boards = useFetchBoards();
@@ -19,9 +19,9 @@ export default function Home() {
       </div>
 
       {boards.isLoading ? (
-        <div className="text-center">Loading...</div>
+        <div className="mt-10 text-center">Loading...</div>
       ) : boards.isError ? (
-        <div className="text-center">An error occurred while fetching boards</div>
+        <div className="mt-10 text-center">An error occurred while fetching boards</div>
       ) : boards.data?.body && boards.data.body.length > 0 ? (
         <div className="grid mt-10 gap-x-8 gap-y-6 grid-cols-list">
           {boards.data!.body!.map(board => (
@@ -43,16 +43,27 @@ export default function Home() {
                 </div>
                 <p className="px-3 mt-2 text-sm truncate">{board.title}</p>
                 <div className="flex items-center px-3 pb-3">
-                  <div className="mt-3 mr-3 rounded-lg w-7 h-7 bg-corn-blue"></div>
-                  <div className="mt-3 mr-3 rounded-lg w-7 h-7 bg-corn-blue"></div>
-                  <div className="mt-3 mr-3 rounded-lg w-7 h-7 bg-corn-blue"></div>
+                  <div className="relative mt-3 mr-3 overflow-hidden rounded-lg w-7 h-7">
+                    {board.owner.image_id ? (
+                      <Image
+                        src={getCloudinaryUrl(
+                          board.owner.image_id,
+                          board.owner.image_version
+                        )}
+                        layout="fill"
+                        alt="board owner"
+                      />
+                    ) : (
+                      getInitials(board.owner.name)
+                    )}
+                  </div>
                 </div>
               </a>
             </Link>
           ))}
         </div>
       ) : (
-        <div className="text-center">There are no boards right now.</div>
+        <div className="mt-10 text-center">There are no boards right now.</div>
       )}
     </section>
   );
