@@ -66,10 +66,9 @@ export default function Login() {
         } else {
           router.push('/new-profile');
         }
-      } catch (error) {
-        if (error instanceof Error) {
-          toast.error(error.message);
-        }
+      } catch (error: any) {
+        const errorMsg = error?.response?.data?.message || error.message;
+        toast.error(errorMsg);
       } finally {
         setLoading(false);
       }
