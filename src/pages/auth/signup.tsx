@@ -7,7 +7,7 @@ import { FcGoogle } from 'react-icons/fc';
 
 import { Button } from '@components/common/Button';
 import { Footer } from '@components/common/Footer';
-import { signUpUser } from '@lib/auth';
+import { signUpUser } from '@lib/api/auth';
 import Logo from '../../../public/logo-small.svg';
 
 export default function Register() {

@@ -1,5 +1,5 @@
 import { UserProfile } from 'types/database';
-import { supabase } from './supabase';
+import { supabase } from '../supabase';
 
 export async function signUpUser(email: string, password: string) {
   const { error, session } = await supabase.auth.signUp({
@@ -27,6 +27,7 @@ export async function handleSignIn(email: string, password: string) {
   const userProfileResult = await supabase
     .from<UserProfile>('profiles')
     .select('is_profile_setup')
+    .match({ id: result.user?.id })
     .single();
 
   if (userProfileResult.error) {

@@ -8,7 +8,7 @@ import { toast } from 'react-hot-toast';
 import { Button } from '@components/common/Button';
 import { Footer } from '@components/common/Footer';
 import axios, { axiosClient } from '@lib/axios';
-import { handleSignIn } from '@lib/auth';
+import { handleSignIn } from '@lib/api/auth';
 import { SupabaseUser } from 'types/database';
 import Logo from '../../../public/logo-small.svg';
 
@@ -66,10 +66,9 @@ export default function Login() {
         } else {
           router.push('/new-profile');
         }
-      } catch (error) {
-        if (error instanceof Error) {
-          toast.error(error.message);
-        }
+      } catch (error: any) {
+        const errorMsg = error?.response?.data?.message || error.message;
+        toast.error(errorMsg);
       } finally {
         setLoading(false);
       }

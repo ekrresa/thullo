@@ -12,7 +12,12 @@ export function useFetchBoards() {
   return useQuery(
     boardsQueryKeys.all(),
     async () =>
-      supabase.from<Board>('boards').select().order('updated_at', { ascending: false }),
+      supabase
+        .from<Board>('boards')
+        .select(
+          `id, title, cover, image_id, image_version, visibility, owner (name, username, image_id, image_version)`
+        )
+        .order('updated_at', { ascending: false }),
     { staleTime: ONE_HOUR_IN_MILLISECONDS }
   );
 }
