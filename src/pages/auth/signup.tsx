@@ -10,6 +10,7 @@ import { Button } from '@components/common/Button';
 import { Footer } from '@components/common/Footer';
 import { handleDemoUserSignUp, signUpUser } from '@lib/api/auth';
 import Logo from '../../../public/logo-small.svg';
+import { ROUTES } from '@lib/constants';
 
 export default function Register() {
   const router = useRouter();
@@ -26,7 +27,7 @@ export default function Register() {
         toast.error(errorMsg);
       },
       onSuccess: () => {
-        router.push('/profile');
+        router.push(ROUTES.profile);
       },
     });
   };
@@ -52,7 +53,7 @@ export default function Register() {
             const errorMsg = error?.response?.data?.message || error.message;
             toast.error(errorMsg);
           },
-          onSuccess: () => router.push('/profile'),
+          onSuccess: () => router.push(ROUTES.profile),
         }
       );
     }
@@ -131,7 +132,7 @@ export default function Register() {
 
           <p className="mt-6 text-xs text-center text-gray3">
             Have an account?{' '}
-            <Link href="/auth/login" passHref>
+            <Link href={ROUTES.login} passHref>
               <a>
                 <span className="font-semibold text-corn-blue">Login</span>
               </a>

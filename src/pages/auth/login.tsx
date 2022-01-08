@@ -10,6 +10,7 @@ import { Button } from '@components/common/Button';
 import { Footer } from '@components/common/Footer';
 import { handleDemoUserSignUp, handleSignIn } from '@lib/api/auth';
 import Logo from '../../../public/logo-small.svg';
+import { ROUTES } from '@lib/constants';
 
 export default function Login() {
   const router = useRouter();
@@ -27,7 +28,7 @@ export default function Login() {
         toast.error(errorMsg);
       },
       onSuccess: () => {
-        router.push('/profile');
+        router.push(ROUTES.profile);
       },
     });
   };
@@ -52,9 +53,9 @@ export default function Login() {
           },
           onSuccess: data => {
             if (data.is_profile_setup) {
-              router.push('/');
+              router.push(ROUTES.home);
             } else {
-              router.push('/profile');
+              router.push(ROUTES.profile);
             }
           },
         }
@@ -136,7 +137,7 @@ export default function Login() {
 
           <p className="mt-6 text-xs text-center text-gray3">
             First time here?{' '}
-            <Link href="/auth/signup" passHref>
+            <Link href={ROUTES.signup} passHref>
               <a>
                 <span className="font-semibold text-corn-blue">Sign up</span>
               </a>

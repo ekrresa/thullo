@@ -14,6 +14,7 @@ import { useFetchSingleBoard } from '@hooks/board';
 import { supabase } from '@lib/supabase';
 import { getCloudinaryUrl, getInitials } from '@lib/utils';
 import Logo from '../../../public/logo.svg';
+import { ROUTES } from '@lib/constants';
 
 export function Layout({ children }: React.PropsWithChildren<unknown>) {
   const router = useRouter();
@@ -25,18 +26,18 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
     <div className="grid min-h-screen grid-cols-1 grid-rows-layout">
       <header className="py-4 mb-1 bg-white shadow-sm">
         <div className="container flex items-center">
-          <Link href="/" passHref>
+          <Link href={ROUTES.home} passHref>
             <a>
               <Logo className="w-28" />
             </a>
           </Link>
 
-          {router.query.board && board.isSuccess ? (
+          {router.query.board && board.isSuccess && (
             <div className="flex items-center mx-auto">
               <h1 className="text-lg text-pencil">{board.data.title}</h1>
               <span className="mx-2 text-3xl text-ash">&#124;</span>
 
-              <Link href="/" passHref>
+              <Link href={ROUTES.home} passHref>
                 <a>
                   <button className="flex items-center px-3 py-2 rounded-lg bg-off-white">
                     <CgLayoutGridSmall className="text-2xl" color="#828282" />
@@ -45,8 +46,6 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
                 </a>
               </Link>
             </div>
-          ) : (
-            <div className="mx-auto">Error...</div>
           )}
 
           <form className="flex flex-1 max-w-xs ml-auto p-[1px] rounded-lg shadow-md">
@@ -96,7 +95,7 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
               </div>
             }
             list={[
-              <Link key="profile" href="/profile">
+              <Link key="profile" href={ROUTES.profile}>
                 <a className="block w-full px-3 py-2 text-sm transition-colors duration-200 ease-linear border-inherit hover:bg-gray-100">
                   Profile
                 </a>

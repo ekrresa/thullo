@@ -7,6 +7,7 @@ import { Layout } from '../components/common/Layout';
 import { NewBoard } from '../components/modules/Board/NewBoard';
 import { useFetchBoards } from '@hooks/board';
 import { getCloudinaryUrl, getInitials } from '@lib/utils';
+import { ROUTES } from '@lib/constants';
 
 export default function Home() {
   const boards = useFetchBoards();
@@ -26,7 +27,7 @@ export default function Home() {
       ) : boards.data && boards.data.length > 0 ? (
         <div className="grid mt-10 gap-x-8 gap-y-6 grid-cols-list">
           {boards.data.map(board => (
-            <Link key={board.id} href={`/board/${board.id}`} passHref>
+            <Link key={board.id} href={ROUTES.board(board.id)} passHref>
               <a className="relative flex flex-col rounded-lg shadow">
                 {board.visibility === 'private' && (
                   <span className="absolute z-10 p-1 rounded-full opacity-60 right-1 top-1 bg-slate-300 hover:opacity-90">
