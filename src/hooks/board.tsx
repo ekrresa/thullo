@@ -4,6 +4,7 @@ import { Board } from 'types/database';
 
 export const boardsQueryKeys = {
   all: () => ['boards', 'all'],
+  board: (boardId: number) => ['boards', 'single', { boardId }],
 };
 
 const ONE_HOUR_IN_MILLISECONDS = 3600000;
@@ -19,5 +20,20 @@ export function useFetchBoards() {
         )
         .order('updated_at', { ascending: false }),
     { staleTime: ONE_HOUR_IN_MILLISECONDS }
+  );
+}
+
+export function useFetchSingleBoard(boardId: number) {
+  return useQuery(
+    boardsQueryKeys.board(boardId),
+    async () =>
+      supabase
+        .from<Board>('boards')
+        .select(
+          `id, title, cover, image_id, image_version, visibility, created_at, updated_at, owner (name, username, image_id, image_version)`
+        )
+        .match({ id: boardId })
+        .single(),
+    { enabled: Boolean(boardId), staleTime: ONE_HOUR_IN_MILLISECONDS }
   );
 }

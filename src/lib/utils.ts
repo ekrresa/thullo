@@ -1,5 +1,5 @@
 export function getInitials(name: string) {
-  if (!name) throw new Error('No name specified');
+  if (!name) return;
 
   const initials = name
     .split(' ')

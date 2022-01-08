@@ -1,56 +1,52 @@
-import { Fragment, useState } from 'react';
+import * as React from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { IoMdGlobe, IoMdLock } from 'react-icons/io';
+import { useMutation, useQueryClient } from 'react-query';
+import toast from 'react-hot-toast';
 
-const list = [
-  {
-    value: 'public',
-    text: (
-      <div className="p-4 rounded-lg cursor-pointer hover:bg-off-white">
-        <div className="flex items-center">
-          <IoMdGlobe className="mr-2" />
-          <span className="font-medium text-gray4">Public</span>
-        </div>
-        <p className="text-xs font-light text-gray3 whitespace-nowrap">
-          Anyone on the internet can see this.
-        </p>
-      </div>
-    ),
-  },
-  {
-    value: 'private',
-    text: (
-      <div className="p-4 rounded-lg cursor-pointer hover:bg-off-white">
-        <div className="flex items-center">
-          <IoMdLock className="mr-2" />
-          <span className="font-medium text-gray4">Private</span>
-        </div>
-        <p className="text-xs font-light text-gray3 whitespace-nowrap">
-          Only board members can see this.
-        </p>
-      </div>
-    ),
-  },
-];
+import { BoardUpdate, updateBoard } from '@lib/api/board';
+import { boardsQueryKeys } from '@hooks/board';
 
-export function VisibilitySwitch() {
-  const [selected, setSelected] = useState(list[0].value);
+interface VisibilitySwitchProps {
+  visibility: 'public' | 'private';
+  boardId: number;
+}
+
+export function VisibilitySwitch({ boardId, visibility }: VisibilitySwitchProps) {
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation((data: Partial<BoardUpdate>) =>
+    updateBoard(data, boardId)
+  );
+
+  const handleVisibilityChange = (val: 'public' | 'private') => {
+    mutate(
+      { visibility: val },
+      {
+        onError: (error: any) => {
+          toast.error(error.message);
+        },
+        onSuccess: async () => {
+          await queryClient.invalidateQueries(boardsQueryKeys.board(boardId));
+        },
+      }
+    );
+  };
 
   return (
-    <Listbox value={selected} onChange={val => setSelected(val)}>
-      <div className="relative mt-1">
+    <Listbox value={visibility} onChange={val => handleVisibilityChange(val)}>
+      <div className="relative">
         <Listbox.Button className="relative w-full px-4 py-2 rounded-lg cursor-pointer bg-off-white sm:text-sm text-gray3">
           <span className="flex items-center capitalize">
-            {selected === 'private' ? (
+            {visibility === 'private' ? (
               <IoMdLock className="mr-2" />
             ) : (
               <IoMdGlobe className="mr-2" />
             )}
-            {selected}
+            {visibility}
           </span>
         </Listbox.Button>
         <Transition
-          as={Fragment}
+          as={React.Fragment}
           leave="transition ease-in duration-100"
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
@@ -62,24 +58,29 @@ export function VisibilitySwitch() {
                 Choose who can see this board.
               </p>
             </div>
-            {list.map((item, itemIdx) => (
-              <Listbox.Option
-                key={itemIdx}
-                className={({ active }) =>
-                  `${active ? 'text-amber-900 bg-amber-100' : 'text-gray-900'}
-                          cursor-default select-none relative py-2`
-                }
-                value={item.value}
-              >
-                {({ selected, active }) => (
-                  <>
-                    <span className={`${selected ? 'font-medium' : 'font-normal'} block`}>
-                      {item.text}
-                    </span>
-                  </>
-                )}
-              </Listbox.Option>
-            ))}
+
+            <Listbox.Option value="public">
+              <div className="p-4 rounded-lg cursor-pointer hover:bg-off-white">
+                <div className="flex items-center">
+                  <IoMdGlobe className="mr-2" />
+                  <span className="font-medium text-gray4">Public</span>
+                </div>
+                <p className="text-xs font-light text-gray3 whitespace-nowrap">
+                  Anyone on the internet can see this.
+                </p>
+              </div>
+            </Listbox.Option>
+            <Listbox.Option value="private">
+              <div className="p-4 rounded-lg cursor-pointer hover:bg-off-white">
+                <div className="flex items-center">
+                  <IoMdLock className="mr-2" />
+                  <span className="font-medium text-gray4">Private</span>
+                </div>
+                <p className="text-xs font-light text-gray3 whitespace-nowrap">
+                  Only board members can see this.
+                </p>
+              </div>
+            </Listbox.Option>
           </Listbox.Options>
         </Transition>
       </div>
