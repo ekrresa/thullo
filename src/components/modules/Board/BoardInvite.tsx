@@ -5,7 +5,7 @@ import { BiPlus, BiSearch } from 'react-icons/bi';
 export function BoardInvite() {
   return (
     <Menu as="div" className="relative">
-      <Menu.Button className="px-1 py-1 rounded-lg bg-corn-blue">
+      <Menu.Button className="grid w-8 h-8 rounded-lg place-items-center bg-corn-blue">
         <BiPlus className="text-2xl" color="#fff" />
       </Menu.Button>
 

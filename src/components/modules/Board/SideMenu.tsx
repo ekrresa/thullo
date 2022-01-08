@@ -37,7 +37,7 @@ export function SideMenu({ board }: SideMenuProps) {
         ref={sideMenuRef}
       >
         <div className="flex items-center justify-between pb-2 border-b border-ash">
-          <h4 className="font-medium text-pencil">{board.title}</h4>
+          <h4 className="text-pencil">{board.title}</h4>
 
           <button className="p-1 border-0" onClick={() => toggleSideMenu(false)}>
             <IoClose className="text-xl" color="#4F4F4F" />
