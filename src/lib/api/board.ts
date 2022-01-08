@@ -11,6 +11,11 @@ export interface BoardInput {
   visibility: 'public' | 'private';
 }
 
+export interface BoardUpdate {
+  title: string;
+  visibility: 'public' | 'private';
+}
+
 export async function createBoard(input: BoardInput, userId: string) {
   if (!input.title && userId) {
     throw new Error(`Title and User ID are required`);
@@ -48,6 +53,20 @@ export async function createBoard(input: BoardInput, userId: string) {
       image_version: imageVersion,
       visibility: input.visibility as 'public' | 'private',
     })
+    .single();
+
+  if (result.error) {
+    throw result.error;
+  }
+
+  return result.data;
+}
+
+export async function updateBoard(input: Partial<BoardUpdate>, boardId: number) {
+  const result = await supabase
+    .from<Board>('boards')
+    .update({ ...input })
+    .match({ id: boardId })
     .single();
 
   if (result.error) {

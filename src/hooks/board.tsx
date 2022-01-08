@@ -4,7 +4,7 @@ import { Board } from 'types/database';
 
 export const boardsQueryKeys = {
   all: () => ['boards', 'all'],
-  board: (boardId: string) => ['board', { boardId }],
+  board: (boardId: number) => ['boards', 'single', { boardId }],
 };
 
 const ONE_HOUR_IN_MILLISECONDS = 3600000;
@@ -23,7 +23,7 @@ export function useFetchBoards() {
   );
 }
 
-export function useFetchSingleBoard(boardId: string) {
+export function useFetchSingleBoard(boardId: number) {
   return useQuery(
     boardsQueryKeys.board(boardId),
     async () =>

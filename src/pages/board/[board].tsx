@@ -17,7 +17,7 @@ import { getCloudinaryUrl, getInitials } from '@lib/utils';
 
 export default function Board() {
   const router = useRouter();
-  const board = useFetchSingleBoard(router.query.board as string);
+  const board = useFetchSingleBoard(Number(router.query.board));
   const [sideMenu, setSideMenu] = useState(false);
   const handleDragEnd = (result: DropResult) => {
     console.log(result);
@@ -41,7 +41,7 @@ export default function Board() {
             <div className="flex items-center">
               <VisibilitySwitch
                 boardId={board.data.body.id}
-                defaultVisibility={board.data?.body.visibility}
+                visibility={board.data?.body.visibility}
               />
 
               <div className="flex items-center ml-4 mr-4 space-x-4">

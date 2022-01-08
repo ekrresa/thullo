@@ -22,7 +22,7 @@ export interface SupabaseUser {
 }
 
 export interface Board {
-  id: string;
+  id: number;
   title: string;
   owner: UserProfile;
   members: UserProfile[];
