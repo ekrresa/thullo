@@ -21,8 +21,8 @@ export default function NewProfile() {
 
   const formik = useFormik({
     initialValues: {
-      name: userProfile.data?.data?.name || '',
-      username: userProfile.data?.data?.username || '',
+      name: userProfile.data?.name || '',
+      username: userProfile.data?.username || '',
       image: null,
     },
     onSubmit: values => {
@@ -30,7 +30,7 @@ export default function NewProfile() {
         {
           image: values.image,
           name: values.name,
-          userId: userProfile.data?.data?.id,
+          userId: userProfile.data?.id,
           username: values.username,
         },
         {
@@ -91,11 +91,11 @@ export default function NewProfile() {
                     layout="fill"
                     className="object-cover w-full h-full rounded-full"
                   />
-                ) : userProfile.data?.data?.image_id ? (
+                ) : userProfile.data?.image_id ? (
                   <Image
                     src={getCloudinaryUrl(
-                      userProfile.data?.data?.image_id,
-                      userProfile.data?.data?.image_version
+                      userProfile.data?.image_id,
+                      userProfile?.data?.image_version
                     )}
                     alt=""
                     layout="fill"
