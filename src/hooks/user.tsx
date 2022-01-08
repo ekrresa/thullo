@@ -11,8 +11,18 @@ export function useUserProfile() {
 
   return useQuery(
     userQueryKeys.profile(),
-    async () =>
-      supabase.from<UserProfile>('profiles').select().match({ id: user?.id }).single(),
+    async () => {
+      const result = await supabase
+        .from<UserProfile>('profiles')
+        .select()
+        .match({ id: user?.id })
+        .single();
+
+      if (result.status === 401) await supabase.auth.signOut();
+      if (result.error) throw result.error;
+
+      return result.data;
+    },
     { staleTime: Infinity }
   );
 }

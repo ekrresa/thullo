@@ -1,77 +1,64 @@
-import { FormEvent, useRef, useState } from 'react';
+import { FormEvent, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FaFacebook, FaGithub } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 import { toast } from 'react-hot-toast';
+import { useMutation } from 'react-query';
 
 import { Button } from '@components/common/Button';
 import { Footer } from '@components/common/Footer';
-import axios, { axiosClient } from '@lib/axios';
-import { handleSignIn } from '@lib/api/auth';
-import { SupabaseUser } from 'types/database';
+import { handleDemoUserSignUp, handleSignIn } from '@lib/api/auth';
 import Logo from '../../../public/logo-small.svg';
 
 export default function Login() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [creatingDemoUser, setDemoUserStatus] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
+  const demoUserSignUpMutation = useMutation(() => handleDemoUserSignUp());
+  const loginMutation = useMutation((data: any) =>
+    handleSignIn(data.email, data.password)
+  );
+
   const handleDemoUserLogin = async () => {
-    setDemoUserStatus(true);
-
-    try {
-      const result = await axiosClient.post<SupabaseUser>('/api/auth/user');
-      const signInResult = await handleSignIn(result.data.email, result.data.password!);
-
-      if (signInResult.is_profile_setup) {
-        router.push('/');
-      } else {
+    demoUserSignUpMutation.mutate(undefined, {
+      onError: (error: any) => {
+        const errorMsg = error?.response?.data?.message || error.message;
+        toast.error(errorMsg);
+      },
+      onSuccess: () => {
         router.push('/profile');
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log(error.response?.data);
-      }
-
-      if (error instanceof Error) {
-        toast.error(error.message);
-      }
-    } finally {
-      setDemoUserStatus(false);
-    }
+      },
+    });
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     if (formRef.current) {
-      setLoading(true);
       const formData = new FormData(formRef.current);
 
       if (!formData.get('email') || !formData.get('password')) {
-        setLoading(false);
+        toast.error('email and password are required');
         return;
       }
 
-      try {
-        const signInResult = await handleSignIn(
-          formData.get('email') as string,
-          formData.get('password') as string
-        );
-
-        if (signInResult.is_profile_setup) {
-          router.push('/');
-        } else {
-          router.push('/new-profile');
+      loginMutation.mutate(
+        { email: formData.get('email'), password: formData.get('password') },
+        {
+          onError: (error: any) => {
+            const errorMsg = error?.response?.data?.message || error.message;
+            toast.error(errorMsg);
+          },
+          onSuccess: data => {
+            if (data.is_profile_setup) {
+              router.push('/');
+            } else {
+              router.push('/profile');
+            }
+          },
         }
-      } catch (error: any) {
-        const errorMsg = error?.response?.data?.message || error.message;
-        toast.error(errorMsg);
-      } finally {
-        setLoading(false);
-      }
+      );
     }
   };
 
@@ -131,8 +118,8 @@ export default function Login() {
             <Button
               className="justify-center w-full py-4 mt-4 text-white rounded-md shadow bg-corn-blue"
               type="submit"
-              loading={loading}
-              disabled={loading}
+              loading={loginMutation.isLoading}
+              disabled={loginMutation.isLoading}
             >
               Login
             </Button>
@@ -141,8 +128,8 @@ export default function Login() {
           <Button
             className="justify-center w-full mt-6 text-sm text-corn-blue"
             onClick={handleDemoUserLogin}
-            disabled={creatingDemoUser}
-            loading={creatingDemoUser}
+            disabled={demoUserSignUpMutation.isLoading}
+            loading={demoUserSignUpMutation.isLoading}
           >
             Sign in as demo user
           </Button>

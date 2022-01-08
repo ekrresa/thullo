@@ -19,7 +19,7 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
   const router = useRouter();
   const userProfileResult = useUserProfile();
   const queryClient = useQueryClient();
-  const board = useFetchSingleBoard(router.query.board as string);
+  const board = useFetchSingleBoard(Number(router.query.board));
 
   return (
     <div className="grid min-h-screen grid-cols-1 grid-rows-layout">
@@ -31,9 +31,9 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
             </a>
           </Link>
 
-          {router.query.board && board.isSuccess && !board.data.error && (
+          {router.query.board && board.isSuccess ? (
             <div className="flex items-center mx-auto">
-              <h1 className="text-lg text-pencil">{board.data.body.title}</h1>
+              <h1 className="text-lg text-pencil">{board.data.title}</h1>
               <span className="mx-2 text-3xl text-ash">&#124;</span>
 
               <Link href="/" passHref>
@@ -45,6 +45,8 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
                 </a>
               </Link>
             </div>
+          ) : (
+            <div className="mx-auto">Error...</div>
           )}
 
           <form className="flex flex-1 max-w-xs ml-auto p-[1px] rounded-lg shadow-md">
@@ -64,18 +66,18 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
             className="ml-8"
             header={
               <div className="px-3 py-2 mb-2 text-sm opacity-60">
-                {userProfileResult.data?.data?.username}
+                {userProfileResult.data?.username}
               </div>
             }
             panel={
               <div className="flex items-center">
                 {userProfileResult.isSuccess ? (
-                  userProfileResult.data.data?.image_id ? (
+                  userProfileResult.data?.image_id ? (
                     <div className="relative overflow-hidden rounded-lg h-9 w-9">
                       <Image
                         src={getCloudinaryUrl(
-                          userProfileResult.data.data.image_id,
-                          userProfileResult.data.data.image_version
+                          userProfileResult.data.image_id,
+                          userProfileResult.data.image_version
                         )}
                         layout="fill"
                         alt=""
@@ -83,12 +85,12 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
                     </div>
                   ) : (
                     <div className="grid px-1 py-1 text-white uppercase rounded-lg w-9 place-items-center bg-corn-blue">
-                      {getInitials(userProfileResult.data.data!.name)}
+                      {getInitials(userProfileResult.data.name)}
                     </div>
                   )
                 ) : null}
                 <p className="w-24 ml-3 text-sm capitalize truncate">
-                  {userProfileResult.data?.data?.name}
+                  {userProfileResult.data?.name}
                 </p>
                 <FaCaretDown className="ml-2" />
               </div>

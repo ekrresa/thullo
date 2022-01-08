@@ -1,4 +1,4 @@
-import React, { ComponentType, useState } from 'react';
+import * as React from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
@@ -18,7 +18,6 @@ import { getCloudinaryUrl, getInitials } from '@lib/utils';
 export default function Board() {
   const router = useRouter();
   const board = useFetchSingleBoard(Number(router.query.board));
-  const [sideMenu, setSideMenu] = useState(false);
   const handleDragEnd = (result: DropResult) => {
     console.log(result);
   };
@@ -27,37 +26,37 @@ export default function Board() {
     return <div className="text-center mt-9">Loading...</div>;
   }
 
-  if (board.isError || board.data?.error) {
+  if (board.isError) {
     return <div className="text-center mt-9">An error occurred...</div>;
   }
 
   return (
     <>
-      {board.data?.body && (
+      {board.data && (
         <section className="container relative overflow-hidden mt-9">
           <TaskDetails />
 
           <div className="flex justify-between">
             <div className="flex items-center">
               <VisibilitySwitch
-                boardId={board.data.body.id}
-                visibility={board.data?.body.visibility}
+                boardId={board.data.id}
+                visibility={board.data.visibility}
               />
 
               <div className="flex items-center ml-4 mr-4 space-x-4">
                 <div className="relative w-8 h-8 overflow-hidden rounded-lg bg-corn-blue">
-                  {board.data?.body && board.data?.body.owner.image_id ? (
+                  {board.data.owner.image_id ? (
                     <Image
                       src={getCloudinaryUrl(
-                        board.data?.body.owner.image_id as string,
-                        board.data?.body.owner.image_version as string
+                        board.data?.owner.image_id as string,
+                        board.data?.owner.image_version as string
                       )}
                       layout="fill"
                       alt=""
                     />
                   ) : (
                     <div className="w-full h-full">
-                      {getInitials(board.data?.body.owner.name as string)}
+                      {getInitials(board.data?.owner.name as string)}
                     </div>
                   )}
                 </div>
@@ -66,7 +65,7 @@ export default function Board() {
               <BoardInvite />
             </div>
 
-            <SideMenu board={board.data.body} />
+            <SideMenu board={board.data} />
           </div>
 
           <DragDropContext onDragEnd={handleDragEnd}>
@@ -90,7 +89,7 @@ export default function Board() {
   );
 }
 
-Board.getLayout = (page: ComponentType) => (
+Board.getLayout = (page: React.ComponentType) => (
   <Layout>
     <TaskProvider>{page}</TaskProvider>
   </Layout>

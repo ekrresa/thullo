@@ -23,9 +23,9 @@ export default function Home() {
         <div className="mt-10 text-center">Loading...</div>
       ) : boards.isError ? (
         <div className="mt-10 text-center">An error occurred while fetching boards</div>
-      ) : boards.data?.body && boards.data.body.length > 0 ? (
+      ) : boards.data && boards.data.length > 0 ? (
         <div className="grid mt-10 gap-x-8 gap-y-6 grid-cols-list">
-          {boards.data!.body!.map(board => (
+          {boards.data.map(board => (
             <Link key={board.id} href={`/board/${board.id}`} passHref>
               <a className="relative flex flex-col rounded-lg shadow">
                 {board.visibility === 'private' && (
