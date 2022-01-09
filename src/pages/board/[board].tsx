@@ -12,12 +12,16 @@ import { BoardInvite } from '@components/modules/Board/BoardInvite';
 import { TaskProvider } from '@context/taskContext';
 import { TaskDetails } from '@components/modules/Board/TaskDetails';
 import { AddNewItem } from '@components/modules/Board/AddNewItem';
-import { useFetchSingleBoard } from '@hooks/board';
+import { useFetchBoardLists, useFetchSingleBoard } from '@hooks/board';
 import { getCloudinaryUrl, getInitials } from '@lib/utils';
+import { createList } from '@lib/api/board';
+import { useUserProfile } from '@hooks/user';
 
 export default function Board() {
   const router = useRouter();
+  const user = useUserProfile();
   const board = useFetchSingleBoard(Number(router.query.board));
+  const boardLists = useFetchBoardLists(Number(router.query.board));
   const handleDragEnd = (result: DropResult) => {
     console.log(result);
   };
@@ -33,7 +37,7 @@ export default function Board() {
   return (
     <>
       {board.data && (
-        <section className="container relative overflow-hidden mt-9">
+        <section className="container relative overflow-hidden mt-9 h-[95%]">
           <TaskDetails />
 
           <div className="flex justify-between">
@@ -69,18 +73,33 @@ export default function Board() {
           </div>
 
           <DragDropContext onDragEnd={handleDragEnd}>
-            <section className="flex items-start p-8 mt-6 space-x-12 overflow-x-auto bg-off-white2 rounded-xl">
-              <Column title="Backlog">
-                <Task id="1" image />
-                <Task id="2" />
-              </Column>
-              <Column title="In Progress">
-                <Task id="3" />
-                <Task id="4" image />
-                <Task id="5" image />
-              </Column>
+            <section className="flex items-start p-8 mt-6 space-x-12 h-[93%] overflow-x-auto bg-off-white2 rounded-xl">
+              {boardLists.data &&
+                boardLists.data.map(list => (
+                  <Column
+                    title={list.title}
+                    boardId={list.board_id}
+                    key={list.id}
+                  ></Column>
+                ))}
 
-              <AddNewItem text="Add new list" />
+              {boardLists.data && (
+                <AddNewItem
+                  text="Add new list"
+                  boardId={board.data.id}
+                  submitAction={(title: string) => {
+                    const maxPosition = Math.max(
+                      ...boardLists.data.map(list => list.position)
+                    );
+                    return createList({
+                      title,
+                      board_id: board.data.id,
+                      user_id: user.data?.id!,
+                      position: maxPosition + 1,
+                    });
+                  }}
+                />
+              )}
             </section>
           </DragDropContext>
         </section>

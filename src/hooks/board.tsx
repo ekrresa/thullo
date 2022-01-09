@@ -1,10 +1,11 @@
 import { supabase } from '@lib/supabase';
 import { useQuery } from 'react-query';
-import { Board } from 'types/database';
+import { Board, List } from 'types/database';
 
 export const boardsQueryKeys = {
   all: () => ['boards', 'all'],
-  board: (boardId: number) => ['boards', 'single', { boardId }],
+  board: (boardId: number) => ['boards', { boardId }],
+  boardLists: (boardId: number) => ['boards', 'lists', { boardId }],
 };
 
 const ONE_HOUR_IN_MILLISECONDS = 3600000;
@@ -40,6 +41,24 @@ export function useFetchSingleBoard(boardId: number) {
         )
         .match({ id: boardId })
         .single();
+
+      if (result.status === 401) await supabase.auth.signOut();
+      if (result.error) throw result.error;
+
+      return result.data;
+    },
+    { enabled: Boolean(boardId), staleTime: ONE_HOUR_IN_MILLISECONDS }
+  );
+}
+
+export function useFetchBoardLists(boardId: number) {
+  return useQuery(
+    boardsQueryKeys.boardLists(boardId),
+    async () => {
+      const result = await supabase
+        .from<List>('lists')
+        .select()
+        .match({ board_id: boardId });
 
       if (result.status === 401) await supabase.auth.signOut();
       if (result.error) throw result.error;
