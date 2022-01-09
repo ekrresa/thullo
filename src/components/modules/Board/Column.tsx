@@ -6,9 +6,10 @@ import { AddNewItem } from './AddNewItem';
 
 interface BoardProps extends React.PropsWithChildren<unknown> {
   title: string;
+  boardId: number;
 }
 
-export function Column({ children, title }: BoardProps) {
+export function Column({ children, boardId, title }: BoardProps) {
   return (
     <div className="flex-grow max-w-[20rem] min-w-[17rem]">
       <header className="flex items-center justify-between mb-4">
@@ -29,7 +30,9 @@ export function Column({ children, title }: BoardProps) {
         )}
       </Droppable>
 
-      <AddNewItem text="Add new task" />
+      <div className="mt-4">
+        <AddNewItem text="Add new task" boardId={boardId} submitAction={() => {}} />
+      </div>
     </div>
   );
 }
