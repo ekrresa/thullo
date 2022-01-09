@@ -19,8 +19,8 @@ export function NewBoard() {
   const [isWidgetOpen, setWidgetOpen] = React.useState(false);
   const user = useUserProfile();
   const queryClient = useQueryClient();
-  const newProfileMutation = useMutation((data: BoardInput) =>
-    createBoard(data, user.data?.body?.id as string)
+  const newBoardMutation = useMutation((data: BoardInput) =>
+    createBoard(data, user.data?.id as string)
   );
 
   const formik = useFormik({
@@ -31,7 +31,7 @@ export function NewBoard() {
       visibility: 'public',
     },
     onSubmit: async values => {
-      newProfileMutation.mutate(
+      newBoardMutation.mutate(
         {
           title: values.title,
           image: values.image,
@@ -130,8 +130,8 @@ export function NewBoard() {
             <Button
               className="bg-corn-blue flex items-center ml-4 rounded-lg px-3 py-3 text-[0.625rem] text-white"
               type="submit"
-              disabled={newProfileMutation.isLoading}
-              loading={newProfileMutation.isLoading}
+              disabled={newBoardMutation.isLoading}
+              loading={newBoardMutation.isLoading}
             >
               <BiPlus className="mr-2 text-sm" />
               Create

@@ -1,47 +1,61 @@
-import { FormEvent, useRef, useState } from 'react';
+import { FormEvent, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useMutation } from 'react-query';
 import { toast } from 'react-hot-toast';
 import { FaFacebook, FaGithub } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 
 import { Button } from '@components/common/Button';
 import { Footer } from '@components/common/Footer';
-import { signUpUser } from '@lib/api/auth';
+import { handleDemoUserSignUp, signUpUser } from '@lib/api/auth';
 import Logo from '../../../public/logo-small.svg';
+import { ROUTES } from '@lib/constants';
 
 export default function Register() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+  const demoUserSignUpMutation = useMutation(() => handleDemoUserSignUp());
+  const userSignUpMutation = useMutation((data: any) =>
+    signUpUser(data.email, data.password)
+  );
 
-  const handleSubmit = async (e: FormEvent) => {
+  const demoUserSignUp = async () => {
+    demoUserSignUpMutation.mutate(undefined, {
+      onError: (error: any) => {
+        const errorMsg = error?.response?.data?.message || error.message;
+        toast.error(errorMsg);
+      },
+      onSuccess: () => {
+        router.push(ROUTES.profile);
+      },
+    });
+  };
+
+  const handleUserSignUp = async (e: FormEvent) => {
     e.preventDefault();
 
     if (formRef.current) {
-      setLoading(true);
       const formData = new FormData(formRef.current);
 
       if (!formData.get('email') || !formData.get('password')) {
-        setLoading(false);
+        toast.error('email and password are required');
         return;
       }
 
-      try {
-        const session = await signUpUser(
-          formData.get('email') as string,
-          formData.get('password') as string
-        );
-
-        if (session) {
-          router.push('/profile');
-        } else {
-          toast.error('An error occurred. Please try again.');
+      userSignUpMutation.mutate(
+        {
+          email: formData.get('email'),
+          password: formData.get('password'),
+        },
+        {
+          onError: (error: any) => {
+            const errorMsg = error?.response?.data?.message || error.message;
+            toast.error(errorMsg);
+          },
+          onSuccess: () => router.push(ROUTES.profile),
         }
-      } catch (error) {
-      } finally {
-        setLoading(false);
-      }
+      );
     }
   };
 
@@ -73,7 +87,7 @@ export default function Register() {
             </Button>
           </div>
 
-          <form className="mt-12" onSubmit={handleSubmit} ref={formRef}>
+          <form className="mt-12" onSubmit={handleUserSignUp} ref={formRef}>
             <div className="mb-4">
               <label className="block text-sm text-gray4" htmlFor="email">
                 Email
@@ -99,21 +113,26 @@ export default function Register() {
 
             <Button
               className="justify-center w-full py-4 mt-4 text-white rounded-md shadow bg-corn-blue"
-              loading={loading}
-              disabled={loading}
+              loading={userSignUpMutation.isLoading}
+              disabled={userSignUpMutation.isLoading}
               type="submit"
             >
               Sign up
             </Button>
           </form>
 
-          <Button className="justify-center w-full mt-6 text-sm text-corn-blue">
+          <Button
+            className="justify-center w-full mt-6 text-sm text-corn-blue"
+            onClick={demoUserSignUp}
+            disabled={demoUserSignUpMutation.isLoading}
+            loading={demoUserSignUpMutation.isLoading}
+          >
             Sign up as demo user
           </Button>
 
           <p className="mt-6 text-xs text-center text-gray3">
             Have an account?{' '}
-            <Link href="/auth/login" passHref>
+            <Link href={ROUTES.login} passHref>
               <a>
                 <span className="font-semibold text-corn-blue">Login</span>
               </a>

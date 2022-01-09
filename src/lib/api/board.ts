@@ -2,7 +2,7 @@ import { UploadApiResponse } from 'cloudinary';
 
 import { axiosClient } from '@lib/axios';
 import { supabase } from '@lib/supabase';
-import { Board } from 'types/database';
+import { Board, List } from 'types/database';
 
 export interface BoardInput {
   title: string;
@@ -16,19 +16,23 @@ export interface BoardUpdate {
   visibility: 'public' | 'private';
 }
 
+export interface ListInput {
+  title: string;
+  board_id: number;
+  user_id: string;
+  position: number;
+}
+
 export async function createBoard(input: BoardInput, userId: string) {
-  if (!input.title && userId) {
-    throw new Error(`Title and User ID are required`);
-  }
+  if (!input.title || !userId) throw new Error(`Title and User ID are required`);
 
   const existingBoards = await supabase
     .from<Board>('boards')
     .select()
     .match({ owner: userId, title: input.title });
 
-  if (existingBoards.body?.length) {
+  if (existingBoards.body?.length)
     throw new Error(`Board with title "${input.title}" already exists`);
-  }
 
   let imageId: string | undefined;
   let imageVersion: string | undefined;
@@ -55,9 +59,7 @@ export async function createBoard(input: BoardInput, userId: string) {
     })
     .single();
 
-  if (result.error) {
-    throw result.error;
-  }
+  if (result.error) throw result.error;
 
   return result.data;
 }
@@ -69,9 +71,26 @@ export async function updateBoard(input: Partial<BoardUpdate>, boardId: number) 
     .match({ id: boardId })
     .single();
 
-  if (result.error) {
-    throw result.error;
-  }
+  if (result.error) throw result.error;
+
+  return result.data;
+}
+
+export async function createList(input: ListInput) {
+  const existingList = await supabase
+    .from<List>('lists')
+    .select('title')
+    .match({ title: input.title, board_id: input.board_id });
+
+  if (existingList.data?.length) throw new Error('List already exists.');
+
+  const result = await supabase
+    .from<List>('lists')
+    .insert({ ...input })
+    .single();
+
+  if (result.status === 401) await supabase.auth.signOut();
+  if (result.error) throw result.error;
 
   return result.data;
 }

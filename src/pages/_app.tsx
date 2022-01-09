@@ -8,13 +8,16 @@ import { Toaster } from 'react-hot-toast';
 import type { Page } from '../types/app';
 import '../styles/globals.css';
 import { supabase } from 'lib/supabase';
+import { ROUTES } from '@lib/constants';
 
 type Props = AppProps & {
   Component: Page;
 };
 
 const queryClient = new QueryClient({
-  defaultOptions: { queries: { refetchOnWindowFocus: false, retry: false } },
+  defaultOptions: {
+    queries: { refetchOnWindowFocus: false, retry: false },
+  },
 });
 
 export default function MyApp({ Component, pageProps }: Props) {
@@ -42,7 +45,7 @@ function Auth({ children }: { children: any }) {
   useEffect(() => {
     const authSubscription = supabase.auth.onAuthStateChange((event, session) => {
       if (!session?.user) {
-        router.push('/auth/login');
+        router.push(ROUTES.login);
       }
     });
 
@@ -53,7 +56,7 @@ function Auth({ children }: { children: any }) {
 
   useEffect(() => {
     if (!session?.user) {
-      router.push('/auth/login');
+      router.push(ROUTES.login);
     } else {
       setIsAuthenticated(true);
     }

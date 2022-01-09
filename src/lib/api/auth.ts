@@ -1,4 +1,5 @@
-import { UserProfile } from 'types/database';
+import { axiosClient } from '@lib/axios';
+import { SupabaseUser, UserProfile } from 'types/database';
 import { supabase } from '../supabase';
 
 export async function signUpUser(email: string, password: string) {
@@ -11,7 +12,16 @@ export async function signUpUser(email: string, password: string) {
     throw new Error(error.message);
   }
 
+  if (!session) {
+    throw new Error('An error occurred. Please try again.');
+  }
+
   return session;
+}
+
+export async function handleDemoUserSignUp() {
+  const result = await axiosClient.post<SupabaseUser>('/api/auth/user');
+  const signInResult = await handleSignIn(result.data.email, result.data.password!);
 }
 
 export async function handleSignIn(email: string, password: string) {
