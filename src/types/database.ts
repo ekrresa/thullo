@@ -33,3 +33,13 @@ export interface Board {
   created_at: string;
   updated_at: string;
 }
+
+export interface List {
+  id: number;
+  title: string;
+  position: number;
+  board_id: number;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+}
