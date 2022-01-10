@@ -2,6 +2,13 @@ import { axiosClient } from '@lib/axios';
 import { supabase } from '@lib/supabase';
 import { UploadApiResponse } from 'cloudinary';
 
+interface UserProfileInput {
+  username: string;
+  userId: string;
+  name: string;
+  image: File;
+}
+
 export async function updateProfile(data: Partial<UserProfileInput>) {
   let imageId: string | undefined;
   let imageVersion: string | undefined;
@@ -45,11 +52,4 @@ export async function updateProfile(data: Partial<UserProfileInput>) {
   }
 
   return result;
-}
-
-interface UserProfileInput {
-  username: string;
-  userId: string;
-  name: string;
-  image: File;
 }
