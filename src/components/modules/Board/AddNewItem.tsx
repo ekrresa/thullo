@@ -1,19 +1,18 @@
 import * as React from 'react';
 import { BiPlus } from 'react-icons/bi';
 import { IoClose } from 'react-icons/io5';
-import { Button } from '@components/common/Button';
 import { toast } from 'react-hot-toast';
 import { useMutation, useQueryClient } from 'react-query';
-import { boardsQueryKeys } from '@hooks/board';
 import { useFormik } from 'formik';
+import { Button } from '@components/common/Button';
 
 interface AddNewItemProps {
   text: string;
   submitAction: (title: string) => any;
-  boardId: number;
+  onSuccessCallback: (data: any) => void;
 }
 
-export function AddNewItem({ text, boardId, submitAction }: AddNewItemProps) {
+export function AddNewItem({ text, onSuccessCallback, submitAction }: AddNewItemProps) {
   const queryClient = useQueryClient();
   const [showInput, toggleInput] = React.useState(false);
   const newItemMutation = useMutation((data: any) => submitAction(data.title as string));
@@ -29,11 +28,8 @@ export function AddNewItem({ text, boardId, submitAction }: AddNewItemProps) {
       newItemMutation.mutate(
         { title: values.title },
         {
-          onError: (error: any) => {
-            toast.error(error.message);
-          },
-          onSuccess: async () => {
-            await queryClient.invalidateQueries(boardsQueryKeys.boardLists(boardId));
+          onSuccess: data => {
+            onSuccessCallback(data);
             resetForm();
           },
         }

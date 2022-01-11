@@ -43,3 +43,18 @@ export interface List {
   created_at: string;
   updated_at: string;
 }
+
+export interface Card {
+  id: number;
+  title: string;
+  position: number;
+  description: string;
+  list_id: number;
+  board_id: number;
+  created_by: string;
+  image_id: string;
+  image_version: string;
+  cover: string;
+  created_at: string;
+  updated_at: string;
+}
