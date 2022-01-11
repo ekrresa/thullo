@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import type { AppProps } from 'next/app';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryCache, QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { Toaster } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 
 import type { Page } from '../types/app';
 import '../styles/globals.css';
@@ -18,6 +18,12 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: { refetchOnWindowFocus: false, retry: false },
   },
+  queryCache: new QueryCache({
+    onError: (error: any) => {
+      const errorMessage = error?.response?.data?.message || error.message;
+      toast.error(errorMessage);
+    },
+  }),
 });
 
 export default function MyApp({ Component, pageProps }: Props) {
