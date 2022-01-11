@@ -2,7 +2,7 @@ import { UploadApiResponse } from 'cloudinary';
 
 import { axiosClient } from '@lib/axios';
 import { supabase } from '@lib/supabase';
-import { Board, List } from 'types/database';
+import { Board, Card, List } from 'types/database';
 
 export interface BoardInput {
   title: string;
@@ -20,6 +20,14 @@ export interface ListInput {
   title: string;
   board_id: number;
   user_id: string;
+  position: number;
+}
+
+export interface CardInput {
+  title: string;
+  board_id: number;
+  list_id: number;
+  created_by: string;
   position: number;
 }
 
@@ -86,6 +94,18 @@ export async function createList(input: ListInput) {
 
   const result = await supabase
     .from<List>('lists')
+    .insert({ ...input })
+    .single();
+
+  if (result.status === 401) await supabase.auth.signOut();
+  if (result.error) throw result.error;
+
+  return result.data;
+}
+
+export async function createCard(input: CardInput) {
+  const result = await supabase
+    .from<Card>('cards')
     .insert({ ...input })
     .single();
 

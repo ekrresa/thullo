@@ -1,11 +1,12 @@
 import { supabase } from '@lib/supabase';
 import { useQuery } from 'react-query';
-import { Board, List } from 'types/database';
+import { Board, Card, List } from 'types/database';
 
 export const boardsQueryKeys = {
   all: () => ['boards', 'all'],
   board: (boardId: number) => ['boards', { boardId }],
   boardLists: (boardId: number) => ['boards', 'lists', { boardId }],
+  boardListCards: (listId: number) => ['boards', 'lists', 'cards', { listId }],
 };
 
 const ONE_HOUR_IN_MILLISECONDS = 3600000;
@@ -66,5 +67,23 @@ export function useFetchBoardLists(boardId: number) {
       return result.data;
     },
     { enabled: Boolean(boardId), staleTime: ONE_HOUR_IN_MILLISECONDS }
+  );
+}
+
+export function useFetchListCards(listId: number) {
+  return useQuery(
+    boardsQueryKeys.boardListCards(listId),
+    async () => {
+      const result = await supabase
+        .from<Card>('cards')
+        .select()
+        .match({ list_id: listId });
+
+      if (result.status === 401) await supabase.auth.signOut();
+      if (result.error) throw result.error;
+
+      return result.data;
+    },
+    { enabled: Boolean(listId), staleTime: ONE_HOUR_IN_MILLISECONDS }
   );
 }
