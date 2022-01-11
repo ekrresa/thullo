@@ -114,3 +114,16 @@ export async function createCard(input: CardInput) {
 
   return result.data;
 }
+
+export async function renameList(title: string, listId: number) {
+  const result = await supabase
+    .from<List>('lists')
+    .update({ title: title })
+    .match({ id: listId })
+    .single();
+
+  if (result.status === 401) await supabase.auth.signOut();
+  if (result.error) throw result.error;
+
+  return result.data;
+}
