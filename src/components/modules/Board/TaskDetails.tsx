@@ -2,16 +2,16 @@ import React from 'react';
 import { FaPen, FaUserCircle } from 'react-icons/fa';
 import { MdStickyNote2 } from 'react-icons/md';
 import { Modal } from '../../common/Modal';
-import { useTaskContext } from '@context/taskContext';
+import { useCardContext } from '@context/CardContext';
 
 export function TaskDetails() {
-  const { taskId, handleTaskId } = useTaskContext();
+  const { cardId, handleCardId } = useCardContext();
 
   return (
     <Modal
-      isOpen={Boolean(taskId)}
+      isOpen={Boolean(cardId)}
       className="max-w-2xl pb-10"
-      closeModal={() => handleTaskId('')}
+      closeModal={() => handleCardId('')}
     >
       <div className="h-32 rounded bg-corn-blue"></div>
       <div className="flex mt-8 space-x-8">

@@ -1,15 +1,16 @@
 import { Draggable } from 'react-beautiful-dnd';
 import { BiPlus } from 'react-icons/bi';
 import { IoAttachSharp } from 'react-icons/io5';
-import { useTaskContext } from '@context/taskContext';
+import { useCardContext } from '@context/CardContext';
 
 interface BoardCardProps {
   image?: boolean;
   id: string;
+  title: string;
 }
 
-export function Task({ id, image }: BoardCardProps) {
-  const { handleTaskId } = useTaskContext();
+export function Card({ id, title, image }: BoardCardProps) {
+  const { handleCardId } = useCardContext();
 
   return (
     <Draggable draggableId={id} index={Number(id)}>
@@ -19,11 +20,11 @@ export function Task({ id, image }: BoardCardProps) {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}
-          onClick={() => handleTaskId(id)}
+          onClick={() => handleCardId(id)}
         >
           {image && <div className="h-40 mb-3 rounded-lg bg-corn-blue"></div>}
 
-          <h3 className="text-base font-open-sans">New phone: Who this?</h3>
+          <h3 className="text-base font-open-sans">{title}</h3>
 
           <div className="flex items-center my-4">
             <span className="bg-[#EBDCF9] px-2 py-[0.09rem] rounded-lg text-xs text-[#9B51E0]">
