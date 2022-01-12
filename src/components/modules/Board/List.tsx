@@ -131,11 +131,13 @@ export function List({ boardId, listId, title }: BoardProps) {
       </header>
 
       <Droppable droppableId={String(listId)}>
-        {provided => (
+        {(provided, snapshot) => (
           <div
             {...provided.droppableProps}
             ref={provided.innerRef}
-            className="grid gap-4"
+            className={`grid min-h-[10px] gap-4 rounded-lg ${
+              snapshot.isDraggingOver && 'bg-sky-100'
+            }`}
           >
             {cards.data &&
               cards.data.map((card, index) => (
@@ -152,7 +154,7 @@ export function List({ boardId, listId, title }: BoardProps) {
       </Droppable>
 
       {cards.isSuccess && user.data && (
-        <div className="mt-4">
+        <div className="pt-4">
           <AddNewItem
             text="Add new task"
             submitAction={addNewCard}
