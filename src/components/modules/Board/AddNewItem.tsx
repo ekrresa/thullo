@@ -2,7 +2,7 @@ import * as React from 'react';
 import { BiPlus } from 'react-icons/bi';
 import { IoClose } from 'react-icons/io5';
 import { toast } from 'react-hot-toast';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation } from 'react-query';
 import { useFormik } from 'formik';
 import { Button } from '@components/common/Button';
 
