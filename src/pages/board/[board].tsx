@@ -57,46 +57,48 @@ export default function Board() {
     )
       return;
 
-    const column = queryClient.getQueryData<Card[]>(
-      boardsQueryKeys.boardListCards(Number(source.droppableId))
-    );
-
-    if (Array.isArray(column)) {
-      const cardsList = Array.from(column);
-
-      cardsList.splice(source.index, 1);
-      cardsList.splice(
-        destination.index,
-        0,
-        column.find(card => card.id === Number(draggableId))!
+    if (destination.droppableId === source.droppableId) {
+      const column = queryClient.getQueryData<Card[]>(
+        boardsQueryKeys.boardListCards(Number(source.droppableId))
       );
 
-      const newCardsList = cardsList.map((card, index) => {
-        card.position = index;
-        return card;
-      });
+      if (Array.isArray(column)) {
+        const cardsList = Array.from(column);
 
-      // Update client state
-      queryClient.setQueryData(
-        boardsQueryKeys.boardListCards(Number(source.droppableId)),
-        newCardsList
-      );
+        cardsList.splice(source.index, 1);
+        cardsList.splice(
+          destination.index,
+          0,
+          column.find(card => card.id === Number(draggableId))!
+        );
 
-      const sortCardsInput = newCardsList.map(card => ({
-        id: card.id,
-        position: card.position,
-      }));
+        const newCardsList = cardsList.map((card, index) => {
+          card.position = index;
+          return card;
+        });
 
-      // Update database state
-      sortCardsMutation.mutate(sortCardsInput, {
-        onError: () => {
-          toast.error('Cards sync failed.');
-          queryClient.setQueryData(
-            boardsQueryKeys.boardListCards(Number(source.droppableId)),
-            column
-          );
-        },
-      });
+        // Update client state
+        queryClient.setQueryData(
+          boardsQueryKeys.boardListCards(Number(source.droppableId)),
+          newCardsList
+        );
+
+        const sortCardsInput = newCardsList.map(card => ({
+          id: card.id,
+          position: card.position,
+        }));
+
+        // Update database state
+        sortCardsMutation.mutate(sortCardsInput, {
+          onError: () => {
+            toast.error('Cards sync failed.');
+            queryClient.setQueryData(
+              boardsQueryKeys.boardListCards(Number(source.droppableId)),
+              column
+            );
+          },
+        });
+      }
     }
   };
 
