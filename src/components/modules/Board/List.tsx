@@ -50,6 +50,19 @@ export function List({ boardId, listId, title }: BoardProps) {
     }
   }, [editing]);
 
+  const addNewCard = (title: string) => {
+    let maxPosition =
+      cards.data?.length === 0 ? -1 : Math.max(...cards.data!.map(card => card.position));
+
+    return createCard({
+      title,
+      board_id: boardId,
+      list_id: listId,
+      created_by: user.data!.id,
+      position: ++maxPosition!,
+    });
+  };
+
   return (
     <div className="flex-grow max-w-[20rem] min-w-[17rem]">
       <header className="flex items-center justify-between mb-4">
@@ -125,8 +138,13 @@ export function List({ boardId, listId, title }: BoardProps) {
             className="grid gap-4"
           >
             {cards.data &&
-              cards.data.map(card => (
-                <Card key={card.id} id={String(card.id)} title={card.title} />
+              cards.data.map((card, index) => (
+                <Card
+                  key={card.id}
+                  id={String(card.id)}
+                  index={index}
+                  title={card.title}
+                />
               ))}
             {provided.placeholder}
           </div>
@@ -137,21 +155,12 @@ export function List({ boardId, listId, title }: BoardProps) {
         <div className="mt-4">
           <AddNewItem
             text="Add new task"
-            submitAction={(title: string) => {
-              const maxPosition = Math.max(...cards.data.map(card => card.position));
-              return createCard({
-                title,
-                board_id: boardId,
-                list_id: listId,
-                created_by: user.data.id,
-                position: Number(maxPosition) + 1,
-              });
-            }}
+            submitAction={addNewCard}
             onSuccessCallback={data => {
               queryClient.setQueryData(
                 boardsQueryKeys.boardListCards(listId),
                 (oldData: any) => {
-                  return [data, ...oldData];
+                  return [...oldData, data];
                 }
               );
             }}

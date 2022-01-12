@@ -21,11 +21,28 @@ export default function Board() {
   const router = useRouter();
   const user = useUserProfile();
   const board = useFetchSingleBoard(Number(router.query.board));
-  const boardLists = useFetchBoardLists(Number(router.query.board));
+  const lists = useFetchBoardLists(Number(router.query.board));
   const queryClient = useQueryClient();
   const handleDragEnd = (result: DropResult) => {
     console.log(result);
   };
+
+  const addNewList = React.useCallback(
+    (title: string) => {
+      let maxPosition =
+        lists.data?.length === 0
+          ? -1
+          : Math.max(...lists.data!.map(list => list.position));
+
+      return createList({
+        title,
+        board_id: board.data?.id!,
+        user_id: user.data?.id!,
+        position: ++maxPosition!,
+      });
+    },
+    [board.data?.id, lists.data, user.data?.id]
+  );
 
   if (board.isLoading) {
     return <div className="text-center mt-9">Loading...</div>;
@@ -75,8 +92,8 @@ export default function Board() {
 
           <DragDropContext onDragEnd={handleDragEnd}>
             <section className="flex items-start p-8 mt-6 space-x-12 h-[93%] overflow-x-auto bg-off-white2 rounded-xl">
-              {boardLists.data &&
-                boardLists.data.map(list => (
+              {lists.data &&
+                lists.data.map(list => (
                   <List
                     title={list.title}
                     boardId={list.board_id}
@@ -85,20 +102,10 @@ export default function Board() {
                   />
                 ))}
 
-              {boardLists.data && (
+              {lists.data && (
                 <AddNewItem
                   text="Add new list"
-                  submitAction={(title: string) => {
-                    const maxPosition = Math.max(
-                      ...boardLists.data.map(list => list.position)
-                    );
-                    return createList({
-                      title,
-                      board_id: board.data.id,
-                      user_id: user.data?.id!,
-                      position: Number(maxPosition) + 1,
-                    });
-                  }}
+                  submitAction={addNewList}
                   onSuccessCallback={data => {
                     queryClient.setQueryData(
                       boardsQueryKeys.boardLists(board.data.id),
