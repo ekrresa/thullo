@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import type { AppProps } from 'next/app';
-import { QueryCache, QueryClient, QueryClientProvider } from 'react-query';
+import { MutationCache, QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { toast, Toaster } from 'react-hot-toast';
 
@@ -18,7 +18,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: { refetchOnWindowFocus: false, retry: false },
   },
-  queryCache: new QueryCache({
+  mutationCache: new MutationCache({
     onError: (error: any) => {
       const errorMessage = error?.response?.data?.message || error.message;
       toast.error(errorMessage);

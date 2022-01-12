@@ -7,13 +7,14 @@ interface BoardCardProps {
   image?: boolean;
   id: string;
   title: string;
+  index: number;
 }
 
-export function Card({ id, title, image }: BoardCardProps) {
+export function Card({ id, title, index, image }: BoardCardProps) {
   const { handleCardId } = useCardContext();
 
   return (
-    <Draggable draggableId={id} index={Number(id)}>
+    <Draggable draggableId={id} index={index}>
       {provided => (
         <div
           className="p-4 bg-white rounded-lg shadow-card"

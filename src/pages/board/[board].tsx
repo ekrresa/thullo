@@ -2,7 +2,8 @@ import * as React from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
-import { useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
+import toast from 'react-hot-toast';
 
 import { Layout } from '@components/common/Layout';
 import { List } from '@components/modules/Board/List';
@@ -14,8 +15,9 @@ import { TaskDetails } from '@components/modules/Board/TaskDetails';
 import { AddNewItem } from '@components/modules/Board/AddNewItem';
 import { boardsQueryKeys, useFetchBoardLists, useFetchSingleBoard } from '@hooks/board';
 import { getCloudinaryUrl, getInitials } from '@lib/utils';
-import { createList } from '@lib/api/board';
+import { createList, sortCards, SortListInput } from '@lib/api/board';
 import { useUserProfile } from '@hooks/user';
+import { Card } from 'types/database';
 
 export default function Board() {
   const router = useRouter();
@@ -23,9 +25,7 @@ export default function Board() {
   const board = useFetchSingleBoard(Number(router.query.board));
   const lists = useFetchBoardLists(Number(router.query.board));
   const queryClient = useQueryClient();
-  const handleDragEnd = (result: DropResult) => {
-    console.log(result);
-  };
+  const sortCardsMutation = useMutation((data: SortListInput) => sortCards(data));
 
   const addNewList = React.useCallback(
     (title: string) => {
@@ -43,6 +43,62 @@ export default function Board() {
     },
     [board.data?.id, lists.data, user.data?.id]
   );
+
+  const handleDragEnd = (result: DropResult) => {
+    const { source, destination, draggableId } = result;
+
+    // Item was not dropped on a Droppable
+    if (!destination) return;
+
+    // Item was dropped in its initial location
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    )
+      return;
+
+    const column = queryClient.getQueryData<Card[]>(
+      boardsQueryKeys.boardListCards(Number(source.droppableId))
+    );
+
+    if (Array.isArray(column)) {
+      const cardsList = Array.from(column);
+
+      cardsList.splice(source.index, 1);
+      cardsList.splice(
+        destination.index,
+        0,
+        column.find(card => card.id === Number(draggableId))!
+      );
+
+      const newCardsList = cardsList.map((card, index) => {
+        card.position = index;
+        return card;
+      });
+
+      // Update client state
+      queryClient.setQueryData(
+        boardsQueryKeys.boardListCards(Number(source.droppableId)),
+        newCardsList
+      );
+
+      const sortCardsInput = newCardsList.map(card => ({
+        id: card.id,
+        position: card.position,
+      }));
+
+      // Update database state
+      sortCardsMutation.mutate(sortCardsInput, {
+        onError: () => {
+          toast.error('Cards sync failed.');
+          queryClient.setQueryData(
+            boardsQueryKeys.boardListCards(Number(source.droppableId)),
+            column
+          );
+        },
+      });
+    }
+  };
 
   if (board.isLoading) {
     return <div className="text-center mt-9">Loading...</div>;
