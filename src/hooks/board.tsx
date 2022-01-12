@@ -59,7 +59,8 @@ export function useFetchBoardLists(boardId: number) {
       const result = await supabase
         .from<List>('lists')
         .select()
-        .match({ board_id: boardId });
+        .match({ board_id: boardId })
+        .order('position', { ascending: true });
 
       if (result.status === 401) await supabase.auth.signOut();
       if (result.error) throw result.error;
@@ -77,7 +78,8 @@ export function useFetchListCards(listId: number) {
       const result = await supabase
         .from<Card>('cards')
         .select()
-        .match({ list_id: listId });
+        .match({ list_id: listId })
+        .order('position', { ascending: true });
 
       if (result.status === 401) await supabase.auth.signOut();
       if (result.error) throw result.error;

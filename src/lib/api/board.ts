@@ -127,3 +127,14 @@ export async function renameList(title: string, listId: number) {
 
   return result.data;
 }
+
+export type SortListInput = Array<{ id: number; position: number }>;
+
+export async function sortCards(input: SortListInput) {
+  const result = await supabase.rpc('fn_sort_cards', { fn_input: input });
+
+  if (result.status === 401) await supabase.auth.signOut();
+  if (result.error) throw result.error;
+
+  return result.data;
+}

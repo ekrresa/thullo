@@ -13,9 +13,15 @@ interface AddNewItemProps {
 }
 
 export function AddNewItem({ text, onSuccessCallback, submitAction }: AddNewItemProps) {
-  const queryClient = useQueryClient();
+  const inputRef = React.useRef<HTMLInputElement>(null);
   const [showInput, toggleInput] = React.useState(false);
   const newItemMutation = useMutation((data: any) => submitAction(data.title as string));
+
+  React.useEffect(() => {
+    if (showInput) {
+      inputRef.current?.focus();
+    }
+  }, [showInput]);
 
   const formik = useFormik({
     initialValues: { title: '' },
@@ -45,6 +51,7 @@ export function AddNewItem({ text, onSuccessCallback, submitAction }: AddNewItem
             className="block w-full px-3 py-2 text-sm text-gray-600 rounded focus:outline-none"
             placeholder="Enter a title..."
             name="title"
+            ref={inputRef}
             onChange={formik.handleChange}
             value={formik.values.title}
           />
