@@ -138,3 +138,12 @@ export async function sortCards(input: SortListInput) {
 
   return result.data;
 }
+
+export async function sortLists(input: SortListInput) {
+  const result = await supabase.rpc('fn_sort_lists', { fn_input: input });
+
+  if (result.status === 401) await supabase.auth.signOut();
+  if (result.error) throw result.error;
+
+  return result.data;
+}
