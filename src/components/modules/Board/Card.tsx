@@ -15,9 +15,11 @@ export function Card({ id, title, index, image }: BoardCardProps) {
 
   return (
     <Draggable draggableId={id} index={index}>
-      {provided => (
+      {(provided, snapshot) => (
         <div
-          className="p-4 bg-white rounded-lg shadow-card"
+          className={`p-4 bg-white rounded-lg shadow-card transition ${
+            snapshot.isDragging && 'bg-white/30'
+          }`}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}
