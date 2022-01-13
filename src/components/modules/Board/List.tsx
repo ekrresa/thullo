@@ -11,7 +11,7 @@ import { boardsQueryKeys, useFetchListCards } from '@hooks/board';
 import { createCard, renameList } from '@lib/api/board';
 import { useUserProfile } from '@hooks/user';
 import { Card } from './Card';
-import { List } from 'types/database';
+import { Card as CardType, List } from 'types/database';
 
 interface BoardProps extends React.PropsWithChildren<unknown> {
   title: string;
@@ -152,10 +152,11 @@ export function List({ boardId, listId, title, index }: BoardProps) {
                   snapshot.isDraggingOver && 'bg-sky-100'
                 }`}
               >
-                {cards.data &&
+                {cards.data && <InnerList list={cards.data} />}
+                {/* {cards.data &&
                   cards.data.map((card, index) => (
                     <Card key={card.id} id={card.id} index={index} title={card.title} />
-                  ))}
+                  ))} */}
                 {provided.placeholder}
               </div>
             )}
@@ -180,5 +181,19 @@ export function List({ boardId, listId, title, index }: BoardProps) {
         </div>
       )}
     </Draggable>
+  );
+}
+
+interface InnerListProps<T> {
+  list: T[];
+}
+
+function InnerList({ list }: InnerListProps<CardType>) {
+  return (
+    <>
+      {list.map((card, index) => (
+        <Card key={card.id} id={card.id} index={index} title={card.title} />
+      ))}
+    </>
   );
 }

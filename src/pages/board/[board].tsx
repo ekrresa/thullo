@@ -202,16 +202,7 @@ export default function Board() {
                     ref={provided.innerRef}
                     className="flex items-start flex-1 h-full p-4 space-x-12"
                   >
-                    {lists.data &&
-                      lists.data.map((list, index) => (
-                        <List
-                          title={list.title}
-                          boardId={list.board_id}
-                          listId={list.id}
-                          key={list.id}
-                          index={index}
-                        />
-                      ))}
+                    {lists.data && <InnerList list={lists.data} />}
 
                     {provided.placeholder}
                   </div>
@@ -248,3 +239,23 @@ Board.getLayout = (page: React.ComponentType) => (
   </Layout>
 );
 Board.protected = true;
+
+interface InnerListProps<T> {
+  list: T[];
+}
+
+function InnerList({ list }: InnerListProps<ListType>) {
+  return (
+    <>
+      {list.map((list, index) => (
+        <List
+          key={list.id}
+          index={index}
+          title={list.title}
+          boardId={list.board_id}
+          listId={list.id}
+        />
+      ))}
+    </>
+  );
+}
