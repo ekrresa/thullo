@@ -4,6 +4,7 @@ import { useQueryClient } from 'react-query';
 import { IoEllipsisHorizontalSharp } from 'react-icons/io5';
 import { Menu, Transition } from '@headlessui/react';
 import { useFormik } from 'formik';
+import UseOnClickOutside from 'use-onclickoutside';
 
 import { AddNewItem } from './AddNewItem';
 import { boardsQueryKeys, useFetchListCards } from '@hooks/board';
@@ -24,6 +25,8 @@ export function List({ boardId, listId, title }: BoardProps) {
   const queryClient = useQueryClient();
   const [editing, setEditing] = React.useState(false);
   const titleInputRef = React.useRef<HTMLInputElement>(null);
+
+  UseOnClickOutside(titleInputRef, () => setEditing(false));
 
   const formik = useFormik({
     initialValues: { title },
