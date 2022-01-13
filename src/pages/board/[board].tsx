@@ -219,7 +219,7 @@ export default function Board() {
               </Droppable>
 
               {lists.data && (
-                <div className="p-4">
+                <div className="py-4 pr-2">
                   <AddNewItem
                     text="Add new list"
                     submitAction={addNewList}

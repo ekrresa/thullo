@@ -121,7 +121,7 @@ export function List({ boardId, listId, title, index }: BoardProps) {
                 leaveTo="transform opacity-0 scale-95"
               >
                 <Menu.Items className="absolute left-0 z-10 overflow-hidden bg-white border rounded-lg shadow-lg border-ash">
-                  <div className="text-xs divide-y divide-ash text-gray3">
+                  <div className="text-xs text-gray3">
                     <Menu.Item>
                       <button
                         className="block w-full px-2 py-2 text-left hover:bg-gray-100 whitespace-nowrap"
