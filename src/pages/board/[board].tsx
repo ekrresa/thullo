@@ -15,9 +15,9 @@ import { TaskDetails } from '@components/modules/Board/TaskDetails';
 import { AddNewItem } from '@components/modules/Board/AddNewItem';
 import { boardsQueryKeys, useFetchBoardLists, useFetchSingleBoard } from '@hooks/board';
 import { getCloudinaryUrl, getInitials } from '@lib/utils';
-import { createList, sortCards, SortListInput } from '@lib/api/board';
+import { createList, sortCards, SortItemInput, sortLists } from '@lib/api/board';
 import { useUserProfile } from '@hooks/user';
-import { Card } from 'types/database';
+import { Card, List as ListType } from 'types/database';
 
 export default function Board() {
   const router = useRouter();
@@ -25,7 +25,8 @@ export default function Board() {
   const board = useFetchSingleBoard(Number(router.query.board));
   const lists = useFetchBoardLists(Number(router.query.board));
   const queryClient = useQueryClient();
-  const sortCardsMutation = useMutation((data: SortListInput) => sortCards(data));
+  const sortCardsMutation = useMutation((data: SortItemInput) => sortCards(data));
+  const sortListsMutation = useMutation((data: SortItemInput) => sortLists(data));
 
   const addNewList = React.useCallback(
     (title: string) => {
@@ -58,7 +59,47 @@ export default function Board() {
       return;
 
     if (destination.droppableId === source.droppableId && type === 'LIST') {
-      console.log(result);
+      const grid = queryClient.getQueryData<ListType[]>(
+        boardsQueryKeys.boardLists(Number(router.query.board))
+      );
+
+      if (Array.isArray(grid)) {
+        const columnList = Array.from(grid);
+
+        columnList.splice(source.index, 1);
+        columnList.splice(
+          destination.index,
+          0,
+          grid.find(list => list.id === Number(draggableId))!
+        );
+
+        const newColumnList = columnList.map((card, index) => {
+          card.position = index;
+          return card;
+        });
+
+        // Update client state
+        queryClient.setQueryData(
+          boardsQueryKeys.boardLists(Number(router.query.board)),
+          newColumnList
+        );
+
+        const sortListsInput = newColumnList.map(list => ({
+          id: list.id,
+          position: list.position,
+        }));
+
+        // Update database with new lists order
+        sortListsMutation.mutate(sortListsInput, {
+          onError: () => {
+            toast.error('Lists sync failed.');
+            queryClient.setQueryData(
+              boardsQueryKeys.boardLists(Number(router.query.board)),
+              grid
+            );
+          },
+        });
+      }
     }
 
     if (destination.droppableId === source.droppableId && type === 'CARD') {
@@ -92,7 +133,7 @@ export default function Board() {
           position: card.position,
         }));
 
-        // Update database state
+        // Update database with new lists order
         sortCardsMutation.mutate(sortCardsInput, {
           onError: () => {
             toast.error('Cards sync failed.');

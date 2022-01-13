@@ -128,9 +128,9 @@ export async function renameList(title: string, listId: number) {
   return result.data;
 }
 
-export type SortListInput = Array<{ id: number; position: number }>;
+export type SortItemInput = Array<{ id: number; position: number }>;
 
-export async function sortCards(input: SortListInput) {
+export async function sortCards(input: SortItemInput) {
   const result = await supabase.rpc('fn_sort_cards', { fn_input: input });
 
   if (result.status === 401) await supabase.auth.signOut();
@@ -139,7 +139,7 @@ export async function sortCards(input: SortListInput) {
   return result.data;
 }
 
-export async function sortLists(input: SortListInput) {
+export async function sortLists(input: SortItemInput) {
   const result = await supabase.rpc('fn_sort_lists', { fn_input: input });
 
   if (result.status === 401) await supabase.auth.signOut();
