@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
-import { useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { IoEllipsisHorizontalSharp } from 'react-icons/io5';
 import { Menu, Transition } from '@headlessui/react';
 import { useFormik } from 'formik';
 import UseOnClickOutside from 'use-onclickoutside';
+import { toast } from 'react-hot-toast';
 
 import { AddNewItem } from './AddNewItem';
 import { boardsQueryKeys, useFetchListCards } from '@hooks/board';
-import { createCard, renameList } from '@lib/api/board';
+import { createCard, deleteList, renameList } from '@lib/api/board';
 import { useUserProfile } from '@hooks/user';
 import { Card } from './Card';
 import { Card as CardType, List } from 'types/database';
@@ -26,6 +27,9 @@ export function List({ boardId, listId, title, index }: BoardProps) {
   const queryClient = useQueryClient();
   const [editing, setEditing] = React.useState(false);
   const titleInputRef = React.useRef<HTMLInputElement>(null);
+  const deleteListMutation = useMutation(({ listId }: { listId: number }) =>
+    deleteList(listId)
+  );
 
   UseOnClickOutside(titleInputRef, () => setEditing(false));
 
@@ -65,6 +69,23 @@ export function List({ boardId, listId, title, index }: BoardProps) {
       created_by: user.data!.id,
       position: ++maxPosition!,
     });
+  };
+
+  const handleListDelete = () => {
+    deleteListMutation.mutate(
+      { listId },
+      {
+        onError: error => console.error(error),
+        onSuccess: () => {
+          toast.success('List deleted!');
+          const lists = queryClient
+            .getQueryData<List[]>(boardsQueryKeys.boardLists(boardId))
+            ?.filter(list => list.id !== listId);
+
+          queryClient.setQueryData(boardsQueryKeys.boardLists(boardId), lists);
+        },
+      }
+    );
   };
 
   return (
@@ -133,7 +154,10 @@ export function List({ boardId, listId, title, index }: BoardProps) {
                       </button>
                     </Menu.Item>
                     <Menu.Item>
-                      <button className="block w-full px-2 py-2 text-left hover:bg-gray-100 whitespace-nowrap">
+                      <button
+                        className="block w-full px-2 py-2 text-left hover:bg-gray-100 whitespace-nowrap"
+                        onClick={handleListDelete}
+                      >
                         Delete this list
                       </button>
                     </Menu.Item>
