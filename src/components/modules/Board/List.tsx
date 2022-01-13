@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Droppable } from 'react-beautiful-dnd';
+import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { useQueryClient } from 'react-query';
 import { IoEllipsisHorizontalSharp } from 'react-icons/io5';
 import { Menu, Transition } from '@headlessui/react';
@@ -17,9 +17,10 @@ interface BoardProps extends React.PropsWithChildren<unknown> {
   title: string;
   boardId: number;
   listId: number;
+  index: number;
 }
 
-export function List({ boardId, listId, title }: BoardProps) {
+export function List({ boardId, listId, title, index }: BoardProps) {
   const user = useUserProfile();
   const cards = useFetchListCards(listId);
   const queryClient = useQueryClient();
@@ -67,111 +68,117 @@ export function List({ boardId, listId, title }: BoardProps) {
   };
 
   return (
-    <div className="flex-grow max-w-[20rem] min-w-[17rem]">
-      <header className="flex items-center justify-between mb-4">
-        {editing ? (
-          <form className="flex-1 mr-4" onSubmit={formik.handleSubmit}>
-            <input
-              className="w-full pl-1 bg-inherit font-poppins"
-              ref={titleInputRef}
-              name="title"
-              value={formik.values.title}
-              onChange={formik.handleChange}
-              onBlur={() => {
-                formik.handleSubmit();
-              }}
-            />
-          </form>
-        ) : (
-          <h2
-            className="pl-1"
-            onClick={() => {
-              setEditing(true);
-            }}
+    <Draggable draggableId={String(listId)} index={index}>
+      {provided => (
+        <div
+          {...provided.draggableProps}
+          ref={provided.innerRef}
+          className="flex-grow max-w-[20rem] min-w-[17rem]"
+        >
+          <header
+            {...provided.dragHandleProps}
+            className="flex items-center justify-between mb-4"
           >
-            {title}
-          </h2>
-        )}
-
-        <Menu as="div" className="relative">
-          <Menu.Button>
-            <IoEllipsisHorizontalSharp
-              className="text-base cursor-pointer"
-              color="#828282"
-            />
-          </Menu.Button>
-
-          <Transition
-            as={React.Fragment}
-            enter="transition ease-out duration-100"
-            enterFrom="transform opacity-0 scale-95"
-            enterTo="transform opacity-100 scale-100"
-            leave="transition ease-in duration-75"
-            leaveFrom="transform opacity-100 scale-100"
-            leaveTo="transform opacity-0 scale-95"
-          >
-            <Menu.Items className="absolute left-0 z-10 overflow-hidden bg-white border rounded-lg shadow-lg border-ash">
-              <div className="text-xs divide-y divide-ash text-gray3">
-                <Menu.Item>
-                  <button
-                    className="block w-full px-2 py-2 text-left hover:bg-gray-100 whitespace-nowrap"
-                    onClick={() => {
-                      setEditing(true);
-                    }}
-                  >
-                    Rename
-                  </button>
-                </Menu.Item>
-                <Menu.Item>
-                  <button className="block w-full px-2 py-2 text-left hover:bg-gray-100 whitespace-nowrap">
-                    Delete this list
-                  </button>
-                </Menu.Item>
-              </div>
-            </Menu.Items>
-          </Transition>
-        </Menu>
-      </header>
-
-      <Droppable droppableId={String(listId)}>
-        {(provided, snapshot) => (
-          <div
-            {...provided.droppableProps}
-            ref={provided.innerRef}
-            className={`grid min-h-[10px] gap-4 rounded-lg ${
-              snapshot.isDraggingOver && 'bg-sky-100'
-            }`}
-          >
-            {cards.data &&
-              cards.data.map((card, index) => (
-                <Card
-                  key={card.id}
-                  id={String(card.id)}
-                  index={index}
-                  title={card.title}
+            {editing ? (
+              <form className="flex-1 mr-4" onSubmit={formik.handleSubmit}>
+                <input
+                  className="w-full pl-1 bg-inherit font-poppins"
+                  ref={titleInputRef}
+                  name="title"
+                  value={formik.values.title}
+                  onChange={formik.handleChange}
+                  onBlur={() => {
+                    formik.handleSubmit();
+                  }}
                 />
-              ))}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
+              </form>
+            ) : (
+              <h2
+                className="flex-1 pl-1"
+                onClick={() => {
+                  setEditing(true);
+                }}
+              >
+                {title}
+              </h2>
+            )}
 
-      {cards.isSuccess && user.data && (
-        <div className="pt-4">
-          <AddNewItem
-            text="Add new task"
-            submitAction={addNewCard}
-            onSuccessCallback={data => {
-              queryClient.setQueryData(
-                boardsQueryKeys.boardListCards(listId),
-                (oldData: any) => {
-                  return [...oldData, data];
-                }
-              );
-            }}
-          />
+            <Menu as="div" className="relative">
+              <Menu.Button>
+                <IoEllipsisHorizontalSharp
+                  className="text-base cursor-pointer"
+                  color="#828282"
+                />
+              </Menu.Button>
+
+              <Transition
+                as={React.Fragment}
+                enter="transition ease-out duration-100"
+                enterFrom="transform opacity-0 scale-95"
+                enterTo="transform opacity-100 scale-100"
+                leave="transition ease-in duration-75"
+                leaveFrom="transform opacity-100 scale-100"
+                leaveTo="transform opacity-0 scale-95"
+              >
+                <Menu.Items className="absolute left-0 z-10 overflow-hidden bg-white border rounded-lg shadow-lg border-ash">
+                  <div className="text-xs divide-y divide-ash text-gray3">
+                    <Menu.Item>
+                      <button
+                        className="block w-full px-2 py-2 text-left hover:bg-gray-100 whitespace-nowrap"
+                        onClick={() => {
+                          setEditing(true);
+                        }}
+                      >
+                        Rename
+                      </button>
+                    </Menu.Item>
+                    <Menu.Item>
+                      <button className="block w-full px-2 py-2 text-left hover:bg-gray-100 whitespace-nowrap">
+                        Delete this list
+                      </button>
+                    </Menu.Item>
+                  </div>
+                </Menu.Items>
+              </Transition>
+            </Menu>
+          </header>
+
+          <Droppable droppableId={String(listId)} type="CARD">
+            {(provided, snapshot) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                className={`grid min-h-[10px] gap-4 rounded-lg ${
+                  snapshot.isDraggingOver && 'bg-sky-100'
+                }`}
+              >
+                {cards.data &&
+                  cards.data.map((card, index) => (
+                    <Card key={card.id} id={card.id} index={index} title={card.title} />
+                  ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+
+          {cards.isSuccess && user.data && (
+            <div className="pt-4">
+              <AddNewItem
+                text="Add new task"
+                submitAction={addNewCard}
+                onSuccessCallback={data => {
+                  queryClient.setQueryData(
+                    boardsQueryKeys.boardListCards(listId),
+                    (oldData: any) => {
+                      return [...oldData, data];
+                    }
+                  );
+                }}
+              />
+            </div>
+          )}
         </div>
       )}
-    </div>
+    </Draggable>
   );
 }

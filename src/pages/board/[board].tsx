@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import { DragDropContext, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { useMutation, useQueryClient } from 'react-query';
 import toast from 'react-hot-toast';
 
@@ -45,7 +45,7 @@ export default function Board() {
   );
 
   const handleDragEnd = (result: DropResult) => {
-    const { source, destination, draggableId } = result;
+    const { source, destination, draggableId, type } = result;
 
     // Item was not dropped on a Droppable
     if (!destination) return;
@@ -57,7 +57,11 @@ export default function Board() {
     )
       return;
 
-    if (destination.droppableId === source.droppableId) {
+    if (destination.droppableId === source.droppableId && type === 'LIST') {
+      console.log(result);
+    }
+
+    if (destination.droppableId === source.droppableId && type === 'CARD') {
       const column = queryClient.getQueryData<Card[]>(
         boardsQueryKeys.boardListCards(Number(source.droppableId))
       );
@@ -149,30 +153,45 @@ export default function Board() {
           </div>
 
           <DragDropContext onDragEnd={handleDragEnd}>
-            <section className="flex items-start p-8 mt-6 space-x-12 h-[93%] overflow-x-auto bg-off-white2 rounded-xl">
-              {lists.data &&
-                lists.data.map(list => (
-                  <List
-                    title={list.title}
-                    boardId={list.board_id}
-                    listId={list.id}
-                    key={list.id}
-                  />
-                ))}
+            <section className="flex items-start p-4 mt-6 space-x-12 h-[93%] overflow-x-auto bg-off-white2 rounded-xl">
+              <Droppable droppableId="lists" type="LIST" direction="horizontal">
+                {provided => (
+                  <div
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                    className="flex items-start flex-1 h-full p-4 space-x-12"
+                  >
+                    {lists.data &&
+                      lists.data.map((list, index) => (
+                        <List
+                          title={list.title}
+                          boardId={list.board_id}
+                          listId={list.id}
+                          key={list.id}
+                          index={index}
+                        />
+                      ))}
+
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
 
               {lists.data && (
-                <AddNewItem
-                  text="Add new list"
-                  submitAction={addNewList}
-                  onSuccessCallback={data => {
-                    queryClient.setQueryData(
-                      boardsQueryKeys.boardLists(board.data.id),
-                      (oldData: any) => {
-                        return [...oldData, data];
-                      }
-                    );
-                  }}
-                />
+                <div className="p-4">
+                  <AddNewItem
+                    text="Add new list"
+                    submitAction={addNewList}
+                    onSuccessCallback={data => {
+                      queryClient.setQueryData(
+                        boardsQueryKeys.boardLists(board.data.id),
+                        (oldData: any) => {
+                          return [...oldData, data];
+                        }
+                      );
+                    }}
+                  />
+                </div>
               )}
             </section>
           </DragDropContext>
