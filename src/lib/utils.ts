@@ -12,3 +12,7 @@ export function getInitials(name: string) {
 export function getCloudinaryUrl(publicId: string, version: string) {
   return `https://res.cloudinary.com/chuck-huey/image/upload/c_thumb,dpr_auto,w_auto,q_auto,f_auto,g_face/${version}/${publicId}.jpg`;
 }
+
+export function profileCloudinaryUrl(publicId: string, version: string) {
+  return `https://res.cloudinary.com/chuck-huey/image/upload/c_thumb,dpr_auto,w_200,q_auto,f_auto,g_face/${version}/${publicId}.jpg`;
+}

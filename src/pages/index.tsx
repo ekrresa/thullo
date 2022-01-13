@@ -6,8 +6,9 @@ import { IoMdLock } from 'react-icons/io';
 import { Layout } from '../components/common/Layout';
 import { NewBoard } from '../components/modules/Board/NewBoard';
 import { useFetchBoards } from '@hooks/board';
-import { getCloudinaryUrl, getInitials } from '@lib/utils';
+import { getCloudinaryUrl } from '@lib/utils';
 import { ROUTES } from '@lib/constants';
+import { Avatar } from '@components/common/Avatar';
 
 export default function Home() {
   const boards = useFetchBoards();
@@ -50,19 +51,12 @@ export default function Home() {
                 </div>
                 <p className="px-3 mt-2 text-sm truncate">{board.title}</p>
                 <div className="flex items-center px-3 pb-3">
-                  <div className="relative mt-3 mr-3 overflow-hidden rounded-lg w-7 h-7">
-                    {board.owner.image_id ? (
-                      <Image
-                        src={getCloudinaryUrl(
-                          board.owner.image_id,
-                          board.owner.image_version
-                        )}
-                        layout="fill"
-                        alt="board owner"
-                      />
-                    ) : (
-                      getInitials(board.owner.name)
-                    )}
+                  <div className="relative mt-3 mr-3 overflow-hidden rounded-xl w-7 h-7">
+                    <Avatar
+                      imageId={board.owner.image_id}
+                      imageVersion={board.owner.image_version}
+                      name={board.owner.name}
+                    />
                   </div>
                 </div>
               </a>
