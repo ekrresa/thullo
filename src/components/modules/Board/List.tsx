@@ -31,12 +31,13 @@ export function List({ boardId, listId, title, index }: BoardProps) {
     deleteList(listId)
   );
 
-  UseOnClickOutside(titleInputRef, () => setEditing(false));
-
   const formik = useFormik({
     initialValues: { title },
     onSubmit: async values => {
-      if (title === values.title) return;
+      if (title === values.title) {
+        setEditing(false);
+        return;
+      }
 
       const result = await renameList(values.title, listId);
       queryClient.setQueryData(boardsQueryKeys.boardLists(boardId), (oldData: any) => {
@@ -49,6 +50,11 @@ export function List({ boardId, listId, title, index }: BoardProps) {
 
       setEditing(false);
     },
+  });
+
+  UseOnClickOutside(titleInputRef, () => {
+    formik.handleSubmit();
+    setEditing(false);
   });
 
   React.useEffect(() => {
@@ -91,11 +97,7 @@ export function List({ boardId, listId, title, index }: BoardProps) {
   return (
     <Draggable draggableId={String(listId)} index={index}>
       {provided => (
-        <div
-          {...provided.draggableProps}
-          ref={provided.innerRef}
-          className="flex-grow max-w-[20rem] min-w-[17rem]"
-        >
+        <div {...provided.draggableProps} ref={provided.innerRef} className="w-[19rem]">
           <header
             {...provided.dragHandleProps}
             className="flex items-center justify-between mb-4"
@@ -108,9 +110,6 @@ export function List({ boardId, listId, title, index }: BoardProps) {
                   name="title"
                   value={formik.values.title}
                   onChange={formik.handleChange}
-                  onBlur={() => {
-                    formik.handleSubmit();
-                  }}
                 />
               </form>
             ) : (

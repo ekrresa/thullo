@@ -200,7 +200,7 @@ export default function Board() {
                   <div
                     {...provided.droppableProps}
                     ref={provided.innerRef}
-                    className="flex items-start flex-1 h-full p-4 space-x-12"
+                    className="flex items-start h-full p-4 space-x-12"
                   >
                     {lists.data && <InnerList list={lists.data} />}
 
