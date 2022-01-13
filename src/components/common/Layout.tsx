@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useQueryClient } from 'react-query';
 import { CgLayoutGridSmall } from 'react-icons/cg';
@@ -9,10 +8,10 @@ import { FaCaretDown } from 'react-icons/fa';
 import { Footer } from './Footer';
 import { Dropdown } from './Dropdown';
 import { Button } from './Button';
+import { Avatar } from './Avatar';
 import { useUserProfile } from '@hooks/user';
 import { useFetchSingleBoard } from '@hooks/board';
 import { supabase } from '@lib/supabase';
-import { getCloudinaryUrl, getInitials } from '@lib/utils';
 import Logo from '../../../public/logo.svg';
 import { ROUTES } from '@lib/constants';
 
@@ -71,22 +70,13 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
             panel={
               <div className="flex items-center">
                 {userProfileResult.isSuccess ? (
-                  userProfileResult.data?.image_id ? (
-                    <div className="relative overflow-hidden rounded-lg h-9 w-9">
-                      <Image
-                        src={getCloudinaryUrl(
-                          userProfileResult.data.image_id,
-                          userProfileResult.data.image_version
-                        )}
-                        layout="fill"
-                        alt=""
-                      />
-                    </div>
-                  ) : (
-                    <div className="grid px-1 py-1 text-white uppercase rounded-lg w-9 place-items-center bg-corn-blue">
-                      {getInitials(userProfileResult.data.name)}
-                    </div>
-                  )
+                  <div className="overflow-hidden w-9 h-9 rounded-xl">
+                    <Avatar
+                      imageId={userProfileResult.data?.image_id}
+                      imageVersion={userProfileResult.data.image_version}
+                      name={userProfileResult.data.name}
+                    />
+                  </div>
                 ) : null}
                 <p className="w-24 ml-3 text-sm capitalize truncate">
                   {userProfileResult.data?.name}

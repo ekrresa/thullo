@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { format } from 'date-fns';
 import { FaPen } from 'react-icons/fa';
-import Image from 'next/image';
 import { IoClose, IoEllipsisHorizontalSharp, IoPersonCircle } from 'react-icons/io5';
 import { MdStickyNote2 } from 'react-icons/md';
 import useOnClickOutside from 'use-onclickoutside';
 
 import { useLockBodyScroll } from '@hooks/useLockBodyScroll';
 import { Board } from 'types/database';
-import { getCloudinaryUrl, getInitials } from '@lib/utils';
+import { Avatar } from '@components/common/Avatar';
 
 interface SideMenuProps {
   board: Board;
@@ -50,19 +49,12 @@ export function SideMenu({ board }: SideMenuProps) {
         </div>
 
         <div className="flex mt-3">
-          <div className="relative w-10 overflow-hidden rounded-lg">
-            {board.owner.image_id ? (
-              <Image
-                src={getCloudinaryUrl(
-                  board.owner.image_id as string,
-                  board.owner.image_version as string
-                )}
-                layout="fill"
-                alt=""
-              />
-            ) : (
-              <div className="w-full h-full">{getInitials(board.owner.name)}</div>
-            )}
+          <div className="relative w-10 h-10 overflow-hidden rounded-xl">
+            <Avatar
+              imageId={board.owner.image_id}
+              imageVersion={board.owner.image_version}
+              name={board.owner.name}
+            />
           </div>
           <div className="ml-4">
             <div className="mb-1 text-sm font-medium text-pencil">{board.owner.name}</div>
@@ -103,18 +95,11 @@ export function SideMenu({ board }: SideMenuProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <div className="relative w-10 h-10 overflow-hidden rounded-xl">
-                {board.owner.image_id ? (
-                  <Image
-                    src={getCloudinaryUrl(
-                      board.owner.image_id as string,
-                      board.owner.image_version as string
-                    )}
-                    layout="fill"
-                    alt=""
-                  />
-                ) : (
-                  <div className="w-full h-full">{getInitials(board.owner.name)}</div>
-                )}
+                <Avatar
+                  imageId={board.owner.image_id}
+                  imageVersion={board.owner.image_version}
+                  name={board.owner.name}
+                />
               </div>
               <div className="ml-4 text-sm font-medium text-pencil">
                 {board.owner.name}
@@ -125,7 +110,9 @@ export function SideMenu({ board }: SideMenuProps) {
 
           <div className="flex items-center justify-between mt-6">
             <div className="flex items-center">
-              <div className="h-10 bg-corn-blue w-11 rounded-xl"></div>
+              <div className="w-10 h-10 overflow-hidden rounded-xl">
+                <Avatar imageId={null} imageVersion={null} name="Daniel Jensen" />
+              </div>
               <div className="ml-4 text-sm font-medium text-pencil">Daniel Jensen</div>
             </div>
 

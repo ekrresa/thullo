@@ -128,6 +128,15 @@ export async function renameList(title: string, listId: number) {
   return result.data;
 }
 
+export async function deleteList(listId: number) {
+  const result = await supabase.rpc('fn_delete_lists', { list_id: listId });
+
+  if (result.status === 401) await supabase.auth.signOut();
+  if (result.error) throw result.error;
+
+  return result.data;
+}
+
 export type SortItemInput = Array<{ id: number; position: number }>;
 
 export async function sortCards(input: SortItemInput) {

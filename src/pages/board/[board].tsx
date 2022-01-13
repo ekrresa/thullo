@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useRouter } from 'next/router';
-import Image from 'next/image';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { useMutation, useQueryClient } from 'react-query';
 import toast from 'react-hot-toast';
@@ -14,10 +13,10 @@ import { CardProvider } from '@context/CardContext';
 import { TaskDetails } from '@components/modules/Board/TaskDetails';
 import { AddNewItem } from '@components/modules/Board/AddNewItem';
 import { boardsQueryKeys, useFetchBoardLists, useFetchSingleBoard } from '@hooks/board';
-import { getCloudinaryUrl, getInitials } from '@lib/utils';
 import { createList, sortCards, SortItemInput, sortLists } from '@lib/api/board';
 import { useUserProfile } from '@hooks/user';
 import { Card, List as ListType } from 'types/database';
+import { Avatar } from '@components/common/Avatar';
 
 export default function Board() {
   const router = useRouter();
@@ -169,21 +168,12 @@ export default function Board() {
               />
 
               <div className="flex items-center ml-4 mr-4 space-x-4">
-                <div className="relative w-8 h-8 overflow-hidden rounded-lg bg-corn-blue">
-                  {board.data.owner.image_id ? (
-                    <Image
-                      src={getCloudinaryUrl(
-                        board.data?.owner.image_id as string,
-                        board.data?.owner.image_version as string
-                      )}
-                      layout="fill"
-                      alt=""
-                    />
-                  ) : (
-                    <div className="w-full h-full">
-                      {getInitials(board.data?.owner.name as string)}
-                    </div>
-                  )}
+                <div className="relative overflow-hidden w-9 h-9 rounded-xl bg-corn-blue">
+                  <Avatar
+                    imageId={board.data?.owner.image_id}
+                    imageVersion={board.data?.owner.image_version}
+                    name={board.data?.owner.name}
+                  />
                 </div>
               </div>
 
@@ -200,7 +190,7 @@ export default function Board() {
                   <div
                     {...provided.droppableProps}
                     ref={provided.innerRef}
-                    className="flex items-start flex-1 h-full p-4 space-x-12"
+                    className="flex items-start h-full p-4 space-x-12"
                   >
                     {lists.data && <InnerList list={lists.data} />}
 
