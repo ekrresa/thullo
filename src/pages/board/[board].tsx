@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import { DragDropContext, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { useMutation, useQueryClient } from 'react-query';
 import toast from 'react-hot-toast';
 
@@ -15,9 +15,9 @@ import { TaskDetails } from '@components/modules/Board/TaskDetails';
 import { AddNewItem } from '@components/modules/Board/AddNewItem';
 import { boardsQueryKeys, useFetchBoardLists, useFetchSingleBoard } from '@hooks/board';
 import { getCloudinaryUrl, getInitials } from '@lib/utils';
-import { createList, sortCards, SortListInput } from '@lib/api/board';
+import { createList, sortCards, SortItemInput, sortLists } from '@lib/api/board';
 import { useUserProfile } from '@hooks/user';
-import { Card } from 'types/database';
+import { Card, List as ListType } from 'types/database';
 
 export default function Board() {
   const router = useRouter();
@@ -25,7 +25,8 @@ export default function Board() {
   const board = useFetchSingleBoard(Number(router.query.board));
   const lists = useFetchBoardLists(Number(router.query.board));
   const queryClient = useQueryClient();
-  const sortCardsMutation = useMutation((data: SortListInput) => sortCards(data));
+  const sortCardsMutation = useMutation((data: SortItemInput) => sortCards(data));
+  const sortListsMutation = useMutation((data: SortItemInput) => sortLists(data));
 
   const addNewList = React.useCallback(
     (title: string) => {
@@ -45,7 +46,7 @@ export default function Board() {
   );
 
   const handleDragEnd = (result: DropResult) => {
-    const { source, destination, draggableId } = result;
+    const { source, destination, draggableId, type } = result;
 
     // Item was not dropped on a Droppable
     if (!destination) return;
@@ -57,46 +58,92 @@ export default function Board() {
     )
       return;
 
-    const column = queryClient.getQueryData<Card[]>(
-      boardsQueryKeys.boardListCards(Number(source.droppableId))
-    );
-
-    if (Array.isArray(column)) {
-      const cardsList = Array.from(column);
-
-      cardsList.splice(source.index, 1);
-      cardsList.splice(
-        destination.index,
-        0,
-        column.find(card => card.id === Number(draggableId))!
+    if (destination.droppableId === source.droppableId && type === 'LIST') {
+      const grid = queryClient.getQueryData<ListType[]>(
+        boardsQueryKeys.boardLists(Number(router.query.board))
       );
 
-      const newCardsList = cardsList.map((card, index) => {
-        card.position = index;
-        return card;
-      });
+      if (Array.isArray(grid)) {
+        const columnList = Array.from(grid);
 
-      // Update client state
-      queryClient.setQueryData(
-        boardsQueryKeys.boardListCards(Number(source.droppableId)),
-        newCardsList
+        columnList.splice(source.index, 1);
+        columnList.splice(
+          destination.index,
+          0,
+          grid.find(list => list.id === Number(draggableId))!
+        );
+
+        const newColumnList = columnList.map((card, index) => {
+          card.position = index;
+          return card;
+        });
+
+        // Update client state
+        queryClient.setQueryData(
+          boardsQueryKeys.boardLists(Number(router.query.board)),
+          newColumnList
+        );
+
+        const sortListsInput = newColumnList.map(list => ({
+          id: list.id,
+          position: list.position,
+        }));
+
+        // Update database with new lists order
+        sortListsMutation.mutate(sortListsInput, {
+          onError: () => {
+            toast.error('Lists sync failed.');
+            queryClient.setQueryData(
+              boardsQueryKeys.boardLists(Number(router.query.board)),
+              grid
+            );
+          },
+        });
+      }
+    }
+
+    if (destination.droppableId === source.droppableId && type === 'CARD') {
+      const column = queryClient.getQueryData<Card[]>(
+        boardsQueryKeys.boardListCards(Number(source.droppableId))
       );
 
-      const sortCardsInput = newCardsList.map(card => ({
-        id: card.id,
-        position: card.position,
-      }));
+      if (Array.isArray(column)) {
+        const cardsList = Array.from(column);
 
-      // Update database state
-      sortCardsMutation.mutate(sortCardsInput, {
-        onError: () => {
-          toast.error('Cards sync failed.');
-          queryClient.setQueryData(
-            boardsQueryKeys.boardListCards(Number(source.droppableId)),
-            column
-          );
-        },
-      });
+        cardsList.splice(source.index, 1);
+        cardsList.splice(
+          destination.index,
+          0,
+          column.find(card => card.id === Number(draggableId))!
+        );
+
+        const newCardsList = cardsList.map((card, index) => {
+          card.position = index;
+          return card;
+        });
+
+        // Update client state
+        queryClient.setQueryData(
+          boardsQueryKeys.boardListCards(Number(source.droppableId)),
+          newCardsList
+        );
+
+        const sortCardsInput = newCardsList.map(card => ({
+          id: card.id,
+          position: card.position,
+        }));
+
+        // Update database with new lists order
+        sortCardsMutation.mutate(sortCardsInput, {
+          onError: () => {
+            toast.error('Cards sync failed.');
+            queryClient.setQueryData(
+              boardsQueryKeys.boardListCards(Number(source.droppableId)),
+              column
+            );
+          },
+        });
+      }
     }
   };
 
@@ -147,30 +194,36 @@ export default function Board() {
           </div>
 
           <DragDropContext onDragEnd={handleDragEnd}>
-            <section className="flex items-start p-8 mt-6 space-x-12 h-[93%] overflow-x-auto bg-off-white2 rounded-xl">
-              {lists.data &&
-                lists.data.map(list => (
-                  <List
-                    title={list.title}
-                    boardId={list.board_id}
-                    listId={list.id}
-                    key={list.id}
-                  />
-                ))}
+            <section className="flex items-start p-4 mt-6 space-x-12 h-[93%] overflow-x-auto bg-off-white2 rounded-xl">
+              <Droppable droppableId="lists" type="LIST" direction="horizontal">
+                {provided => (
+                  <div
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                    className="flex items-start flex-1 h-full p-4 space-x-12"
+                  >
+                    {lists.data && <InnerList list={lists.data} />}
+
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
 
               {lists.data && (
-                <AddNewItem
-                  text="Add new list"
-                  submitAction={addNewList}
-                  onSuccessCallback={data => {
-                    queryClient.setQueryData(
-                      boardsQueryKeys.boardLists(board.data.id),
-                      (oldData: any) => {
-                        return [...oldData, data];
-                      }
-                    );
-                  }}
-                />
+                <div className="py-4 pr-2">
+                  <AddNewItem
+                    text="Add new list"
+                    submitAction={addNewList}
+                    onSuccessCallback={data => {
+                      queryClient.setQueryData(
+                        boardsQueryKeys.boardLists(board.data.id),
+                        (oldData: any) => {
+                          return [...oldData, data];
+                        }
+                      );
+                    }}
+                  />
+                </div>
               )}
             </section>
           </DragDropContext>
@@ -186,3 +239,23 @@ Board.getLayout = (page: React.ComponentType) => (
   </Layout>
 );
 Board.protected = true;
+
+interface InnerListProps<T> {
+  list: T[];
+}
+
+function InnerList({ list }: InnerListProps<ListType>) {
+  return (
+    <>
+      {list.map((list, index) => (
+        <List
+          key={list.id}
+          index={index}
+          title={list.title}
+          boardId={list.board_id}
+          listId={list.id}
+        />
+      ))}
+    </>
+  );
+}

@@ -5,7 +5,7 @@ import { useCardContext } from '@context/CardContext';
 
 interface BoardCardProps {
   image?: boolean;
-  id: string;
+  id: number;
   title: string;
   index: number;
 }
@@ -14,14 +14,16 @@ export function Card({ id, title, index, image }: BoardCardProps) {
   const { handleCardId } = useCardContext();
 
   return (
-    <Draggable draggableId={id} index={index}>
-      {provided => (
+    <Draggable draggableId={String(id)} index={index}>
+      {(provided, snapshot) => (
         <div
-          className="p-4 bg-white rounded-lg shadow-card"
+          className={`p-4 bg-white rounded-lg shadow-card transition ${
+            snapshot.isDragging && 'bg-white/30'
+          }`}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}
-          onClick={() => handleCardId(id)}
+          onClick={() => handleCardId(String(id))}
         >
           {image && <div className="h-40 mb-3 rounded-lg bg-corn-blue"></div>}
 
