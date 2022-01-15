@@ -14,6 +14,7 @@ export interface BoardInput {
 export interface BoardUpdate {
   title: string;
   visibility: 'public' | 'private';
+  members: string[];
 }
 
 export interface ListInput {
@@ -74,14 +75,14 @@ export async function createBoard(input: BoardInput, userId: string) {
 
 export async function updateBoard(input: Partial<BoardUpdate>, boardId: number) {
   const result = await supabase
-    .from<Board>('boards')
+    .from<BoardUpdate>('boards')
     .update({ ...input })
     .match({ id: boardId })
     .single();
 
   if (result.error) throw result.error;
 
-  return result.data;
+  return result.data as unknown as Board;
 }
 
 export async function createList(input: ListInput) {

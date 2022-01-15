@@ -12,17 +12,28 @@ import { BoardInvite } from '@components/modules/Board/BoardInvite';
 import { CardProvider } from '@context/CardContext';
 import { TaskDetails } from '@components/modules/Board/TaskDetails';
 import { AddNewItem } from '@components/modules/Board/AddNewItem';
-import { boardsQueryKeys, useFetchBoardLists, useFetchSingleBoard } from '@hooks/board';
+import {
+  boardsQueryKeys,
+  useFetchBoardLists,
+  useFetchBoardMembers,
+  useFetchSingleBoard,
+} from '@hooks/board';
 import { createList, sortCards, SortItemInput, sortLists } from '@lib/api/board';
 import { useUserProfile } from '@hooks/user';
 import { Card, List as ListType } from 'types/database';
 import { Avatar } from '@components/common/Avatar';
+import { IsOwner } from '@components/common/IsOwner';
 
 export default function Board() {
   const router = useRouter();
-  const user = useUserProfile();
+  const loggedInUser = useUserProfile();
   const board = useFetchSingleBoard(Number(router.query.board));
   const lists = useFetchBoardLists(Number(router.query.board));
+  const boardMembers = useFetchBoardMembers(
+    Number(router.query.board),
+    board.data?.members
+  );
+
   const queryClient = useQueryClient();
   const sortCardsMutation = useMutation((data: SortItemInput) => sortCards(data));
   const sortListsMutation = useMutation((data: SortItemInput) => sortLists(data));
@@ -37,11 +48,11 @@ export default function Board() {
       return createList({
         title,
         board_id: board.data?.id!,
-        user_id: user.data?.id!,
+        user_id: loggedInUser.data?.id!,
         position: ++maxPosition!,
       });
     },
-    [board.data?.id, lists.data, user.data?.id]
+    [board.data?.id, lists.data, loggedInUser.data?.id]
   );
 
   const handleDragEnd = (result: DropResult) => {
@@ -175,12 +186,30 @@ export default function Board() {
                     name={board.data?.owner.name}
                   />
                 </div>
+
+                {boardMembers.data &&
+                  boardMembers.data.map(user => (
+                    <div
+                      key={user.id}
+                      className="relative overflow-hidden w-9 h-9 rounded-xl bg-corn-blue"
+                    >
+                      <Avatar
+                        imageId={user.image_id}
+                        imageVersion={user.image_version}
+                        name={user.name}
+                      />
+                    </div>
+                  ))}
               </div>
 
-              <BoardInvite />
+              {board.data && (
+                <IsOwner isOwner={board.data.owner.id === loggedInUser.data?.id}>
+                  <BoardInvite board={board.data} members={boardMembers.data ?? []} />
+                </IsOwner>
+              )}
             </div>
 
-            <SideMenu board={board.data} />
+            <SideMenu board={board.data} members={boardMembers.data ?? []} />
           </div>
 
           <DragDropContext onDragEnd={handleDragEnd}>
@@ -200,7 +229,7 @@ export default function Board() {
               </Droppable>
 
               {lists.data && (
-                <div className="py-4 pr-2">
+                <div className="py-4 pr-3">
                   <AddNewItem
                     text="Add new list"
                     submitAction={addNewList}
