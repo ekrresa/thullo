@@ -3,6 +3,7 @@ import { useQuery } from 'react-query';
 import { UserProfile } from 'types/database';
 
 export const userQueryKeys = {
+  users: () => ['users'],
   profile: () => ['userProfile'],
 };
 
@@ -24,5 +25,24 @@ export function useUserProfile() {
       return result.data;
     },
     { staleTime: Infinity }
+  );
+}
+
+export function useFetchUsers(userId: string = '') {
+  return useQuery(
+    userQueryKeys.users(),
+    async () => {
+      const result = await supabase
+        .from<UserProfile>('profiles')
+        .select()
+        .neq('id', userId)
+        .order('name', { ascending: true });
+
+      if (result.status === 401) await supabase.auth.signOut();
+      if (result.error) throw result.error;
+
+      return result.data;
+    },
+    { enabled: Boolean(userId), staleTime: Infinity }
   );
 }

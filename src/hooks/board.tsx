@@ -1,12 +1,17 @@
 import { supabase } from '@lib/supabase';
 import { useQuery } from 'react-query';
-import { Board, Card, List } from 'types/database';
+import { Board, Card, List, UserProfile } from 'types/database';
 
 export const boardsQueryKeys = {
   all: () => ['boards', 'all'],
-  board: (boardId: number) => ['boards', { boardId }],
-  boardLists: (boardId: number) => ['boards', 'lists', { boardId }],
-  boardListCards: (listId: number) => ['boards', 'lists', 'cards', { listId }],
+  board: (boardId: number) => ['board', { boardId }],
+  boardMembers: (boardId: number, numOfMembers: number) => [
+    'board',
+    'members',
+    { boardId, numOfMembers },
+  ],
+  boardLists: (boardId: number) => ['board', 'lists', { boardId }],
+  boardListCards: (listId: number) => ['board', 'lists', 'cards', { listId }],
 };
 
 const ONE_HOUR_IN_MILLISECONDS = 3600000;
@@ -38,7 +43,7 @@ export function useFetchSingleBoard(boardId: number) {
       const result = await supabase
         .from<Board>('boards')
         .select(
-          `id, title, cover, image_id, image_version, visibility, created_at, updated_at, owner (name, username, image_id, image_version)`
+          `id, title, cover, image_id, image_version, visibility, created_at, updated_at, members, owner (name, username, image_id, image_version)`
         )
         .match({ id: boardId })
         .single();
@@ -49,6 +54,29 @@ export function useFetchSingleBoard(boardId: number) {
       return result.data;
     },
     { enabled: Boolean(boardId), staleTime: ONE_HOUR_IN_MILLISECONDS }
+  );
+}
+
+export function useFetchBoardMembers(boardId: number, members: string[] = []) {
+  return useQuery(
+    boardsQueryKeys.boardMembers(boardId, members.length),
+    async () => {
+      const boardMembersP = members.map(async userId => {
+        const result = await supabase
+          .from<UserProfile>('profiles')
+          .select()
+          .match({ id: userId })
+          .single();
+
+        if (result.status === 401) await supabase.auth.signOut();
+        if (result.error) throw result.error;
+
+        return result.data;
+      });
+
+      return await Promise.all(boardMembersP);
+    },
+    { enabled: Boolean(members?.length), staleTime: ONE_HOUR_IN_MILLISECONDS }
   );
 }
 

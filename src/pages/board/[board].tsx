@@ -12,7 +12,12 @@ import { BoardInvite } from '@components/modules/Board/BoardInvite';
 import { CardProvider } from '@context/CardContext';
 import { TaskDetails } from '@components/modules/Board/TaskDetails';
 import { AddNewItem } from '@components/modules/Board/AddNewItem';
-import { boardsQueryKeys, useFetchBoardLists, useFetchSingleBoard } from '@hooks/board';
+import {
+  boardsQueryKeys,
+  useFetchBoardLists,
+  useFetchBoardMembers,
+  useFetchSingleBoard,
+} from '@hooks/board';
 import { createList, sortCards, SortItemInput, sortLists } from '@lib/api/board';
 import { useUserProfile } from '@hooks/user';
 import { Card, List as ListType } from 'types/database';
@@ -23,6 +28,11 @@ export default function Board() {
   const user = useUserProfile();
   const board = useFetchSingleBoard(Number(router.query.board));
   const lists = useFetchBoardLists(Number(router.query.board));
+  const boardMembers = useFetchBoardMembers(
+    Number(router.query.board),
+    board.data?.members
+  );
+
   const queryClient = useQueryClient();
   const sortCardsMutation = useMutation((data: SortItemInput) => sortCards(data));
   const sortListsMutation = useMutation((data: SortItemInput) => sortLists(data));
@@ -175,12 +185,28 @@ export default function Board() {
                     name={board.data?.owner.name}
                   />
                 </div>
+
+                {boardMembers.data &&
+                  boardMembers.data.map(user => (
+                    <div
+                      key={user.id}
+                      className="relative overflow-hidden w-9 h-9 rounded-xl bg-corn-blue"
+                    >
+                      <Avatar
+                        imageId={user.image_id}
+                        imageVersion={user.image_version}
+                        name={user.name}
+                      />
+                    </div>
+                  ))}
               </div>
 
-              <BoardInvite />
+              {board.data && (
+                <BoardInvite boardId={board.data.id} members={boardMembers.data ?? []} />
+              )}
             </div>
 
-            <SideMenu board={board.data} />
+            <SideMenu board={board.data} members={boardMembers.data ?? []} />
           </div>
 
           <DragDropContext onDragEnd={handleDragEnd}>

@@ -25,7 +25,7 @@ export interface Board {
   id: number;
   title: string;
   owner: UserProfile;
-  members: UserProfile[];
+  members: string[];
   visibility: 'public' | 'private';
   image_id: string;
   image_version: string;
