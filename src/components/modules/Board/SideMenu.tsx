@@ -3,22 +3,68 @@ import { format } from 'date-fns';
 import { FaPen } from 'react-icons/fa';
 import { IoClose, IoEllipsisHorizontalSharp, IoPersonCircle } from 'react-icons/io5';
 import { MdStickyNote2 } from 'react-icons/md';
+import { useMutation, useQueryClient } from 'react-query';
 import useOnClickOutside from 'use-onclickoutside';
+import { toast } from 'react-hot-toast';
 
 import { useLockBodyScroll } from '@hooks/useLockBodyScroll';
-import { Board } from 'types/database';
+import { Board, UserProfile } from 'types/database';
 import { Avatar } from '@components/common/Avatar';
+import { updateBoard } from '@lib/api/board';
+import { Button } from '@components/common/Button';
+import { boardsQueryKeys } from '@hooks/board';
 
 interface SideMenuProps {
   board: Board;
+  members: UserProfile[];
 }
 
-export function SideMenu({ board }: SideMenuProps) {
+export function SideMenu({ board, members }: SideMenuProps) {
   const sideMenuRef = React.useRef(null);
+  const queryClient = useQueryClient();
   const [openSideMenu, toggleSideMenu] = React.useState(false);
+  const removeMemberMutation = useMutation((data: { members: string[] }) =>
+    updateBoard(data, board.id)
+  );
 
   useOnClickOutside(sideMenuRef, () => toggleSideMenu(false));
   useLockBodyScroll({ mounted: openSideMenu });
+
+  React.useEffect(() => {
+    (async function () {
+      await queryClient.invalidateQueries(
+        boardsQueryKeys.boardMembers(board.id, members.length),
+        {
+          refetchInactive: true,
+        }
+      );
+    })();
+  }, [board.id, members.length, queryClient]);
+
+  const removeMember = (userId: string) => {
+    const currentMembers = members
+      .filter(user => user.id !== userId)
+      .map(user => user.id);
+
+    removeMemberMutation.mutate(
+      { members: currentMembers },
+      {
+        onSuccess: () => {
+          const user = members.find(user => user.id === userId);
+          toast.success(user?.name + ' was removed');
+
+          queryClient.setQueryData<Board | undefined>(
+            boardsQueryKeys.board(board.id),
+            oldData => {
+              if (oldData) {
+                return { ...oldData, members: currentMembers };
+              }
+            }
+          );
+        },
+      }
+    );
+  };
 
   return (
     <>
@@ -30,7 +76,7 @@ export function SideMenu({ board }: SideMenuProps) {
         Show Menu
       </button>
       <div
-        className={`absolute right-0 top-0 bg-white w-full max-w-md h-full p-6 shadow-lg transition duration-500 ease-in-out overflow-y-auto ${
+        className={`absolute right-0 top-0 bg-white w-full max-w-md h-full p-6 shadow-lg transition duration-500 ease-in-out overflow-y-auto z-50 ${
           openSideMenu ? 'opacity-100 translate-x-0' : ' opacity-0 translate-x-full'
         }`}
         ref={sideMenuRef}
@@ -108,18 +154,37 @@ export function SideMenu({ board }: SideMenuProps) {
             <div className="text-[0.8rem] text-gray-400">Admin</div>
           </div>
 
-          <div className="flex items-center justify-between mt-6">
-            <div className="flex items-center">
-              <div className="w-10 h-10 overflow-hidden rounded-xl">
-                <Avatar imageId={null} imageVersion={null} name="Daniel Jensen" />
-              </div>
-              <div className="ml-4 text-sm font-medium text-pencil">Daniel Jensen</div>
-            </div>
+          {members.length > 0 &&
+            members.map(member => (
+              <div key={member.id} className="flex items-center justify-between mt-6">
+                <div className="flex items-center">
+                  <div className="w-10 h-10 overflow-hidden rounded-xl">
+                    <Avatar
+                      imageId={member.image_id}
+                      imageVersion={member.image_version}
+                      name={member.name}
+                    />
+                  </div>
+                  <div className="ml-4 text-sm font-medium capitalize text-pencil">
+                    {member.name}
+                  </div>
+                </div>
 
-            <button className="border border-alt-red-100 rounded-lg px-3 py-[0.3rem] text-[0.7rem] text-alt-red-100">
-              Remove
-            </button>
-          </div>
+                <Button
+                  className="border border-alt-red-100 rounded-lg px-3 py-[0.3rem] text-[0.7rem] text-alt-red-100"
+                  onClick={() => removeMember(member.id)}
+                  disabled={removeMemberMutation.isLoading}
+                >
+                  Remove
+                </Button>
+              </div>
+            ))}
+        </div>
+
+        <div className="mt-8">
+          <Button className="px-3 py-2 text-sm border rounded-lg border-alt-red-100 text-alt-red-100">
+            Delete Board
+          </Button>
         </div>
       </div>
     </>
