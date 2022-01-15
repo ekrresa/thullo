@@ -22,10 +22,11 @@ import { createList, sortCards, SortItemInput, sortLists } from '@lib/api/board'
 import { useUserProfile } from '@hooks/user';
 import { Card, List as ListType } from 'types/database';
 import { Avatar } from '@components/common/Avatar';
+import { IsOwner } from '@components/common/IsOwner';
 
 export default function Board() {
   const router = useRouter();
-  const user = useUserProfile();
+  const loggedInUser = useUserProfile();
   const board = useFetchSingleBoard(Number(router.query.board));
   const lists = useFetchBoardLists(Number(router.query.board));
   const boardMembers = useFetchBoardMembers(
@@ -47,11 +48,11 @@ export default function Board() {
       return createList({
         title,
         board_id: board.data?.id!,
-        user_id: user.data?.id!,
+        user_id: loggedInUser.data?.id!,
         position: ++maxPosition!,
       });
     },
-    [board.data?.id, lists.data, user.data?.id]
+    [board.data?.id, lists.data, loggedInUser.data?.id]
   );
 
   const handleDragEnd = (result: DropResult) => {
@@ -202,7 +203,9 @@ export default function Board() {
               </div>
 
               {board.data && (
-                <BoardInvite boardId={board.data.id} members={boardMembers.data ?? []} />
+                <IsOwner isOwner={board.data.owner.id === loggedInUser.data?.id}>
+                  <BoardInvite board={board.data} members={boardMembers.data ?? []} />
+                </IsOwner>
               )}
             </div>
 
@@ -226,7 +229,7 @@ export default function Board() {
               </Droppable>
 
               {lists.data && (
-                <div className="py-4 pr-2">
+                <div className="py-4 pr-3">
                   <AddNewItem
                     text="Add new list"
                     submitAction={addNewList}

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { useMutation, useQueryClient } from 'react-query';
 import { BiPlus } from 'react-icons/bi';
+import { toast } from 'react-hot-toast';
 import differenceBy from 'lodash.differenceby';
 
 import { useFetchUsers, useUserProfile } from '@hooks/user';
@@ -9,20 +10,20 @@ import { updateBoard } from '@lib/api/board';
 import { Button } from '@components/common/Button';
 import { Board, UserProfile } from 'types/database';
 import { boardsQueryKeys } from '@hooks/board';
-import { toast } from 'react-hot-toast';
+import { IsOwner } from '@components/common/IsOwner';
 
 interface BoardInviteProps {
-  boardId: number;
+  board: Board;
   members: UserProfile[];
 }
 
-export function BoardInvite({ boardId, members }: BoardInviteProps) {
+export function BoardInvite({ board, members }: BoardInviteProps) {
   const queryClient = useQueryClient();
   const [userIds, setUserIds] = React.useState<string[]>([]);
   const loggedInUser = useUserProfile();
   const allUsers = useFetchUsers(loggedInUser.data?.id);
   const inviteUserMutation = useMutation((data: { members: string[] }) =>
-    updateBoard(data, boardId)
+    updateBoard(data, board.id)
   );
 
   const nonMembers = React.useMemo(() => {
@@ -37,7 +38,7 @@ export function BoardInvite({ boardId, members }: BoardInviteProps) {
         onSuccess: data => {
           toast.success('users joined successfully');
           queryClient.setQueryData<Board | undefined>(
-            boardsQueryKeys.board(boardId),
+            boardsQueryKeys.board(board.id),
             oldData => {
               if (oldData) {
                 return { ...oldData, members: data.members };
@@ -52,13 +53,13 @@ export function BoardInvite({ boardId, members }: BoardInviteProps) {
   React.useEffect(() => {
     (async function () {
       await queryClient.invalidateQueries(
-        boardsQueryKeys.boardMembers(boardId, members.length),
+        boardsQueryKeys.boardMembers(board.id, members.length),
         {
           refetchInactive: true,
         }
       );
     })();
-  }, [boardId, members.length, queryClient]);
+  }, [board.id, members.length, queryClient]);
 
   const handleChecked = (checked: boolean, userId: string) => {
     if (checked) {

@@ -13,6 +13,8 @@ import { Avatar } from '@components/common/Avatar';
 import { updateBoard } from '@lib/api/board';
 import { Button } from '@components/common/Button';
 import { boardsQueryKeys } from '@hooks/board';
+import { IsOwner } from '@components/common/IsOwner';
+import { useUserProfile } from '@hooks/user';
 
 interface SideMenuProps {
   board: Board;
@@ -21,6 +23,7 @@ interface SideMenuProps {
 
 export function SideMenu({ board, members }: SideMenuProps) {
   const sideMenuRef = React.useRef(null);
+  const loggedInUser = useUserProfile();
   const queryClient = useQueryClient();
   const [openSideMenu, toggleSideMenu] = React.useState(false);
   const removeMemberMutation = useMutation((data: { members: string[] }) =>
@@ -170,22 +173,29 @@ export function SideMenu({ board, members }: SideMenuProps) {
                   </div>
                 </div>
 
-                <Button
-                  className="border border-alt-red-100 rounded-lg px-3 py-[0.3rem] text-[0.7rem] text-alt-red-100"
-                  onClick={() => removeMember(member.id)}
-                  disabled={removeMemberMutation.isLoading}
+                <IsOwner
+                  isOwner={board.owner.id === loggedInUser.data?.id}
+                  fallback={<p className="text-[0.8rem] text-gray-400 italic">Member</p>}
                 >
-                  Remove
-                </Button>
+                  <Button
+                    className="border border-alt-red-100 rounded-lg px-3 py-[0.3rem] text-[0.7rem] text-alt-red-100"
+                    onClick={() => removeMember(member.id)}
+                    disabled={removeMemberMutation.isLoading}
+                  >
+                    Remove
+                  </Button>
+                </IsOwner>
               </div>
             ))}
         </div>
 
-        <div className="mt-8">
-          <Button className="px-3 py-2 text-sm border rounded-lg border-alt-red-100 text-alt-red-100">
-            Delete Board
-          </Button>
-        </div>
+        <IsOwner isOwner={board.owner.id === loggedInUser.data?.id}>
+          <div className="mt-8">
+            <Button className="px-3 py-2 text-sm border rounded-lg border-alt-red-100 text-alt-red-100">
+              Delete Board
+            </Button>
+          </div>
+        </IsOwner>
       </div>
     </>
   );
