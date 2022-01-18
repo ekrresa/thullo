@@ -75,7 +75,7 @@ export default function Register() {
             Welcome to Thullo
           </h3>
 
-          <div className="flex mt-8 space-x-4">
+          {/* <div className="flex mt-8 space-x-4">
             <Button className="grid flex-1 w-12 h-12 rounded-md shadow place-items-center">
               <FcGoogle className="text-3xl" />
             </Button>
@@ -85,7 +85,7 @@ export default function Register() {
             <Button className="grid flex-1 w-12 h-12 rounded-md shadow place-items-center">
               <FaGithub className="text-3xl" />
             </Button>
-          </div>
+          </div> */}
 
           <form className="mt-12" onSubmit={handleUserSignUp} ref={formRef}>
             <div className="mb-4">
