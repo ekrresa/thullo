@@ -18,7 +18,13 @@ import {
   useFetchBoardMembers,
   useFetchSingleBoard,
 } from '@hooks/board';
-import { createList, sortCards, SortItemInput, sortLists } from '@lib/api/board';
+import {
+  createList,
+  sortCards,
+  SortItemInput,
+  sortLists,
+  updateCard,
+} from '@lib/api/board';
 import { useUserProfile } from '@hooks/user';
 import { Card, List as ListType } from 'types/database';
 import { Avatar } from '@components/common/Avatar';
@@ -37,6 +43,9 @@ export default function Board() {
   const queryClient = useQueryClient();
   const sortCardsMutation = useMutation((data: SortItemInput) => sortCards(data));
   const sortListsMutation = useMutation((data: SortItemInput) => sortLists(data));
+  const updateCardListMutation = useMutation((data: any) =>
+    updateCard(data.input, data.cardId)
+  );
 
   const addNewList = React.useCallback(
     (title: string) => {
@@ -109,6 +118,94 @@ export default function Board() {
             );
           },
         });
+      }
+    }
+
+    // moving cards between lists
+    if (destination.droppableId !== source.droppableId && type === 'CARD') {
+      console.log(result);
+      const sourceList = queryClient.getQueryData<Card[]>(
+        boardsQueryKeys.boardListCards(Number(source.droppableId))
+      );
+
+      if (Array.isArray(sourceList) && sourceList.length) {
+        const card = Array.from(sourceList).find(card => card.id === Number(draggableId));
+
+        if (!card) return;
+
+        card.list_id = Number(destination.droppableId);
+        const destinationList = Array.from(
+          queryClient.getQueryData<Card[]>(
+            boardsQueryKeys.boardListCards(Number(destination.droppableId))
+          ) ?? []
+        );
+
+        destinationList.splice(destination.index, 0, card);
+
+        const newSourceList = sourceList
+          .filter(card => card.id !== Number(draggableId))
+          .map((card, index) => {
+            card.position = index;
+            return card;
+          });
+
+        const newDestinationList = destinationList.map((card, index) => {
+          card.position = index;
+          return card;
+        });
+
+        // Update client state for destination list
+        queryClient.setQueryData(
+          boardsQueryKeys.boardListCards(Number(destination.droppableId)),
+          newDestinationList
+        );
+
+        // Update client state for source list
+        queryClient.setQueryData(
+          boardsQueryKeys.boardListCards(Number(source.droppableId)),
+          newSourceList
+        );
+
+        const sourceListUpdate = newSourceList.map(card => ({
+          id: card.id,
+          position: card.position,
+        }));
+
+        const destinationListUpdate = newDestinationList.map(card => ({
+          id: card.id,
+          position: card.position,
+        }));
+
+        updateCardListMutation.mutateAsync(
+          {
+            input: { list_id: destination.droppableId },
+            cardId: Number(draggableId),
+          },
+          {
+            onError: () => {
+              toast.error('Cards sync failed.');
+            },
+            onSuccess: () => {
+              // Update database with new lists order
+              sortCardsMutation.mutate(destinationListUpdate, {
+                onError: () => {
+                  toast.error('Cards sync failed.');
+                },
+              });
+
+              // Update database with new lists order
+              sortCardsMutation.mutate(sourceListUpdate, {
+                onError: () => {
+                  toast.error('Cards sync failed.');
+                  queryClient.setQueryData(
+                    boardsQueryKeys.boardListCards(Number(destination.droppableId)),
+                    sourceList
+                  );
+                },
+              });
+            },
+          }
+        );
       }
     }
 
