@@ -157,3 +157,15 @@ export async function sortLists(input: SortItemInput) {
 
   return result.data;
 }
+
+export async function updateCard(input: Partial<CardInput>, cardId: number) {
+  const result = await supabase
+    .from<Card>('cards')
+    .update({ ...input })
+    .match({ id: cardId });
+
+  if (result.status === 401) await supabase.auth.signOut();
+  if (result.error) throw result.error;
+
+  return result.data;
+}
