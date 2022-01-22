@@ -13,6 +13,7 @@ export interface BoardInput {
 
 export interface BoardUpdate {
   title: string;
+  description: string;
   visibility: 'public' | 'private';
   members: string[];
 }

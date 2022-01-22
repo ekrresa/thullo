@@ -43,7 +43,7 @@ export function useFetchSingleBoard(boardId: number) {
       const result = await supabase
         .from<Board>('boards')
         .select(
-          `id, title, cover, image_id, image_version, visibility, created_at, updated_at, members, owner (id, name, username, image_id, image_version)`
+          `id, title, cover, description, image_id, image_version, visibility, created_at, updated_at, members, owner (id, name, username, image_id, image_version)`
         )
         .match({ id: boardId })
         .single();
