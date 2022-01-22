@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { format } from 'date-fns';
-import { FaPen } from 'react-icons/fa';
-import { IoClose, IoEllipsisHorizontalSharp, IoPersonCircle } from 'react-icons/io5';
+import {
+  IoClose,
+  IoEllipsisHorizontalSharp,
+  IoPencil,
+  IoPersonCircle,
+} from 'react-icons/io5';
 import { MdStickyNote2 } from 'react-icons/md';
 import { useMutation, useQueryClient } from 'react-query';
 import useOnClickOutside from 'use-onclickoutside';
@@ -15,6 +19,7 @@ import { Button } from '@components/common/Button';
 import { boardsQueryKeys } from '@hooks/board';
 import { IsOwner } from '@components/common/IsOwner';
 import { useUserProfile } from '@hooks/user';
+import { TextArea } from '@components/common/TextArea';
 
 interface SideMenuProps {
   board: Board;
@@ -26,6 +31,12 @@ export function SideMenu({ board, members }: SideMenuProps) {
   const loggedInUser = useUserProfile();
   const queryClient = useQueryClient();
   const [openSideMenu, toggleSideMenu] = React.useState(false);
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [description, setDescription] = React.useState('');
+
+  const descriptionMutation = useMutation((data: { description: string }) =>
+    updateBoard(data, board.id)
+  );
   const removeMemberMutation = useMutation((data: { members: string[] }) =>
     updateBoard(data, board.id)
   );
@@ -43,6 +54,18 @@ export function SideMenu({ board, members }: SideMenuProps) {
       );
     })();
   }, [board.id, members.length, queryClient]);
+
+  const handleDescription = () => {
+    descriptionMutation.mutate(
+      { description },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries(boardsQueryKeys.board(board.id));
+          setIsEditing(false);
+        },
+      }
+    );
+  };
 
   const removeMember = (userId: string) => {
     const currentMembers = members
@@ -117,22 +140,55 @@ export function SideMenu({ board, members }: SideMenuProps) {
           <MdStickyNote2 className="text-xl" />
           <p className="ml-2 text-gray-400">Description</p>
 
-          <button className="flex items-center px-2 py-1 ml-auto border border-gray-400 rounded-xl">
-            <FaPen className="text-sm" color="#828282" />
-            <span className="ml-2 text-sm text-gray-400">Edit</span>
+          <button
+            className="flex items-center px-2 py-1 ml-auto border border-gray-400 rounded-xl"
+            onClick={() => setIsEditing(!isEditing)}
+          >
+            {isEditing ? (
+              <>
+                <IoClose />
+                <span className="ml-2 text-sm text-gray-400">Cancel</span>
+              </>
+            ) : board.description ? (
+              <>
+                <IoPencil />
+                <span className="ml-2 text-sm text-gray-400">Edit</span>
+              </>
+            ) : (
+              <>
+                <IoPencil />
+                <span className="ml-2 text-sm text-gray-400">Add</span>
+              </>
+            )}
           </button>
         </div>
 
         <div className="mt-6">
-          Simple board to start on a project. Each list can hold items (cards) that
-          represent ideas or tasks. There 4 lists here: * Backlog 🤔 : Ideas are created
-          here. Here people can describe the idea following three simple questions: Why
-          you wish to do it, What it is, how can you do it. * In Progress📚: Once the
-          ideas is clearly defined, the task can move to #todo stage. Here the owner of
-          the idea can move to #doing once s/he is ready. He can also wait a bit for other
-          members to join. * In Review ⚙️: On-going * Completed 🙌🏽**: Finished You could
-          add other lists like labels holding labels (with colors) in order to tag each
-          card by a label if you wish.
+          {isEditing ? (
+            <>
+              <div className="p-4 text-sm border rounded-lg">
+                <TextArea
+                  content={board.description}
+                  onChange={val => setDescription(val)}
+                />
+              </div>
+              <Button
+                className="items-stretch justify-center w-full px-4 py-3 mt-2 text-sm text-white rounded-lg bg-corn-blue"
+                onClick={handleDescription}
+                disabled={descriptionMutation.isLoading}
+                loading={descriptionMutation.isLoading}
+              >
+                Submit
+              </Button>
+            </>
+          ) : board.description ? (
+            <div
+              className="p-4 prose-sm border rounded-lg prose-p:mb-1 prose-p:mt-1"
+              dangerouslySetInnerHTML={{ __html: board.description }}
+            ></div>
+          ) : (
+            <p className="text-sm italic text-gray-400">No board description yet.</p>
+          )}
         </div>
 
         <div className="flex items-center mt-8 text-light-pencil">
