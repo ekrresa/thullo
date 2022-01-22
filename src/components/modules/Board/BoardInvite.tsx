@@ -27,7 +27,7 @@ export function BoardInvite({ board, members }: BoardInviteProps) {
   );
 
   const nonMembers = React.useMemo(() => {
-    return differenceBy(allUsers.data, members, 'id');
+    return differenceBy(allUsers.data, members, 'id').filter(user => Boolean(user.name));
   }, [allUsers.data, members]);
 
   const handleInvite = () => {
