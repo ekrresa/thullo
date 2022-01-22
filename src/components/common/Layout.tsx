@@ -1,7 +1,6 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useQueryClient } from 'react-query';
 import { CgLayoutGridSmall } from 'react-icons/cg';
 import { FaCaretDown } from 'react-icons/fa';
 
@@ -18,7 +17,6 @@ import { ROUTES } from '@lib/constants';
 export function Layout({ children }: React.PropsWithChildren<unknown>) {
   const router = useRouter();
   const userProfileResult = useUserProfile();
-  const queryClient = useQueryClient();
   const board = useFetchSingleBoard(Number(router.query.board));
 
   return (
@@ -95,7 +93,6 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
                 className="w-full px-3 py-2 text-sm transition-colors duration-200 ease-linear border-inherit hover:bg-gray-100"
                 onClick={() => {
                   supabase.auth.signOut();
-                  queryClient.removeQueries();
                 }}
               >
                 Log out

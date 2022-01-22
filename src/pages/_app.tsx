@@ -1,7 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import type { AppProps } from 'next/app';
-import { MutationCache, QueryClient, QueryClientProvider } from 'react-query';
+import {
+  MutationCache,
+  QueryClient,
+  QueryClientProvider,
+  useQueryClient,
+} from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { toast, Toaster } from 'react-hot-toast';
 
@@ -46,11 +51,13 @@ export default function MyApp({ Component, pageProps }: Props) {
 function Auth({ children }: { children: any }) {
   const router = useRouter();
   const session = supabase.auth.session();
+  const queryClient = useQueryClient();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     const authSubscription = supabase.auth.onAuthStateChange((event, session) => {
       if (!session?.user) {
+        queryClient.removeQueries();
         router.push(ROUTES.login);
       }
     });
@@ -58,7 +65,7 @@ function Auth({ children }: { children: any }) {
     return () => {
       authSubscription.data?.unsubscribe();
     };
-  }, [router]);
+  }, [queryClient, router]);
 
   useEffect(() => {
     if (!session?.user) {
