@@ -31,6 +31,7 @@ export interface CardInput {
   list_id: number;
   created_by: string;
   position: number;
+  description?: string;
 }
 
 export async function createBoard(input: BoardInput, userId: string) {

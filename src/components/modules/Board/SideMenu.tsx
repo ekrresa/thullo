@@ -59,8 +59,8 @@ export function SideMenu({ board, members }: SideMenuProps) {
     descriptionMutation.mutate(
       { description },
       {
-        onSuccess: () => {
-          queryClient.invalidateQueries(boardsQueryKeys.board(board.id));
+        onSuccess: async () => {
+          await queryClient.invalidateQueries(boardsQueryKeys.board(board.id));
           setIsEditing(false);
         },
       }
@@ -138,7 +138,7 @@ export function SideMenu({ board, members }: SideMenuProps) {
 
         <div className="flex items-center mt-6 text-light-pencil">
           <MdStickyNote2 className="text-xl" />
-          <p className="ml-2 text-gray-400">Description</p>
+          <p className="ml-2 text-sm text-gray-400">Description</p>
 
           <button
             className="flex items-center px-2 py-1 ml-auto border border-gray-400 rounded-xl"
@@ -147,17 +147,17 @@ export function SideMenu({ board, members }: SideMenuProps) {
             {isEditing ? (
               <>
                 <IoClose />
-                <span className="ml-2 text-sm text-gray-400">Cancel</span>
+                <span className="ml-2 text-xs text-gray-400">Cancel</span>
               </>
             ) : board.description ? (
               <>
                 <IoPencil />
-                <span className="ml-2 text-sm text-gray-400">Edit</span>
+                <span className="ml-2 text-xs text-gray-400">Edit</span>
               </>
             ) : (
               <>
                 <IoPencil />
-                <span className="ml-2 text-sm text-gray-400">Add</span>
+                <span className="ml-2 text-xs text-gray-400">Add</span>
               </>
             )}
           </button>
