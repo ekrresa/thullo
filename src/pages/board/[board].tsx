@@ -10,7 +10,7 @@ import { SideMenu } from '@components/modules/Board/SideMenu';
 import { VisibilitySwitch } from '@components/modules/Board/VisibilitySwitch';
 import { BoardInvite } from '@components/modules/Board/BoardInvite';
 import { CardProvider } from '@context/CardContext';
-import { TaskDetails } from '@components/modules/Board/TaskDetails';
+import { CardDetails } from '@components/modules/Board/CardDetails';
 import { AddNewItem } from '@components/modules/Board/AddNewItem';
 import {
   boardsQueryKeys,
@@ -266,7 +266,7 @@ export default function Board() {
     <>
       {board.data && (
         <section className="container relative overflow-hidden mt-9 h-[95%]">
-          <TaskDetails />
+          <CardDetails />
 
           <div className="flex justify-between">
             <div className="flex items-center">
