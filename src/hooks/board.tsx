@@ -12,6 +12,7 @@ export const boardsQueryKeys = {
   ],
   boardLists: (boardId: number) => ['board', 'lists', { boardId }],
   boardListCards: (listId: number) => ['board', 'lists', 'cards', { listId }],
+  card: (cardId: number) => ['list', 'card', { cardId }],
 };
 
 const ONE_HOUR_IN_MILLISECONDS = 3600000;
@@ -115,5 +116,27 @@ export function useFetchListCards(listId: number) {
       return result.data;
     },
     { enabled: Boolean(listId), staleTime: ONE_HOUR_IN_MILLISECONDS }
+  );
+}
+
+export function useFetchCardInfo(cardId: number) {
+  return useQuery(
+    boardsQueryKeys.card(cardId),
+    async () => {
+      const result = await supabase
+        .from<Card>('cards')
+        .select()
+        .match({ id: cardId })
+        .single();
+
+      if (result.status === 401) await supabase.auth.signOut();
+      if (result.error) throw result.error;
+
+      return result.data;
+    },
+    {
+      enabled: Boolean(cardId),
+      staleTime: ONE_HOUR_IN_MILLISECONDS,
+    }
   );
 }

@@ -175,7 +175,7 @@ export function List({ boardId, listId, title, index }: BoardProps) {
                   snapshot.isDraggingOver && 'bg-sky-100'
                 }`}
               >
-                {cards.data && <InnerList list={cards.data} />}
+                {cards.data && <InnerList listTitle={title} list={cards.data} />}
                 {/* {cards.data &&
                   cards.data.map((card, index) => (
                     <Card key={card.id} id={card.id} index={index} title={card.title} />
@@ -209,13 +209,20 @@ export function List({ boardId, listId, title, index }: BoardProps) {
 
 interface InnerListProps<T> {
   list: T[];
+  listTitle: string;
 }
 
-function InnerList({ list }: InnerListProps<CardType>) {
+function InnerList({ listTitle, list }: InnerListProps<CardType>) {
   return (
     <>
       {list.map((card, index) => (
-        <Card key={card.id} id={card.id} index={index} title={card.title} />
+        <Card
+          key={card.id}
+          id={card.id}
+          index={index}
+          title={card.title}
+          listTitle={listTitle}
+        />
       ))}
     </>
   );
