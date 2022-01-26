@@ -1,6 +1,6 @@
 import { supabase } from '@lib/supabase';
 import { useQuery } from 'react-query';
-import { Board, Card, List, UserProfile } from 'types/database';
+import { Board, Card, Comment, List, UserProfile } from 'types/database';
 
 export const boardsQueryKeys = {
   all: () => ['boards', 'all'],
@@ -13,6 +13,7 @@ export const boardsQueryKeys = {
   boardLists: (boardId: number) => ['board', 'lists', { boardId }],
   boardListCards: (listId: number) => ['board', 'lists', 'cards', { listId }],
   card: (cardId: number) => ['list', 'card', { cardId }],
+  cardComments: (cardId: number) => ['card', 'comments', { cardId }],
 };
 
 const ONE_HOUR_IN_MILLISECONDS = 3600000;
@@ -128,6 +129,28 @@ export function useFetchCardInfo(cardId: number) {
         .select()
         .match({ id: cardId })
         .single();
+
+      if (result.status === 401) await supabase.auth.signOut();
+      if (result.error) throw result.error;
+
+      return result.data;
+    },
+    {
+      enabled: Boolean(cardId),
+      staleTime: ONE_HOUR_IN_MILLISECONDS,
+    }
+  );
+}
+
+export function useFetchCardComments(cardId: number) {
+  return useQuery(
+    boardsQueryKeys.cardComments(cardId),
+    async () => {
+      const result = await supabase
+        .from<Comment>('comments')
+        .select(`id, text, created_at, user(id, name, username, image_id, image_version)`)
+        .match({ card_id: cardId })
+        .order('created_at', { ascending: false });
 
       if (result.status === 401) await supabase.auth.signOut();
       if (result.error) throw result.error;
