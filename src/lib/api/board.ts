@@ -171,3 +171,22 @@ export async function updateCard(input: Partial<CardInput>, cardId: number) {
 
   return result.data;
 }
+
+export interface CommentInput {
+  text: string;
+  card_id: number;
+  board_id: number;
+  user: string;
+}
+
+export async function addComment(input: CommentInput) {
+  const result = await supabase
+    .from('comments')
+    .insert({ ...input })
+    .single();
+
+  if (result.status === 401) await supabase.auth.signOut();
+  if (result.error) throw result.error;
+
+  return result.data;
+}

@@ -14,7 +14,8 @@ type Props = {
   readOnly?: boolean;
 };
 
-export function TextArea({ content, onChange }: Props) {
+// eslint-disable-next-line react/display-name
+export const TextArea = React.forwardRef(({ content, onChange }: Props, ref) => {
   const [editorState, setEditorState] = React.useState(() => EditorState.createEmpty());
   const editorRef = React.useRef<any>(null);
 
@@ -31,9 +32,21 @@ export function TextArea({ content, onChange }: Props) {
     }
   }, [content]);
 
+  React.useImperativeHandle(ref, () => ({
+    clearEditor() {
+      const newEditorState = EditorState.push(
+        editorState,
+        ContentState.createFromText(''),
+        'remove-range'
+      );
+
+      setEditorState(newEditorState);
+    },
+  }));
+
   return (
     <div
-      className="h-36 cursor-text"
+      className="min-h-[5rem] cursor-text"
       onClick={() => {
         setTimeout(() => {
           if (editorRef && editorRef.current) {
@@ -58,4 +71,4 @@ export function TextArea({ content, onChange }: Props) {
       />
     </div>
   );
-}
+});

@@ -59,3 +59,13 @@ export interface Card {
   created_at: string;
   updated_at: string;
 }
+
+export interface Comment {
+  id: number;
+  text: string;
+  card_id: number;
+  user: UserProfile;
+  board_id: number;
+  created_at: string;
+  updated_at: string;
+}
