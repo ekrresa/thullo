@@ -8,30 +8,36 @@ interface BoardCardProps {
   id: number;
   title: string;
   listTitle: string;
+  boardId: number;
   index: number;
 }
 
-export function Card({ listTitle, id, title, index, image }: BoardCardProps) {
+export function Card({ listTitle, id, boardId, title, index, image }: BoardCardProps) {
   const { handleCardInfo } = useCardContext();
 
   return (
     <Draggable draggableId={String(id)} index={index}>
       {(provided, snapshot) => (
         <div
-          className={`p-4 bg-white rounded-lg shadow-card transition ${
+          className={`rounded-lg bg-white p-4 shadow-card transition ${
             snapshot.isDragging && 'bg-white/30'
           }`}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}
-          onClick={() => handleCardInfo({ id, listTitle })}
+          onClick={() => handleCardInfo({ id, listTitle, board_id: boardId })}
         >
-          {image && <div className="h-40 mb-3 rounded-lg bg-corn-blue"></div>}
+          {image && <div className="mb-3 h-40 rounded-lg bg-corn-blue"></div>}
 
-          <h3 className="text-base font-open-sans">{title}</h3>
+          <h3 className="font-open-sans text-base">{title}</h3>
 
-          <div className="flex items-center justify-between mt-4">
-            <button className="p-1 text-white rounded-lg bg-corn-blue">
+          <div className="mt-4 flex items-center justify-between">
+            <button
+              className="rounded-lg bg-corn-blue p-1 text-white"
+              onClick={e => {
+                e.stopPropagation();
+              }}
+            >
               <BiPlus className="text-2xl" />
             </button>
             <div className="">

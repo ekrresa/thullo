@@ -100,12 +100,12 @@ export function List({ boardId, listId, title, index }: BoardProps) {
         <div {...provided.draggableProps} ref={provided.innerRef} className="w-[19rem]">
           <header
             {...provided.dragHandleProps}
-            className="flex items-center justify-between mb-4"
+            className="mb-4 flex items-center justify-between"
           >
             {editing ? (
-              <form className="flex-1 mr-4" onSubmit={formik.handleSubmit}>
+              <form className="mr-4 flex-1" onSubmit={formik.handleSubmit}>
                 <input
-                  className="w-full pl-1 bg-inherit font-poppins"
+                  className="w-full bg-inherit pl-1 font-poppins"
                   ref={titleInputRef}
                   name="title"
                   value={formik.values.title}
@@ -126,7 +126,7 @@ export function List({ boardId, listId, title, index }: BoardProps) {
             <Menu as="div" className="relative">
               <Menu.Button>
                 <IoEllipsisHorizontalSharp
-                  className="text-base cursor-pointer"
+                  className="cursor-pointer text-base"
                   color="#828282"
                 />
               </Menu.Button>
@@ -140,11 +140,11 @@ export function List({ boardId, listId, title, index }: BoardProps) {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute left-0 z-10 overflow-hidden bg-white border rounded-lg shadow-lg border-ash">
+                <Menu.Items className="absolute left-0 z-10 overflow-hidden rounded-lg border border-ash bg-white shadow-lg">
                   <div className="text-xs text-gray3">
                     <Menu.Item>
                       <button
-                        className="block w-full px-2 py-2 text-left hover:bg-gray-100 whitespace-nowrap"
+                        className="block w-full whitespace-nowrap px-2 py-2 text-left hover:bg-gray-100"
                         onClick={() => {
                           setEditing(true);
                         }}
@@ -154,7 +154,7 @@ export function List({ boardId, listId, title, index }: BoardProps) {
                     </Menu.Item>
                     <Menu.Item>
                       <button
-                        className="block w-full px-2 py-2 text-left hover:bg-gray-100 whitespace-nowrap"
+                        className="block w-full whitespace-nowrap px-2 py-2 text-left hover:bg-gray-100"
                         onClick={handleListDelete}
                       >
                         Delete this list
@@ -175,7 +175,8 @@ export function List({ boardId, listId, title, index }: BoardProps) {
                   snapshot.isDraggingOver && 'bg-sky-100'
                 }`}
               >
-                {cards.data && <InnerList listTitle={title} list={cards.data} />}
+                <InnerList boardId={boardId} listTitle={title} list={cards.data} />
+
                 {/* {cards.data &&
                   cards.data.map((card, index) => (
                     <Card key={card.id} id={card.id} index={index} title={card.title} />
@@ -208,11 +209,14 @@ export function List({ boardId, listId, title, index }: BoardProps) {
 }
 
 interface InnerListProps<T> {
-  list: T[];
+  list: T[] | undefined;
   listTitle: string;
+  boardId: number;
 }
 
-function InnerList({ listTitle, list }: InnerListProps<CardType>) {
+function InnerList({ boardId, listTitle, list }: InnerListProps<CardType>) {
+  if (!list) return null;
+
   return (
     <>
       {list.map((card, index) => (
@@ -222,6 +226,7 @@ function InnerList({ listTitle, list }: InnerListProps<CardType>) {
           index={index}
           title={card.title}
           listTitle={listTitle}
+          boardId={boardId}
         />
       ))}
     </>
