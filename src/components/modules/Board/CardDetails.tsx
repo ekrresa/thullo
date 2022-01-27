@@ -5,6 +5,8 @@ import { MdStickyNote2 } from 'react-icons/md';
 import { useMutation, useQueryClient } from 'react-query';
 import { IoClose, IoPencil } from 'react-icons/io5';
 import { formatDistanceToNow } from 'date-fns';
+import { useFormik } from 'formik';
+import UseOnClickOutside from 'use-onclickoutside';
 
 import { Modal } from '../../common/Modal';
 import { useCardContext } from '@context/CardContext';
@@ -15,7 +17,7 @@ import { addComment, CommentInput, updateCard } from '@lib/api/board';
 import { useUserProfile } from '@hooks/user';
 import { Avatar } from '@components/common/Avatar';
 import { supabase } from '@lib/supabase';
-import { Comment } from '../../../types/database';
+import { Card, Comment } from '../../../types/database';
 import { CardCover } from './CardCover';
 import { getCloudinaryUrl } from '@lib/utils';
 
@@ -27,15 +29,66 @@ export function CardDetails() {
   const loggedInUser = useUserProfile();
   const cardComments = useFetchCardComments(cardInfo.id);
 
+  const titleInputRef = React.useRef<HTMLInputElement>(null);
   const [isEditing, setIsEditing] = React.useState(false);
   const [description, setDescription] = React.useState('');
   const [comment, setComment] = React.useState('');
   const [showCommentsInput, setShowCommentsInput] = React.useState(false);
+  const [changingTitle, setChangingTitle] = React.useState(false);
 
   const addCommentMutation = useMutation((data: CommentInput) => addComment(data));
-  const descriptionMutation = useMutation((data: { description: string }) =>
-    updateCard(data, cardInfo.id)
-  );
+  const descriptionMutation = useMutation((data: any) => updateCard(data, cardInfo.id));
+
+  const formik = useFormik({
+    initialValues: { title: cardData.data?.title },
+    onSubmit: values => {
+      descriptionMutation.mutate(
+        { title: values.title },
+        {
+          onSuccess: async data => {
+            queryClient.setQueryData<Card[]>(
+              boardsQueryKeys.boardListCards(cardInfo.list_id),
+              prevData => {
+                const cardList = prevData!.map(card => {
+                  if (card.id === data.id) {
+                    card.title = data.title;
+                  }
+                  return card;
+                });
+
+                return cardList as Card[];
+              }
+            );
+
+            queryClient.setQueryData<Card>(
+              boardsQueryKeys.card(cardInfo.id),
+              prevData => {
+                if (prevData) {
+                  prevData.title = data.title;
+                }
+                return prevData as Card;
+              }
+            );
+
+            setChangingTitle(false);
+          },
+        }
+      );
+    },
+    enableReinitialize: true,
+  });
+
+  UseOnClickOutside(titleInputRef, () => {
+    formik.handleSubmit();
+    setChangingTitle(false);
+  });
+
+  React.useEffect(() => {
+    if (changingTitle && titleInputRef.current) {
+      titleInputRef.current.focus();
+      titleInputRef.current.select();
+    }
+  }, [changingTitle]);
 
   React.useEffect(() => {
     (async () => {
@@ -124,7 +177,27 @@ export function CardDetails() {
           )}
           <div className="mt-8 flex space-x-8">
             <div className="flex-1">
-              <h2>{cardData.data?.title}</h2>
+              {changingTitle ? (
+                <form className="mr-4 flex-1" onSubmit={formik.handleSubmit}>
+                  <input
+                    className="w-full bg-inherit pl-1 font-poppins"
+                    ref={titleInputRef}
+                    name="title"
+                    value={formik.values.title}
+                    onChange={formik.handleChange}
+                  />
+                </form>
+              ) : (
+                <h2
+                  className="flex-1 pl-1"
+                  onClick={() => {
+                    setChangingTitle(true);
+                  }}
+                >
+                  {cardData.data?.title}
+                </h2>
+              )}
+              {/* <h2>{cardData.data?.title}</h2> */}
               <p className="mt-2 space-x-2">
                 <span className="text-xs text-gray4">in list</span>
                 <span className="text-sm font-medium text-pencil">
