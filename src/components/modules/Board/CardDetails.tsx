@@ -247,6 +247,7 @@ export function CardDetails() {
                   ))}
               </div>
             </div>
+
             <aside className="max-w-[10rem] flex-1 flex-shrink-0">
               <h2 className="flex items-center text-sm text-light-pencil">
                 <FaUserCircle />
@@ -254,12 +255,6 @@ export function CardDetails() {
               </h2>
 
               <div className="mt-4 space-y-3">
-                <button className="block w-full rounded-lg bg-off-white px-4 py-2 text-xs text-gray3">
-                  Members
-                </button>
-                <button className="block w-full rounded-lg bg-off-white px-4 py-2 text-xs text-gray3">
-                  Labels
-                </button>
                 <button className="block w-full rounded-lg bg-off-white px-4 py-2 text-xs text-gray3">
                   Cover
                 </button>
