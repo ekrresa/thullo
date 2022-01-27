@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Image from 'next/image';
 import { FaUserCircle } from 'react-icons/fa';
 import { MdStickyNote2 } from 'react-icons/md';
 import { useMutation, useQueryClient } from 'react-query';
@@ -15,6 +16,8 @@ import { useUserProfile } from '@hooks/user';
 import { Avatar } from '@components/common/Avatar';
 import { supabase } from '@lib/supabase';
 import { Comment } from '../../../types/database';
+import { CardCover } from './CardCover';
+import { getCloudinaryUrl } from '@lib/utils';
 
 export function CardDetails() {
   const queryClient = useQueryClient();
@@ -107,7 +110,18 @@ export function CardDetails() {
         <p className="text-center text-sm">Loading...</p>
       ) : (
         <>
-          <div className="h-40 rounded bg-corn-blue"></div>
+          {cardData.data?.image_id && (
+            <div className="relative h-40 overflow-hidden rounded-sm">
+              <Image
+                src={getCloudinaryUrl(
+                  cardData.data?.image_id,
+                  cardData.data?.image_version
+                )}
+                layout="fill"
+                alt=""
+              />
+            </div>
+          )}
           <div className="mt-8 flex space-x-8">
             <div className="flex-1">
               <h2>{cardData.data?.title}</h2>
@@ -255,9 +269,7 @@ export function CardDetails() {
               </h2>
 
               <div className="mt-4 space-y-3">
-                <button className="block w-full rounded-lg bg-off-white px-4 py-2 text-xs text-gray3">
-                  Cover
-                </button>
+                <CardCover cardId={cardInfo.id} />
               </div>
             </aside>
           </div>
