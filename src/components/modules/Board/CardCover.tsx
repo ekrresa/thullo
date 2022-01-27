@@ -9,12 +9,14 @@ import { CardCoverInput, updateCardCover } from '@lib/api/board';
 import { usePexelsPhotos } from '@hooks/photos';
 import { boardsQueryKeys } from '@hooks/board';
 import { Card } from '../../../types/database';
+import { useCardContext } from '@context/CardContext';
 
 interface CardLabelProps {
   cardId: number;
 }
 
 export function CardCover({ cardId }: CardLabelProps) {
+  const { cardInfo } = useCardContext();
   const queryClient = useQueryClient();
   const [imageInfo, setImageInfo] = React.useState({ url: '', id: '' });
   const [page, setPage] = React.useState(1);
@@ -25,7 +27,7 @@ export function CardCover({ cardId }: CardLabelProps) {
   );
 
   if (photos.isLoading) {
-    return <p className="text-center">Loading...</p>;
+    return <p className="text-center text-sm">Loading...</p>;
   }
 
   if (photos.data?.error) {
@@ -54,6 +56,21 @@ export function CardCover({ cardId }: CardLabelProps) {
             }
             return oldData as Card;
           });
+
+          queryClient.setQueryData<Card[]>(
+            boardsQueryKeys.boardListCards(cardInfo.list_id),
+            prevData => {
+              const cardList = prevData!.map(card => {
+                if (card.id === data.id) {
+                  card.image_id = data.image_id;
+                  card.image_version = data.image_version;
+                }
+                return card;
+              });
+
+              return cardList as Card[];
+            }
+          );
         },
       }
     );
@@ -61,10 +78,7 @@ export function CardCover({ cardId }: CardLabelProps) {
 
   return (
     <Menu as="div" className="relative">
-      <Menu.Button
-        as={Button}
-        className="block w-full justify-center rounded-lg bg-off-white px-4 py-2 text-xs text-gray3"
-      >
+      <Menu.Button className="block w-full justify-center rounded-lg bg-off-white px-4 py-2 text-xs text-gray3">
         Cover
       </Menu.Button>
       <Transition

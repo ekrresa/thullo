@@ -81,7 +81,6 @@ export function List({ boardId, listId, title, index }: BoardProps) {
     deleteListMutation.mutate(
       { listId },
       {
-        onError: error => console.error(error),
         onSuccess: () => {
           toast.success('List deleted!');
           const lists = queryClient
@@ -222,9 +221,8 @@ function InnerList({ boardId, listTitle, list }: InnerListProps<CardType>) {
       {list.map((card, index) => (
         <Card
           key={card.id}
-          id={card.id}
+          cardInfo={card}
           index={index}
-          title={card.title}
           listTitle={listTitle}
           boardId={boardId}
         />
