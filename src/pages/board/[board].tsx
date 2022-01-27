@@ -123,7 +123,6 @@ export default function Board() {
 
     // moving cards between lists
     if (destination.droppableId !== source.droppableId && type === 'CARD') {
-      console.log(result);
       const sourceList = queryClient.getQueryData<Card[]>(
         boardsQueryKeys.boardListCards(Number(source.droppableId))
       );
@@ -176,7 +175,7 @@ export default function Board() {
           position: card.position,
         }));
 
-        updateCardListMutation.mutateAsync(
+        updateCardListMutation.mutate(
           {
             input: { list_id: destination.droppableId },
             cardId: Number(draggableId),
@@ -255,17 +254,17 @@ export default function Board() {
   };
 
   if (board.isLoading) {
-    return <div className="text-center mt-9">Loading...</div>;
+    return <div className="mt-9 text-center">Loading...</div>;
   }
 
   if (board.isError) {
-    return <div className="text-center mt-9">An error occurred...</div>;
+    return <div className="mt-9 text-center">An error occurred...</div>;
   }
 
   return (
     <>
       {board.data && (
-        <section className="container relative overflow-hidden mt-9 h-[95%]">
+        <section className="container relative mt-9 h-[95%] overflow-hidden">
           <CardDetails />
 
           <div className="flex justify-between">
@@ -275,8 +274,8 @@ export default function Board() {
                 visibility={board.data.visibility}
               />
 
-              <div className="flex items-center ml-4 mr-4 space-x-4">
-                <div className="relative overflow-hidden w-9 h-9 rounded-xl bg-corn-blue">
+              <div className="ml-4 mr-4 flex items-center space-x-4">
+                <div className="relative h-9 w-9 overflow-hidden rounded-xl bg-corn-blue">
                   <Avatar
                     imageId={board.data?.owner.image_id}
                     imageVersion={board.data?.owner.image_version}
@@ -288,7 +287,7 @@ export default function Board() {
                   boardMembers.data.map(user => (
                     <div
                       key={user.id}
-                      className="relative overflow-hidden w-9 h-9 rounded-xl bg-corn-blue"
+                      className="relative h-9 w-9 overflow-hidden rounded-xl bg-corn-blue"
                     >
                       <Avatar
                         imageId={user.image_id}
@@ -310,13 +309,13 @@ export default function Board() {
           </div>
 
           <DragDropContext onDragEnd={handleDragEnd}>
-            <section className="flex items-start p-4 mt-6 space-x-12 h-[93%] overflow-x-auto bg-off-white2 rounded-xl">
+            <section className="mt-6 flex h-[93%] items-start space-x-12 overflow-x-auto rounded-xl bg-off-white2 p-4">
               <Droppable droppableId="lists" type="LIST" direction="horizontal">
                 {provided => (
                   <div
                     {...provided.droppableProps}
                     ref={provided.innerRef}
-                    className="flex items-start h-full p-4 space-x-12"
+                    className="flex h-full items-start space-x-12 p-4"
                   >
                     {lists.data && <InnerList list={lists.data} />}
 

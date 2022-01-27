@@ -1,22 +1,23 @@
+import Image from 'next/image';
 import { Draggable } from 'react-beautiful-dnd';
 import { BiPlus } from 'react-icons/bi';
 import { IoAttachSharp } from 'react-icons/io5';
 import { useCardContext } from '@context/CardContext';
+import { Card as CardType } from 'types/database';
+import { getCloudinaryUrl } from '@lib/utils';
 
-interface BoardCardProps {
-  image?: boolean;
-  id: number;
-  title: string;
+interface CardProps {
+  cardInfo: CardType;
   listTitle: string;
   boardId: number;
   index: number;
 }
 
-export function Card({ listTitle, id, boardId, title, index, image }: BoardCardProps) {
-  const { handleCardInfo } = useCardContext();
+export function Card({ boardId, cardInfo, listTitle, index }: CardProps) {
+  const { handleCardInfo, handleCardModal } = useCardContext();
 
   return (
-    <Draggable draggableId={String(id)} index={index}>
+    <Draggable draggableId={String(cardInfo.id)} index={index}>
       {(provided, snapshot) => (
         <div
           className={`rounded-lg bg-white p-4 shadow-card transition ${
@@ -25,11 +26,27 @@ export function Card({ listTitle, id, boardId, title, index, image }: BoardCardP
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}
-          onClick={() => handleCardInfo({ id, listTitle, board_id: boardId })}
+          onClick={() => {
+            handleCardInfo({
+              id: cardInfo.id,
+              listTitle,
+              list_id: cardInfo.list_id,
+              board_id: boardId,
+            });
+            handleCardModal();
+          }}
         >
-          {image && <div className="mb-3 h-40 rounded-lg bg-corn-blue"></div>}
+          {cardInfo.image_id && cardInfo.image_version && (
+            <div className="relative mb-3 h-40 overflow-hidden rounded-lg">
+              <Image
+                src={getCloudinaryUrl(cardInfo.image_id, cardInfo.image_version)}
+                layout="fill"
+                alt=""
+              />
+            </div>
+          )}
 
-          <h3 className="font-open-sans text-base">{title}</h3>
+          <h3 className="font-open-sans text-base">{cardInfo.title}</h3>
 
           <div className="mt-4 flex items-center justify-between">
             <button

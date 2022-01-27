@@ -1,9 +1,12 @@
 import * as React from 'react';
+import Image from 'next/image';
 import { FaUserCircle } from 'react-icons/fa';
 import { MdStickyNote2 } from 'react-icons/md';
 import { useMutation, useQueryClient } from 'react-query';
 import { IoClose, IoPencil } from 'react-icons/io5';
 import { formatDistanceToNow } from 'date-fns';
+import { useFormik } from 'formik';
+import UseOnClickOutside from 'use-onclickoutside';
 
 import { Modal } from '../../common/Modal';
 import { useCardContext } from '@context/CardContext';
@@ -14,7 +17,9 @@ import { addComment, CommentInput, updateCard } from '@lib/api/board';
 import { useUserProfile } from '@hooks/user';
 import { Avatar } from '@components/common/Avatar';
 import { supabase } from '@lib/supabase';
-import { Comment } from '../../../types/database';
+import { Card, Comment } from '../../../types/database';
+import { CardCover } from './CardCover';
+import { getCloudinaryUrl } from '@lib/utils';
 
 export function CardDetails() {
   const queryClient = useQueryClient();
@@ -24,15 +29,66 @@ export function CardDetails() {
   const loggedInUser = useUserProfile();
   const cardComments = useFetchCardComments(cardInfo.id);
 
+  const titleInputRef = React.useRef<HTMLInputElement>(null);
   const [isEditing, setIsEditing] = React.useState(false);
   const [description, setDescription] = React.useState('');
   const [comment, setComment] = React.useState('');
   const [showCommentsInput, setShowCommentsInput] = React.useState(false);
+  const [changingTitle, setChangingTitle] = React.useState(false);
 
   const addCommentMutation = useMutation((data: CommentInput) => addComment(data));
-  const descriptionMutation = useMutation((data: { description: string }) =>
-    updateCard(data, cardInfo.id)
-  );
+  const descriptionMutation = useMutation((data: any) => updateCard(data, cardInfo.id));
+
+  const formik = useFormik({
+    initialValues: { title: cardData.data?.title },
+    onSubmit: values => {
+      descriptionMutation.mutate(
+        { title: values.title },
+        {
+          onSuccess: async data => {
+            queryClient.setQueryData<Card[]>(
+              boardsQueryKeys.boardListCards(cardInfo.list_id),
+              prevData => {
+                const cardList = prevData!.map(card => {
+                  if (card.id === data.id) {
+                    card.title = data.title;
+                  }
+                  return card;
+                });
+
+                return cardList as Card[];
+              }
+            );
+
+            queryClient.setQueryData<Card>(
+              boardsQueryKeys.card(cardInfo.id),
+              prevData => {
+                if (prevData) {
+                  prevData.title = data.title;
+                }
+                return prevData as Card;
+              }
+            );
+
+            setChangingTitle(false);
+          },
+        }
+      );
+    },
+    enableReinitialize: true,
+  });
+
+  UseOnClickOutside(titleInputRef, () => {
+    formik.handleSubmit();
+    setChangingTitle(false);
+  });
+
+  React.useEffect(() => {
+    if (changingTitle && titleInputRef.current) {
+      titleInputRef.current.focus();
+      titleInputRef.current.select();
+    }
+  }, [changingTitle]);
 
   React.useEffect(() => {
     (async () => {
@@ -107,10 +163,41 @@ export function CardDetails() {
         <p className="text-center text-sm">Loading...</p>
       ) : (
         <>
-          <div className="h-40 rounded bg-corn-blue"></div>
+          {cardData.data?.image_id && (
+            <div className="relative h-40 overflow-hidden rounded-sm">
+              <Image
+                src={getCloudinaryUrl(
+                  cardData.data?.image_id,
+                  cardData.data?.image_version
+                )}
+                layout="fill"
+                alt=""
+              />
+            </div>
+          )}
           <div className="mt-8 flex space-x-8">
             <div className="flex-1">
-              <h2>{cardData.data?.title}</h2>
+              {changingTitle ? (
+                <form className="mr-4 flex-1" onSubmit={formik.handleSubmit}>
+                  <input
+                    className="w-full bg-inherit pl-1 font-poppins"
+                    ref={titleInputRef}
+                    name="title"
+                    value={formik.values.title}
+                    onChange={formik.handleChange}
+                  />
+                </form>
+              ) : (
+                <h2
+                  className="flex-1 pl-1"
+                  onClick={() => {
+                    setChangingTitle(true);
+                  }}
+                >
+                  {cardData.data?.title}
+                </h2>
+              )}
+              {/* <h2>{cardData.data?.title}</h2> */}
               <p className="mt-2 space-x-2">
                 <span className="text-xs text-gray4">in list</span>
                 <span className="text-sm font-medium text-pencil">
@@ -247,6 +334,7 @@ export function CardDetails() {
                   ))}
               </div>
             </div>
+
             <aside className="max-w-[10rem] flex-1 flex-shrink-0">
               <h2 className="flex items-center text-sm text-light-pencil">
                 <FaUserCircle />
@@ -254,15 +342,7 @@ export function CardDetails() {
               </h2>
 
               <div className="mt-4 space-y-3">
-                <button className="block w-full rounded-lg bg-off-white px-4 py-2 text-xs text-gray3">
-                  Members
-                </button>
-                <button className="block w-full rounded-lg bg-off-white px-4 py-2 text-xs text-gray3">
-                  Labels
-                </button>
-                <button className="block w-full rounded-lg bg-off-white px-4 py-2 text-xs text-gray3">
-                  Cover
-                </button>
+                <CardCover cardId={cardInfo.id} />
               </div>
             </aside>
           </div>

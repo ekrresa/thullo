@@ -14,7 +14,6 @@ export default async function UploadUrlHandler(
 
     res.status(200).send(result);
   } catch (error) {
-    console.log(error);
     res.status(400).send({ message: 'An error occurred.' });
   }
 }

@@ -32,6 +32,8 @@ export interface CardInput {
   created_by: string;
   position: number;
   description?: string;
+  image_id?: string;
+  image_version?: string;
 }
 
 export async function createBoard(input: BoardInput, userId: string) {
@@ -52,7 +54,7 @@ export async function createBoard(input: BoardInput, userId: string) {
     const boardTitle = input.title.toLowerCase().split(' ').join('_');
     const result = await axiosClient.post<UploadApiResponse>('/api/images/upload-url', {
       url: input.image,
-      public_id: `${boardTitle}`,
+      public_id: boardTitle,
     });
 
     imageId = result.data.public_id;
@@ -164,7 +166,8 @@ export async function updateCard(input: Partial<CardInput>, cardId: number) {
   const result = await supabase
     .from<Card>('cards')
     .update({ ...input })
-    .match({ id: cardId });
+    .match({ id: cardId })
+    .single();
 
   if (result.status === 401) await supabase.auth.signOut();
   if (result.error) throw result.error;
@@ -189,4 +192,25 @@ export async function addComment(input: CommentInput) {
   if (result.error) throw result.error;
 
   return result.data;
+}
+
+export interface CardCoverInput {
+  photoUrl: string;
+  photoId: string;
+  cardId: number;
+}
+
+export async function updateCardCover({ cardId, photoId, photoUrl }: CardCoverInput) {
+  const result = await axiosClient.post<UploadApiResponse>('/api/images/upload-url', {
+    url: photoUrl,
+    public_id: photoId,
+  });
+
+  return await updateCard(
+    {
+      image_id: result.data.public_id,
+      image_version: 'v' + result.data.version,
+    },
+    cardId
+  );
 }
