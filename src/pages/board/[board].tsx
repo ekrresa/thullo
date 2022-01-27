@@ -123,7 +123,6 @@ export default function Board() {
 
     // moving cards between lists
     if (destination.droppableId !== source.droppableId && type === 'CARD') {
-      console.log(result);
       const sourceList = queryClient.getQueryData<Card[]>(
         boardsQueryKeys.boardListCards(Number(source.droppableId))
       );
