@@ -21,6 +21,7 @@ import { boardsQueryKeys } from '@hooks/board';
 import { IsOwner } from '@components/common/IsOwner';
 import { useUserProfile } from '@hooks/user';
 import { TextArea } from '@components/common/TextArea';
+import { useIsBoardMember } from '@hooks/useIsBoardMember';
 
 interface SideMenuProps {
   board: Board;
@@ -31,6 +32,10 @@ export function SideMenu({ board, members }: SideMenuProps) {
   const sideMenuRef = React.useRef(null);
   const loggedInUser = useUserProfile();
   const queryClient = useQueryClient();
+  const isBoardMember = useIsBoardMember(
+    board.owner.id,
+    members.map(member => member.id)
+  );
   const [openSideMenu, toggleSideMenu] = React.useState(false);
   const [isEditing, setIsEditing] = React.useState(false);
   const [description, setDescription] = React.useState('');
@@ -142,27 +147,29 @@ export function SideMenu({ board, members }: SideMenuProps) {
           <MdStickyNote2 className="text-xl" />
           <p className="ml-2 text-sm text-gray-400">Description</p>
 
-          <button
-            className="ml-auto flex items-center rounded-xl border border-gray-400 px-2 py-1"
-            onClick={() => setIsEditing(!isEditing)}
-          >
-            {isEditing ? (
-              <>
-                <IoClose />
-                <span className="ml-2 text-xs text-gray-400">Cancel</span>
-              </>
-            ) : board.description ? (
-              <>
-                <IoPencil />
-                <span className="ml-2 text-xs text-gray-400">Edit</span>
-              </>
-            ) : (
-              <>
-                <IoPencil />
-                <span className="ml-2 text-xs text-gray-400">Add</span>
-              </>
-            )}
-          </button>
+          {isBoardMember && (
+            <button
+              className="ml-auto flex items-center rounded-xl border border-gray-400 px-2 py-1"
+              onClick={() => setIsEditing(!isEditing)}
+            >
+              {isEditing ? (
+                <>
+                  <IoClose />
+                  <span className="ml-2 text-xs text-gray-400">Cancel</span>
+                </>
+              ) : board.description ? (
+                <>
+                  <IoPencil />
+                  <span className="ml-2 text-xs text-gray-400">Edit</span>
+                </>
+              ) : (
+                <>
+                  <IoPencil />
+                  <span className="ml-2 text-xs text-gray-400">Add</span>
+                </>
+              )}
+            </button>
+          )}
         </div>
 
         <div className="mt-6">

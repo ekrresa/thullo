@@ -13,18 +13,23 @@ import { createCard, deleteList, renameList } from '@lib/api/board';
 import { useUserProfile } from '@hooks/user';
 import { Card } from './Card';
 import { Card as CardType, List } from 'types/database';
+import { useIsBoardMember } from '@hooks/useIsBoardMember';
 
 interface BoardProps extends React.PropsWithChildren<unknown> {
   title: string;
+  boardOwner: string;
   boardId: number;
   listId: number;
   index: number;
+  members: string[];
 }
 
-export function List({ boardId, listId, title, index }: BoardProps) {
+export function List({ boardId, boardOwner, listId, title, index, members }: BoardProps) {
   const user = useUserProfile();
   const cards = useFetchListCards(listId);
   const queryClient = useQueryClient();
+  const interactWithList = useIsBoardMember(boardOwner, members);
+
   const [editing, setEditing] = React.useState(false);
   const titleInputRef = React.useRef<HTMLInputElement>(null);
   const deleteListMutation = useMutation(({ listId }: { listId: number }) =>
@@ -94,7 +99,11 @@ export function List({ boardId, listId, title, index }: BoardProps) {
   };
 
   return (
-    <Draggable draggableId={String(listId)} index={index}>
+    <Draggable
+      draggableId={String(listId)}
+      index={index}
+      isDragDisabled={!interactWithList}
+    >
       {provided => (
         <div {...provided.draggableProps} ref={provided.innerRef} className="w-[19rem]">
           <header
@@ -115,7 +124,9 @@ export function List({ boardId, listId, title, index }: BoardProps) {
               <h2
                 className="flex-1 pl-1"
                 onClick={() => {
-                  setEditing(true);
+                  if (interactWithList) {
+                    setEditing(true);
+                  }
                 }}
               >
                 {title}
@@ -141,9 +152,11 @@ export function List({ boardId, listId, title, index }: BoardProps) {
               >
                 <Menu.Items className="absolute left-0 z-10 overflow-hidden rounded-lg border border-ash bg-white shadow-lg">
                   <div className="text-xs text-gray3">
-                    <Menu.Item>
+                    <Menu.Item disabled={!interactWithList}>
                       <button
-                        className="block w-full whitespace-nowrap px-2 py-2 text-left hover:bg-gray-100"
+                        className={`block w-full whitespace-nowrap px-2 py-2 text-left hover:bg-gray-100 ${
+                          !interactWithList && 'cursor-not-allowed opacity-60'
+                        }`}
                         onClick={() => {
                           setEditing(true);
                         }}
@@ -151,9 +164,11 @@ export function List({ boardId, listId, title, index }: BoardProps) {
                         Rename
                       </button>
                     </Menu.Item>
-                    <Menu.Item>
+                    <Menu.Item disabled={!interactWithList}>
                       <button
-                        className="block w-full whitespace-nowrap px-2 py-2 text-left hover:bg-gray-100"
+                        className={`block w-full whitespace-nowrap px-2 py-2 text-left hover:bg-gray-100 ${
+                          !interactWithList && 'cursor-not-allowed opacity-60'
+                        }`}
                         onClick={handleListDelete}
                       >
                         Delete this list
@@ -165,7 +180,11 @@ export function List({ boardId, listId, title, index }: BoardProps) {
             </Menu>
           </header>
 
-          <Droppable droppableId={String(listId)} type="CARD">
+          <Droppable
+            droppableId={String(listId)}
+            type="CARD"
+            isDropDisabled={!interactWithList}
+          >
             {(provided, snapshot) => (
               <div
                 {...provided.droppableProps}
@@ -174,7 +193,13 @@ export function List({ boardId, listId, title, index }: BoardProps) {
                   snapshot.isDraggingOver && 'bg-sky-100'
                 }`}
               >
-                <InnerList boardId={boardId} listTitle={title} list={cards.data} />
+                <InnerList
+                  boardId={boardId}
+                  listTitle={title}
+                  list={cards.data}
+                  boardOwner={boardOwner}
+                  members={members}
+                />
 
                 {/* {cards.data &&
                   cards.data.map((card, index) => (
@@ -190,6 +215,7 @@ export function List({ boardId, listId, title, index }: BoardProps) {
               <AddNewItem
                 text="Add new task"
                 submitAction={addNewCard}
+                isDisabled={!interactWithList}
                 onSuccessCallback={data => {
                   queryClient.setQueryData(
                     boardsQueryKeys.boardListCards(listId),
@@ -211,9 +237,17 @@ interface InnerListProps<T> {
   list: T[] | undefined;
   listTitle: string;
   boardId: number;
+  boardOwner: string;
+  members: string[];
 }
 
-function InnerList({ boardId, listTitle, list }: InnerListProps<CardType>) {
+function InnerList({
+  boardId,
+  boardOwner,
+  listTitle,
+  list,
+  members,
+}: InnerListProps<CardType>) {
   if (!list) return null;
 
   return (
@@ -225,6 +259,8 @@ function InnerList({ boardId, listTitle, list }: InnerListProps<CardType>) {
           index={index}
           listTitle={listTitle}
           boardId={boardId}
+          boardOwner={boardOwner}
+          members={members}
         />
       ))}
     </>

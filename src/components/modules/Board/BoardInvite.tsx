@@ -10,7 +10,6 @@ import { updateBoard } from '@lib/api/board';
 import { Button } from '@components/common/Button';
 import { Board, UserProfile } from 'types/database';
 import { boardsQueryKeys } from '@hooks/board';
-import { IsOwner } from '@components/common/IsOwner';
 
 interface BoardInviteProps {
   board: Board;
@@ -71,7 +70,7 @@ export function BoardInvite({ board, members }: BoardInviteProps) {
 
   return (
     <Menu as="div" className="relative">
-      <Menu.Button className="grid w-9 h-9 rounded-xl place-items-center bg-corn-blue">
+      <Menu.Button className="grid h-9 w-9 place-items-center rounded-xl bg-corn-blue">
         <BiPlus className="text-2xl" color="#fff" />
       </Menu.Button>
 
@@ -84,10 +83,10 @@ export function BoardInvite({ board, members }: BoardInviteProps) {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute left-0 z-20 px-3 py-2 mt-2 origin-top-right bg-white border shadow-lg rounded-xl border-ash ">
+        <Menu.Items className="absolute left-0 z-20 mt-2 origin-top-right rounded-xl border border-ash bg-white px-3 py-2 shadow-lg ">
           <div className="mb-8">
             <h3 className="text-base text-gray4">Invite to Board</h3>
-            <p className="text-sm font-light text-gray3 whitespace-nowrap">
+            <p className="whitespace-nowrap text-sm font-light text-gray3">
               Search users you want to invite to
             </p>
           </div>
@@ -106,16 +105,19 @@ export function BoardInvite({ board, members }: BoardInviteProps) {
           </form> */}
 
           {allUsers.isSuccess && (
-            <div className="mb-6 overflow-y-auto text-[0.85rem] border rounded-lg drop-shadow h-36 border-ash">
+            <div className="mb-6 h-36 overflow-y-auto rounded-lg border border-ash text-[0.85rem] drop-shadow">
               {nonMembers.map(user => (
-                <div key={user.id} className="flex px-4 capitalize hover:bg-gray-100">
+                <div
+                  key={user.id}
+                  className="flex items-center px-4 capitalize hover:bg-gray-100"
+                >
                   <input
                     id={user.id}
                     type="checkbox"
                     className="mr-4 accent-corn-blue default:ring-2"
                     onChange={e => handleChecked(e.currentTarget.checked, user.id)}
                   />
-                  <label className="flex-1 py-[0.65rem] cursor-pointer" htmlFor={user.id}>
+                  <label className="flex-1 cursor-pointer py-[0.65rem]" htmlFor={user.id}>
                     {user.name}
                   </label>
                 </div>
@@ -124,7 +126,7 @@ export function BoardInvite({ board, members }: BoardInviteProps) {
           )}
 
           <Button
-            className="block px-6 py-2 m-auto text-sm text-white rounded-lg bg-corn-blue"
+            className="m-auto block rounded-lg bg-corn-blue px-6 py-2 text-sm text-white"
             onClick={handleInvite}
             disabled={inviteUserMutation.isLoading}
             loading={inviteUserMutation.isLoading}

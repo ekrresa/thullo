@@ -29,6 +29,7 @@ import { useUserProfile } from '@hooks/user';
 import { Card, List as ListType } from 'types/database';
 import { Avatar } from '@components/common/Avatar';
 import { IsOwner } from '@components/common/IsOwner';
+import { useIsBoardMember } from '@hooks/useIsBoardMember';
 
 export default function Board() {
   const router = useRouter();
@@ -37,7 +38,12 @@ export default function Board() {
   const lists = useFetchBoardLists(Number(router.query.board));
   const boardMembers = useFetchBoardMembers(
     Number(router.query.board),
-    board.data?.members
+    board.data?.members ?? []
+  );
+
+  const interactWithBoard = useIsBoardMember(
+    board.data?.owner.id ?? '',
+    board.data?.members ?? []
   );
 
   const queryClient = useQueryClient();
@@ -265,12 +271,14 @@ export default function Board() {
     <>
       {board.data && (
         <section className="container relative mt-9 h-[95%] overflow-hidden">
-          <CardDetails />
+          <CardDetails boardOwner={board.data.owner.id} members={board.data.members} />
 
           <div className="flex justify-between">
             <div className="flex items-center">
               <VisibilitySwitch
                 boardId={board.data.id}
+                boardOwner={board.data.owner.id}
+                members={board.data.members}
                 visibility={board.data.visibility}
               />
 
@@ -310,14 +318,25 @@ export default function Board() {
 
           <DragDropContext onDragEnd={handleDragEnd}>
             <section className="mt-6 flex h-[93%] items-start space-x-12 overflow-x-auto rounded-xl bg-off-white2 p-4">
-              <Droppable droppableId="lists" type="LIST" direction="horizontal">
+              <Droppable
+                droppableId="lists"
+                type="LIST"
+                direction="horizontal"
+                isDropDisabled={!interactWithBoard}
+              >
                 {provided => (
                   <div
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                     className="flex h-full items-start space-x-12 p-4"
                   >
-                    {lists.data && <InnerList list={lists.data} />}
+                    {lists.data && (
+                      <InnerList
+                        list={lists.data}
+                        boardOwner={board.data.owner.id}
+                        members={board.data.members}
+                      />
+                    )}
 
                     {provided.placeholder}
                   </div>
@@ -329,6 +348,7 @@ export default function Board() {
                   <AddNewItem
                     text="Add new list"
                     submitAction={addNewList}
+                    isDisabled={!interactWithBoard}
                     onSuccessCallback={data => {
                       queryClient.setQueryData(
                         boardsQueryKeys.boardLists(board.data.id),
@@ -357,9 +377,11 @@ Board.protected = true;
 
 interface InnerListProps<T> {
   list: T[];
+  members: string[];
+  boardOwner: string;
 }
 
-function InnerList({ list }: InnerListProps<ListType>) {
+function InnerList({ boardOwner, list, members }: InnerListProps<ListType>) {
   return (
     <>
       {list.map((list, index) => (
@@ -368,6 +390,8 @@ function InnerList({ list }: InnerListProps<ListType>) {
           index={index}
           title={list.title}
           boardId={list.board_id}
+          boardOwner={boardOwner}
+          members={members}
           listId={list.id}
         />
       ))}
