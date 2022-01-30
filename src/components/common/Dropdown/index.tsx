@@ -22,7 +22,7 @@ export function Dropdown({ className, header, list, panel }: DropdownProps) {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute left-0 z-20 w-full mt-2 overflow-hidden origin-top-right bg-white border shadow-lg rounded-xl border-ash">
+        <Menu.Items className="absolute right-0 z-20 mt-2 w-36  origin-top-right overflow-hidden rounded-xl border border-ash bg-white shadow-lg sm:left-0 sm:w-full">
           {header}
           {list.map((item, index) => (
             <Menu.Item key={index}>{item}</Menu.Item>

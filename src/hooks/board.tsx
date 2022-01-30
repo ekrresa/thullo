@@ -59,7 +59,7 @@ export function useFetchSingleBoard(boardId: number) {
   );
 }
 
-export function useFetchBoardMembers(boardId: number, members: string[] = []) {
+export function useFetchBoardMembers(boardId: number, members: string[]) {
   return useQuery(
     boardsQueryKeys.boardMembers(boardId, members.length),
     async () => {
@@ -78,7 +78,7 @@ export function useFetchBoardMembers(boardId: number, members: string[] = []) {
 
       return await Promise.all(boardMembersP);
     },
-    { enabled: Boolean(members?.length), staleTime: ONE_HOUR_IN_MILLISECONDS }
+    { enabled: Boolean(members && members?.length), staleTime: ONE_HOUR_IN_MILLISECONDS }
   );
 }
 

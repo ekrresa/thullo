@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import {
   IoClose,
   IoEllipsisHorizontalSharp,
+  IoMenu,
   IoPencil,
   IoPersonCircle,
 } from 'react-icons/io5';
@@ -95,22 +96,23 @@ export function SideMenu({ board, members }: SideMenuProps) {
   return (
     <>
       <button
-        className="flex items-center px-3 py-2 text-sm rounded-lg bg-off-white text-gray3"
+        className="flex items-center rounded-lg bg-off-white px-3 py-2 text-sm text-gray3"
         onClick={() => toggleSideMenu(true)}
       >
-        <IoEllipsisHorizontalSharp className="mr-2" />
-        Show Menu
+        <IoEllipsisHorizontalSharp className="mr-2 hidden sm:inline" />
+        <span className="hidden sm:inline">Show Menu</span>
+        <IoMenu className="text-lg sm:hidden" />
       </button>
       <div
-        className={`absolute right-0 top-0 bg-white w-full max-w-md h-full p-6 shadow-lg transition duration-500 ease-in-out overflow-y-auto z-50 ${
-          openSideMenu ? 'opacity-100 translate-x-0' : ' opacity-0 translate-x-full'
+        className={`absolute right-0 top-0 z-50 h-full w-full max-w-md overflow-y-auto bg-white p-6 shadow-lg transition duration-500 ease-in-out ${
+          openSideMenu ? 'translate-x-0 opacity-100' : ' translate-x-full opacity-0'
         }`}
         ref={sideMenuRef}
       >
-        <div className="flex items-center justify-between pb-2 border-b border-ash">
+        <div className="flex items-center justify-between border-b border-ash pb-2">
           <h4 className="text-pencil">{board.title}</h4>
 
-          <button className="p-1 border-0" onClick={() => toggleSideMenu(false)}>
+          <button className="border-0 p-1" onClick={() => toggleSideMenu(false)}>
             <IoClose className="text-xl" color="#4F4F4F" />
           </button>
         </div>
@@ -120,8 +122,8 @@ export function SideMenu({ board, members }: SideMenuProps) {
           <span className="ml-2 text-xs text-gray-400">Opened by</span>
         </div>
 
-        <div className="flex mt-3">
-          <div className="relative w-10 h-10 overflow-hidden rounded-xl">
+        <div className="mt-3 flex">
+          <div className="relative h-10 w-10 overflow-hidden rounded-xl">
             <Avatar
               imageId={board.owner.image_id}
               imageVersion={board.owner.image_version}
@@ -136,12 +138,12 @@ export function SideMenu({ board, members }: SideMenuProps) {
           </div>
         </div>
 
-        <div className="flex items-center mt-6 text-light-pencil">
+        <div className="mt-6 flex items-center text-light-pencil">
           <MdStickyNote2 className="text-xl" />
           <p className="ml-2 text-sm text-gray-400">Description</p>
 
           <button
-            className="flex items-center px-2 py-1 ml-auto border border-gray-400 rounded-xl"
+            className="ml-auto flex items-center rounded-xl border border-gray-400 px-2 py-1"
             onClick={() => setIsEditing(!isEditing)}
           >
             {isEditing ? (
@@ -166,14 +168,14 @@ export function SideMenu({ board, members }: SideMenuProps) {
         <div className="mt-6">
           {isEditing ? (
             <>
-              <div className="p-4 text-sm border rounded-lg">
+              <div className="rounded-lg border p-4 text-sm">
                 <TextArea
                   content={board.description}
                   onChange={val => setDescription(val)}
                 />
               </div>
               <Button
-                className="items-stretch justify-center w-full px-4 py-3 mt-2 text-sm text-white rounded-lg bg-corn-blue"
+                className="mt-2 w-full items-stretch justify-center rounded-lg bg-corn-blue px-4 py-3 text-sm text-white"
                 onClick={handleDescription}
                 disabled={descriptionMutation.isLoading}
                 loading={descriptionMutation.isLoading}
@@ -183,7 +185,7 @@ export function SideMenu({ board, members }: SideMenuProps) {
             </>
           ) : board.description ? (
             <div
-              className="p-4 prose-sm border rounded-lg prose-p:mb-1 prose-p:mt-1"
+              className="prose-sm rounded-lg border p-4 prose-p:mb-1 prose-p:mt-1"
               dangerouslySetInnerHTML={{ __html: board.description }}
             ></div>
           ) : (
@@ -191,7 +193,7 @@ export function SideMenu({ board, members }: SideMenuProps) {
           )}
         </div>
 
-        <div className="flex items-center mt-8 text-light-pencil">
+        <div className="mt-8 flex items-center text-light-pencil">
           <MdStickyNote2 className="text-xl" />
           <span className="ml-2 text-gray-400">Team</span>
         </div>
@@ -199,7 +201,7 @@ export function SideMenu({ board, members }: SideMenuProps) {
         <div className="mt-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <div className="relative w-10 h-10 overflow-hidden rounded-xl">
+              <div className="relative h-10 w-10 overflow-hidden rounded-xl">
                 <Avatar
                   imageId={board.owner.image_id}
                   imageVersion={board.owner.image_version}
@@ -215,9 +217,9 @@ export function SideMenu({ board, members }: SideMenuProps) {
 
           {members.length > 0 &&
             members.map(member => (
-              <div key={member.id} className="flex items-center justify-between mt-6">
+              <div key={member.id} className="mt-6 flex items-center justify-between">
                 <div className="flex items-center">
-                  <div className="w-10 h-10 overflow-hidden rounded-xl">
+                  <div className="h-10 w-10 overflow-hidden rounded-xl">
                     <Avatar
                       imageId={member.image_id}
                       imageVersion={member.image_version}
@@ -231,10 +233,10 @@ export function SideMenu({ board, members }: SideMenuProps) {
 
                 <IsOwner
                   isOwner={board.owner.id === loggedInUser.data?.id}
-                  fallback={<p className="text-[0.8rem] text-gray-400 italic">Member</p>}
+                  fallback={<p className="text-[0.8rem] italic text-gray-400">Member</p>}
                 >
                   <Button
-                    className="border border-alt-red-100 rounded-lg px-3 py-[0.3rem] text-[0.7rem] text-alt-red-100"
+                    className="rounded-lg border border-alt-red-100 px-3 py-[0.3rem] text-[0.7rem] text-alt-red-100"
                     onClick={() => removeMember(member.id)}
                     disabled={removeMemberMutation.isLoading}
                   >
@@ -247,7 +249,7 @@ export function SideMenu({ board, members }: SideMenuProps) {
 
         <IsOwner isOwner={board.owner.id === loggedInUser.data?.id}>
           <div className="mt-8">
-            <Button className="px-3 py-2 text-sm border rounded-lg border-alt-red-100 text-alt-red-100">
+            <Button className="rounded-lg border border-alt-red-100 px-3 py-2 text-sm text-alt-red-100">
               Delete Board
             </Button>
           </div>
