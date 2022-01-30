@@ -10,9 +10,15 @@ interface AddNewItemProps {
   text: string;
   submitAction: (title: string) => any;
   onSuccessCallback: (data: any) => void;
+  isDisabled?: boolean;
 }
 
-export function AddNewItem({ text, onSuccessCallback, submitAction }: AddNewItemProps) {
+export function AddNewItem({
+  isDisabled,
+  text,
+  onSuccessCallback,
+  submitAction,
+}: AddNewItemProps) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [showInput, toggleInput] = React.useState(false);
   const newItemMutation = useMutation((data: any) => submitAction(data.title as string));
@@ -44,20 +50,20 @@ export function AddNewItem({ text, onSuccessCallback, submitAction }: AddNewItem
   });
 
   return (
-    <div className="flex-grow max-w-[20rem] min-w-[17rem]">
+    <div className="min-w-[17rem] max-w-[20rem] flex-grow">
       {showInput ? (
-        <form className="p-2 rounded-lg bg-off-white" onSubmit={formik.handleSubmit}>
+        <form className="rounded-lg bg-off-white p-2" onSubmit={formik.handleSubmit}>
           <input
-            className="block w-full px-3 py-2 text-sm text-gray-600 rounded focus:outline-none"
+            className="block w-full rounded px-3 py-2 text-sm text-gray-600 focus:outline-none"
             placeholder="Enter a title..."
             name="title"
             ref={inputRef}
             onChange={formik.handleChange}
             value={formik.values.title}
           />
-          <div className="flex items-center mt-2">
+          <div className="mt-2 flex items-center">
             <Button
-              className="px-3 py-1 text-xs text-white rounded bg-corn-blue"
+              className="rounded bg-corn-blue px-3 py-1 text-xs text-white"
               type="submit"
               disabled={newItemMutation.isLoading}
               loading={newItemMutation.isLoading}
@@ -65,7 +71,7 @@ export function AddNewItem({ text, onSuccessCallback, submitAction }: AddNewItem
               {text}
             </Button>
             <IoClose
-              className="ml-2 text-2xl cursor-pointer"
+              className="ml-2 cursor-pointer text-2xl"
               color="#4F4F4F"
               onClick={() => toggleInput(false)}
             />
@@ -73,8 +79,9 @@ export function AddNewItem({ text, onSuccessCallback, submitAction }: AddNewItem
         </form>
       ) : (
         <Button
-          className="flex justify-between w-full px-3 py-2 rounded-lg bg-off-white3 text-corn-blue"
+          className="flex w-full justify-between rounded-lg bg-off-white3 px-3 py-2 text-corn-blue"
           onClick={() => toggleInput(true)}
+          disabled={isDisabled}
         >
           <span className="text-[0.8rem]">{text}</span>
           <BiPlus className="text-xl" color="#2F80ED" />

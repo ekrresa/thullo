@@ -21,7 +21,7 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
 
   return (
     <div className="grid min-h-screen grid-cols-1 grid-rows-layout">
-      <header className="py-4 mb-1 bg-white shadow-sm">
+      <header className="mb-1 bg-white py-4 shadow-sm">
         <div className="container flex items-center">
           <Link href={ROUTES.home} passHref>
             <a>
@@ -30,13 +30,15 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
           </Link>
 
           {router.query.board && board.isSuccess && (
-            <div className="flex items-center mx-auto">
-              <h1 className="text-lg text-pencil">{board.data.title}</h1>
-              <span className="mx-2 text-3xl text-ash">&#124;</span>
+            <div className="mx-auto flex items-center">
+              <h1 className="w-52 truncate text-lg text-pencil sm:w-auto">
+                {board.data.title}
+              </h1>
+              <span className="mx-2 hidden text-3xl text-ash md:inline">&#124;</span>
 
               <Link href={ROUTES.home} passHref>
-                <a>
-                  <button className="flex items-center px-3 py-2 rounded-lg bg-off-white">
+                <a className="hidden md:inline">
+                  <button className="flex items-center rounded-lg bg-off-white px-3 py-2">
                     <CgLayoutGridSmall className="text-2xl" color="#828282" />
                     <span className="ml-2 text-xs text-gray3">All Boards</span>
                   </button>
@@ -45,30 +47,17 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
             </div>
           )}
 
-          <form className="flex flex-1 max-w-xs ml-auto p-[1px] rounded-lg shadow-md">
-            <input
-              className="flex-1 px-3 text-sm text-gray-600 focus:outline-none"
-              placeholder="keyword..."
-            />
-            <button
-              className="flex-grow-0 flex-shrink-0 px-4 py-2 text-xs text-white rounded-lg bg-corn-blue"
-              type="submit"
-            >
-              Search
-            </button>
-          </form>
-
           <Dropdown
-            className="ml-8"
+            className="ml-auto"
             header={
-              <div className="px-3 py-2 mb-2 text-sm opacity-60">
+              <div className="mb-2 px-3 py-2 text-sm opacity-60">
                 {userProfileResult.data?.username}
               </div>
             }
             panel={
               <div className="flex items-center">
                 {userProfileResult.isSuccess ? (
-                  <div className="overflow-hidden w-9 h-9 rounded-xl">
+                  <div className="h-9 w-9 overflow-hidden rounded-xl">
                     <Avatar
                       imageId={userProfileResult.data?.image_id}
                       imageVersion={userProfileResult.data.image_version}
@@ -76,21 +65,21 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
                     />
                   </div>
                 ) : null}
-                <p className="w-24 ml-3 text-sm capitalize truncate">
+                <p className="ml-3 hidden w-24 truncate text-sm capitalize sm:inline-block">
                   {userProfileResult.data?.name}
                 </p>
-                <FaCaretDown className="ml-2" />
+                <FaCaretDown className="ml-2 hidden sm:inline-block" />
               </div>
             }
             list={[
               <Link key="profile" href={ROUTES.profile}>
-                <a className="block w-full px-3 py-2 text-sm transition-colors duration-200 ease-linear border-inherit hover:bg-gray-100">
+                <a className="block w-full border-inherit px-3 py-2 text-sm transition-colors duration-200 ease-linear hover:bg-gray-100">
                   Profile
                 </a>
               </Link>,
               <Button
                 key="logout"
-                className="w-full px-3 py-2 text-sm transition-colors duration-200 ease-linear border-inherit hover:bg-gray-100"
+                className="w-full border-inherit px-3 py-2 text-sm transition-colors duration-200 ease-linear hover:bg-gray-100"
                 onClick={() => {
                   supabase.auth.signOut();
                 }}

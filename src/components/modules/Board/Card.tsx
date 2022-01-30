@@ -1,26 +1,39 @@
 import Image from 'next/image';
 import { Draggable } from 'react-beautiful-dnd';
-import { BiPlus } from 'react-icons/bi';
-import { IoAttachSharp } from 'react-icons/io5';
 import { useCardContext } from '@context/CardContext';
 import { Card as CardType } from 'types/database';
 import { getCloudinaryUrl } from '@lib/utils';
+import { useIsBoardMember } from '@hooks/useIsBoardMember';
 
 interface CardProps {
   cardInfo: CardType;
   listTitle: string;
   boardId: number;
   index: number;
+  boardOwner: string;
+  members: string[];
 }
 
-export function Card({ boardId, cardInfo, listTitle, index }: CardProps) {
+export function Card({
+  boardOwner,
+  boardId,
+  cardInfo,
+  listTitle,
+  index,
+  members,
+}: CardProps) {
   const { handleCardInfo, handleCardModal } = useCardContext();
+  const interactWithCard = useIsBoardMember(boardOwner, members);
 
   return (
-    <Draggable draggableId={String(cardInfo.id)} index={index}>
+    <Draggable
+      draggableId={String(cardInfo.id)}
+      index={index}
+      isDragDisabled={!interactWithCard}
+    >
       {(provided, snapshot) => (
         <div
-          className={`rounded-lg bg-white p-4 shadow-card transition ${
+          className={`cursor-pointer rounded-lg bg-white p-4 shadow-card transition ${
             snapshot.isDragging && 'bg-white/30'
           }`}
           {...provided.draggableProps}
@@ -47,22 +60,6 @@ export function Card({ boardId, cardInfo, listTitle, index }: CardProps) {
           )}
 
           <h3 className="font-open-sans text-base">{cardInfo.title}</h3>
-
-          <div className="mt-4 flex items-center justify-between">
-            <button
-              className="rounded-lg bg-corn-blue p-1 text-white"
-              onClick={e => {
-                e.stopPropagation();
-              }}
-            >
-              <BiPlus className="text-2xl" />
-            </button>
-            <div className="">
-              <div className="flex items-center text-light-pencil">
-                <IoAttachSharp className="mr-[0.1rem]" />1
-              </div>
-            </div>
-          </div>
         </div>
       )}
     </Draggable>

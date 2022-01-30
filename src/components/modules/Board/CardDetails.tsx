@@ -20,14 +20,21 @@ import { supabase } from '@lib/supabase';
 import { Card, Comment } from '../../../types/database';
 import { CardCover } from './CardCover';
 import { getCloudinaryUrl } from '@lib/utils';
+import { useIsBoardMember } from '@hooks/useIsBoardMember';
 
-export function CardDetails() {
+interface CardDetailsProps {
+  boardOwner: string;
+  members: string[];
+}
+
+export function CardDetails({ boardOwner, members }: CardDetailsProps) {
   const queryClient = useQueryClient();
   const commentRef = React.useRef<any>(null);
   const { cardInfo, handleCardModal, openCardModal } = useCardContext();
   const cardData = useFetchCardInfo(cardInfo.id);
   const loggedInUser = useUserProfile();
   const cardComments = useFetchCardComments(cardInfo.id);
+  const isBoardMember = useIsBoardMember(boardOwner, members);
 
   const titleInputRef = React.useRef<HTMLInputElement>(null);
   const [isEditing, setIsEditing] = React.useState(false);
@@ -42,6 +49,11 @@ export function CardDetails() {
   const formik = useFormik({
     initialValues: { title: cardData.data?.title },
     onSubmit: values => {
+      if (values.title === cardData.data?.title) {
+        setChangingTitle(false);
+        return;
+      }
+
       descriptionMutation.mutate(
         { title: values.title },
         {
@@ -180,7 +192,7 @@ export function CardDetails() {
               {changingTitle ? (
                 <form className="mr-4 flex-1" onSubmit={formik.handleSubmit}>
                   <input
-                    className="w-full bg-inherit pl-1 font-poppins"
+                    className="w-full bg-inherit pl-1 font-poppins text-lg"
                     ref={titleInputRef}
                     name="title"
                     value={formik.values.title}
@@ -189,15 +201,16 @@ export function CardDetails() {
                 </form>
               ) : (
                 <h2
-                  className="flex-1 pl-1"
+                  className="flex-1 truncate pl-1 text-lg"
                   onClick={() => {
-                    setChangingTitle(true);
+                    if (isBoardMember) {
+                      setChangingTitle(true);
+                    }
                   }}
                 >
                   {cardData.data?.title}
                 </h2>
               )}
-              {/* <h2>{cardData.data?.title}</h2> */}
               <p className="mt-2 space-x-2">
                 <span className="text-xs text-gray4">in list</span>
                 <span className="text-sm font-medium text-pencil">
@@ -211,27 +224,29 @@ export function CardDetails() {
                   <span className="ml-2 text-sm font-medium">Description</span>
                 </div>
 
-                <button
-                  className="ml-8 flex items-center rounded-xl border border-light-pencil px-2 py-1"
-                  onClick={() => setIsEditing(!isEditing)}
-                >
-                  {isEditing ? (
-                    <>
-                      <IoClose />
-                      <span className="ml-2 text-xs text-gray-400">Cancel</span>
-                    </>
-                  ) : cardData.data?.description ? (
-                    <>
-                      <IoPencil />
-                      <span className="ml-2 text-xs text-gray-400">Edit</span>
-                    </>
-                  ) : (
-                    <>
-                      <IoPencil />
-                      <span className="ml-2 text-xs text-gray-400">Add</span>
-                    </>
-                  )}
-                </button>
+                {isBoardMember && (
+                  <button
+                    className="ml-8 flex items-center rounded-xl border border-light-pencil px-2 py-1"
+                    onClick={() => setIsEditing(!isEditing)}
+                  >
+                    {isEditing ? (
+                      <>
+                        <IoClose />
+                        <span className="ml-2 text-xs text-gray-400">Cancel</span>
+                      </>
+                    ) : cardData.data?.description ? (
+                      <>
+                        <IoPencil />
+                        <span className="ml-2 text-xs text-gray-400">Edit</span>
+                      </>
+                    ) : (
+                      <>
+                        <IoPencil />
+                        <span className="ml-2 text-xs text-gray-400">Add</span>
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
 
               <div className="mt-2">
@@ -262,7 +277,7 @@ export function CardDetails() {
                 )}
               </div>
 
-              {!showCommentsInput && (
+              {isBoardMember && !showCommentsInput && (
                 <div className="mt-8">
                   <Button
                     className="inline-block rounded-lg border bg-corn-blue py-2 px-4 text-xs text-white"
@@ -335,16 +350,18 @@ export function CardDetails() {
               </div>
             </div>
 
-            <aside className="max-w-[10rem] flex-1 flex-shrink-0">
-              <h2 className="flex items-center text-sm text-light-pencil">
-                <FaUserCircle />
-                <span className="ml-2">Actions</span>
-              </h2>
+            {isBoardMember && (
+              <aside className="max-w-[10rem] flex-1 flex-shrink-0">
+                <h2 className="flex items-center text-sm text-light-pencil">
+                  <FaUserCircle />
+                  <span className="ml-2">Actions</span>
+                </h2>
 
-              <div className="mt-4 space-y-3">
-                <CardCover cardId={cardInfo.id} />
-              </div>
-            </aside>
+                <div className="mt-4 space-y-3">
+                  <CardCover cardId={cardInfo.id} />
+                </div>
+              </aside>
+            )}
           </div>
         </>
       )}
