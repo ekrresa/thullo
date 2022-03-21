@@ -22,10 +22,6 @@ export default function Register() {
 
   const demoUserSignUp = async () => {
     demoUserSignUpMutation.mutate(undefined, {
-      onError: (error: any) => {
-        const errorMsg = error?.response?.data?.message || error.message;
-        toast.error(errorMsg);
-      },
       onSuccess: () => {
         router.push(ROUTES.profile);
       },
@@ -49,10 +45,6 @@ export default function Register() {
           password: formData.get('password'),
         },
         {
-          onError: (error: any) => {
-            const errorMsg = error?.response?.data?.message || error.message;
-            toast.error(errorMsg);
-          },
           onSuccess: () => router.push(ROUTES.profile),
         }
       );
@@ -63,15 +55,15 @@ export default function Register() {
     <div className="container grid min-h-screen grid-cols-1 grid-rows-layout">
       <header className="flex flex-col items-center pt-8">
         <div className="flex items-center">
-          <Logo className="w-10 mr-2" />
-          <span className="font-bold text-5xl text-[#253858]">Thullo</span>
+          <Logo className="mr-2 w-10" />
+          <span className="text-5xl font-bold text-[#253858]">Thullo</span>
         </div>
         <p className="mt-3 text-gray3">Manage your projects with flexibility</p>
       </header>
 
-      <section className="flex items-start justify-center mt-24">
-        <div className="flex-1 max-w-md px-8 pt-6 pb-12 bg-white rounded-lg shadow-md">
-          <h3 className="text-2xl font-medium text-center text-pencil">
+      <section className="mt-24 flex items-start justify-center">
+        <div className="max-w-md flex-1 rounded-lg bg-white px-8 pt-6 pb-12 shadow-md">
+          <h3 className="text-center text-2xl font-medium text-pencil">
             Welcome to Thullo
           </h3>
 
@@ -93,7 +85,7 @@ export default function Register() {
                 Email
               </label>
               <input
-                className="w-full px-3 py-3 mt-2 text-sm rounded-md shadow focus:outline-none"
+                className="mt-2 w-full rounded-md px-3 py-3 text-sm shadow focus:outline-none"
                 id="email"
                 name="email"
                 type="email"
@@ -104,7 +96,7 @@ export default function Register() {
                 Password
               </label>
               <input
-                className="w-full px-3 py-3 mt-2 text-sm rounded-md shadow focus:outline-none"
+                className="mt-2 w-full rounded-md px-3 py-3 text-sm shadow focus:outline-none"
                 id="password"
                 name="password"
                 type="password"
@@ -112,7 +104,7 @@ export default function Register() {
             </div>
 
             <Button
-              className="justify-center w-full py-4 mt-4 text-white rounded-md shadow bg-corn-blue"
+              className="mt-4 w-full justify-center rounded-md bg-corn-blue py-4 text-white shadow"
               loading={userSignUpMutation.isLoading}
               disabled={userSignUpMutation.isLoading}
               type="submit"
@@ -122,7 +114,7 @@ export default function Register() {
           </form>
 
           <Button
-            className="justify-center w-full mt-6 text-sm text-corn-blue"
+            className="mt-6 w-full justify-center text-sm text-corn-blue"
             onClick={demoUserSignUp}
             disabled={demoUserSignUpMutation.isLoading}
             loading={demoUserSignUpMutation.isLoading}
@@ -130,7 +122,7 @@ export default function Register() {
             Sign up as demo user
           </Button>
 
-          <p className="mt-6 text-xs text-center text-gray3">
+          <p className="mt-6 text-center text-xs text-gray3">
             Have an account?{' '}
             <Link href={ROUTES.login} passHref>
               <a>
