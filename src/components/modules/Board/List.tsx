@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { IoEllipsisHorizontalSharp } from 'react-icons/io5';
 import { Menu, Transition } from '@headlessui/react';
 import { useFormik } from 'formik';
-import UseOnClickOutside from 'use-onclickoutside';
+import { useClickAway } from 'react-use';
 import { toast } from 'react-hot-toast';
 
 import { AddNewItem } from './AddNewItem';
@@ -57,7 +57,7 @@ export function List({ boardId, boardOwner, listId, title, index, members }: Boa
     },
   });
 
-  UseOnClickOutside(titleInputRef, () => {
+  useClickAway(titleInputRef, () => {
     formik.handleSubmit();
     setEditing(false);
   });

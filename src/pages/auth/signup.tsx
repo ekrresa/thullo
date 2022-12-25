@@ -1,7 +1,7 @@
 import { FormEvent, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
 import { FaFacebook, FaGithub } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
@@ -125,9 +125,7 @@ export default function Register() {
           <p className="mt-6 text-center text-xs text-gray3">
             Have an account?{' '}
             <Link href={ROUTES.login} passHref>
-              <a>
-                <span className="font-semibold text-corn-blue">Login</span>
-              </a>
+              <span className="font-semibold text-corn-blue">Login</span>
             </Link>
           </p>
         </div>

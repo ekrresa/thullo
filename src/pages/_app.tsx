@@ -6,8 +6,8 @@ import {
   QueryClient,
   QueryClientProvider,
   useQueryClient,
-} from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
+} from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { toast, Toaster } from 'react-hot-toast';
 
 import type { Page } from '../types/app';
@@ -55,12 +55,14 @@ function Auth({ children }: { children: any }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const authSubscription = supabase.auth.onAuthStateChange((event, session) => {
-      if (!session?.user) {
-        queryClient.removeQueries();
-        router.push(ROUTES.login);
+    const authSubscription = supabase.auth.onAuthStateChange(
+      (event: any, session: any) => {
+        if (!session?.user) {
+          queryClient.removeQueries();
+          router.push(ROUTES.login);
+        }
       }
-    });
+    );
 
     return () => {
       authSubscription.data?.unsubscribe();

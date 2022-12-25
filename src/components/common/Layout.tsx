@@ -24,9 +24,9 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
       <header className="mb-1 bg-white py-4 shadow-sm">
         <div className="container flex items-center">
           <Link href={ROUTES.home} passHref>
-            <a>
-              <Logo className="w-28" />
-            </a>
+
+            <Logo className="w-28" />
+
           </Link>
 
           {router.query.board && board.isSuccess && (
@@ -36,13 +36,13 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
               </h1>
               <span className="mx-2 hidden text-3xl text-ash md:inline">&#124;</span>
 
-              <Link href={ROUTES.home} passHref>
-                <a className="hidden md:inline">
-                  <button className="flex items-center rounded-lg bg-off-white px-3 py-2">
-                    <CgLayoutGridSmall className="text-2xl" color="#828282" />
-                    <span className="ml-2 text-xs text-gray3">All Boards</span>
-                  </button>
-                </a>
+              <Link href={ROUTES.home} passHref className="hidden md:inline">
+
+                <button className="flex items-center rounded-lg bg-off-white px-3 py-2">
+                  <CgLayoutGridSmall className="text-2xl" color="#828282" />
+                  <span className="ml-2 text-xs text-gray3">All Boards</span>
+                </button>
+
               </Link>
             </div>
           )}
@@ -72,10 +72,13 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
               </div>
             }
             list={[
-              <Link key="profile" href={ROUTES.profile}>
-                <a className="block w-full border-inherit px-3 py-2 text-sm transition-colors duration-200 ease-linear hover:bg-gray-100">
+              <Link
+                key="profile"
+                href={ROUTES.profile}
+                className="block w-full border-inherit px-3 py-2 text-sm transition-colors duration-200 ease-linear hover:bg-gray-100">
+                
                   Profile
-                </a>
+                
               </Link>,
               <Button
                 key="logout"

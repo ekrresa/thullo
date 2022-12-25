@@ -1,7 +1,7 @@
 import * as React from 'react';
-import Image from 'next/image';
+import Image from 'next/legacy/image';
 import { useFormik } from 'formik';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { BiPlus } from 'react-icons/bi';
 import { BsImage } from 'react-icons/bs';
 import toast from 'react-hot-toast';
@@ -58,8 +58,11 @@ export function NewBoard() {
   return (
     <>
       <Button
-        className="flex items-center px-3 py-2 text-xs text-white rounded-lg bg-corn-blue"
-        onClick={() => setIsOpen(true)}
+        className="flex items-center rounded-lg bg-corn-blue px-3 py-2 text-xs text-white"
+        onClick={() => {
+          console.log('first');
+          setIsOpen(true);
+        }}
       >
         <BiPlus className="mr-2 text-sm" />
         Add
@@ -87,26 +90,26 @@ export function NewBoard() {
             }}
           />
 
-          <div className="relative overflow-hidden bg-gray-200 rounded-lg h-36">
+          <div className="relative h-36 overflow-hidden rounded-lg bg-gray-200">
             {boardImage ? (
               <Image src={boardImage} layout="fill" alt="" />
             ) : boardCover ? (
               <div
                 style={{ backgroundColor: boardCover }}
-                className="w-full h-full"
+                className="h-full w-full"
               ></div>
             ) : null}
           </div>
 
           <input
-            className="w-full px-3 py-3 mt-4 text-xs bg-white border rounded-lg shadow-lg border-ash focus:outline-none text-pencil"
+            className="mt-4 w-full rounded-lg border border-ash bg-white px-3 py-3 text-xs text-pencil shadow-lg focus:outline-none"
             id="title"
             onChange={formik.handleChange}
             placeholder="Add board title"
           />
-          <div className="flex items-center justify-between mt-6">
+          <div className="mt-6 flex items-center justify-between">
             <Button
-              className="flex items-center px-12 py-3 text-xs bg-gray-100 rounded-lg text-gray3"
+              className="flex items-center rounded-lg bg-gray-100 px-12 py-3 text-xs text-gray3"
               onClick={() => setWidgetOpen(true)}
             >
               <BsImage className="mr-2" />
@@ -119,7 +122,7 @@ export function NewBoard() {
             />
           </div>
 
-          <div className="flex justify-end mt-8">
+          <div className="mt-8 flex justify-end">
             <Button
               className="rounded-lg px-3 py-3 text-[0.625rem] text-gray3 hover:bg-gray-100"
               onClick={() => setIsOpen(false)}
@@ -128,7 +131,7 @@ export function NewBoard() {
             </Button>
 
             <Button
-              className="bg-corn-blue flex items-center ml-4 rounded-lg px-3 py-3 text-[0.625rem] text-white"
+              className="ml-4 flex items-center rounded-lg bg-corn-blue px-3 py-3 text-[0.625rem] text-white"
               type="submit"
               disabled={newBoardMutation.isLoading}
               loading={newBoardMutation.isLoading}

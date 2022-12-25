@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { FaFacebook, FaGithub } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 import { toast } from 'react-hot-toast';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 
 import { Button } from '@components/common/Button';
 import { Footer } from '@components/common/Footer';
@@ -136,9 +136,7 @@ export default function Login() {
           <p className="mt-6 text-center text-xs text-gray3">
             First time here?{' '}
             <Link href={ROUTES.signup} passHref>
-              <a>
-                <span className="font-semibold text-corn-blue">Sign up</span>
-              </a>
+              <span className="font-semibold text-corn-blue">Sign up</span>
             </Link>
           </p>
         </div>
