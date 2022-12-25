@@ -136,9 +136,7 @@ export default function Login() {
           <p className="mt-6 text-center text-xs text-gray3">
             First time here?{' '}
             <Link href={ROUTES.signup} passHref>
-              <a>
-                <span className="font-semibold text-corn-blue">Sign up</span>
-              </a>
+              <span className="font-semibold text-corn-blue">Sign up</span>
             </Link>
           </p>
         </div>

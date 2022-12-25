@@ -27,39 +27,42 @@ export default function Home() {
         <div className="mt-10 text-center">An error occurred while fetching boards</div>
       ) : boards.data && boards.data.length > 0 ? (
         <div className="mt-10 grid grid-cols-list gap-x-8 gap-y-6 pb-32">
-          {boards.data.map(board => (
-            <Link key={board.id} href={ROUTES.board(board.id)} passHref>
-              <a className="relative flex flex-col rounded-lg shadow">
-                {board.visibility === 'private' && (
-                  <span className="absolute right-1 top-1 z-10 rounded-full bg-slate-300 p-1 opacity-60 hover:opacity-90">
-                    <IoMdLock className="text-xl" />
-                  </span>
+          {boards.data.map((board: any) => (
+            <Link
+              key={board.id}
+              href={ROUTES.board(board.id)}
+              passHref
+              className="relative flex flex-col rounded-lg shadow"
+            >
+              {board.visibility === 'private' && (
+                <span className="absolute right-1 top-1 z-10 rounded-full bg-slate-300 p-1 opacity-60 hover:opacity-90">
+                  <IoMdLock className="text-xl" />
+                </span>
+              )}
+              <div className="relative h-32 overflow-hidden rounded-t-lg">
+                {board.cover ? (
+                  <div
+                    style={{ backgroundColor: board.cover }}
+                    className="h-full w-full"
+                  ></div>
+                ) : (
+                  <Image
+                    src={getCloudinaryUrl(board.image_id, board.image_version)}
+                    layout="fill"
+                    alt=""
+                  />
                 )}
-                <div className="relative h-32 overflow-hidden rounded-t-lg">
-                  {board.cover ? (
-                    <div
-                      style={{ backgroundColor: board.cover }}
-                      className="h-full w-full"
-                    ></div>
-                  ) : (
-                    <Image
-                      src={getCloudinaryUrl(board.image_id, board.image_version)}
-                      layout="fill"
-                      alt=""
-                    />
-                  )}
+              </div>
+              <p className="mt-2 truncate px-3 text-sm">{board.title}</p>
+              <div className="flex items-center px-3 pb-3">
+                <div className="relative mt-3 mr-3 h-7 w-7 overflow-hidden rounded-xl">
+                  <Avatar
+                    imageId={board.owner.image_id}
+                    imageVersion={board.owner.image_version}
+                    name={board.owner.name}
+                  />
                 </div>
-                <p className="mt-2 truncate px-3 text-sm">{board.title}</p>
-                <div className="flex items-center px-3 pb-3">
-                  <div className="relative mt-3 mr-3 h-7 w-7 overflow-hidden rounded-xl">
-                    <Avatar
-                      imageId={board.owner.image_id}
-                      imageVersion={board.owner.image_version}
-                      name={board.owner.name}
-                    />
-                  </div>
-                </div>
-              </a>
+              </div>
             </Link>
           ))}
         </div>

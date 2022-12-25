@@ -125,9 +125,7 @@ export default function Register() {
           <p className="mt-6 text-center text-xs text-gray3">
             Have an account?{' '}
             <Link href={ROUTES.login} passHref>
-              <a>
-                <span className="font-semibold text-corn-blue">Login</span>
-              </a>
+              <span className="font-semibold text-corn-blue">Login</span>
             </Link>
           </p>
         </div>
