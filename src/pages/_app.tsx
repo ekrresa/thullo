@@ -55,12 +55,14 @@ function Auth({ children }: { children: any }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const authSubscription = supabase.auth.onAuthStateChange((event, session) => {
-      if (!session?.user) {
-        queryClient.removeQueries();
-        router.push(ROUTES.login);
+    const authSubscription = supabase.auth.onAuthStateChange(
+      (event: any, session: any) => {
+        if (!session?.user) {
+          queryClient.removeQueries();
+          router.push(ROUTES.login);
+        }
       }
-    });
+    );
 
     return () => {
       authSubscription.data?.unsubscribe();
