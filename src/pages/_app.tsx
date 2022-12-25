@@ -6,8 +6,8 @@ import {
   QueryClient,
   QueryClientProvider,
   useQueryClient,
-} from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
+} from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { toast, Toaster } from 'react-hot-toast';
 
 import type { Page } from '../types/app';

@@ -8,7 +8,7 @@ import {
   IoPersonCircle,
 } from 'react-icons/io5';
 import { MdStickyNote2 } from 'react-icons/md';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import useOnClickOutside from 'use-onclickoutside';
 import { toast } from 'react-hot-toast';
 

@@ -1,5 +1,5 @@
 import { ErrorResponse, pexelsClient, Photos } from '@lib/pexels';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export const pexelsPhotosQueryKeys = {
   photos: (page: number) => ['pexels', 'photos', { page }],

@@ -1,5 +1,5 @@
 import { supabase } from '@lib/supabase';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Board, Card, Comment, List, UserProfile } from 'types/database';
 
 export const boardsQueryKeys = {

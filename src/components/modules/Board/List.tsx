@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { IoEllipsisHorizontalSharp } from 'react-icons/io5';
 import { Menu, Transition } from '@headlessui/react';
 import { useFormik } from 'formik';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { IoMdGlobe, IoMdLock } from 'react-icons/io';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 
 import { BoardUpdate, updateBoard } from '@lib/api/board';

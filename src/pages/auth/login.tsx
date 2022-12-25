@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { FaFacebook, FaGithub } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 import { toast } from 'react-hot-toast';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 
 import { Button } from '@components/common/Button';
 import { Footer } from '@components/common/Footer';
