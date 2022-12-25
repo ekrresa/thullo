@@ -1,4 +1,4 @@
-import { ComponentType } from 'react';
+import * as React from 'react';
 import Image from 'next/legacy/image';
 import Link from 'next/link';
 import { IoMdLock } from 'react-icons/io';
@@ -73,5 +73,5 @@ export default function Home() {
   );
 }
 
-Home.getLayout = (page: ComponentType) => <Layout>{page}</Layout>;
+Home.getLayout = (page: React.ReactNode) => <Layout>{page}</Layout>;
 Home.protected = true;

@@ -14,7 +14,6 @@ export default async function AuthHandler(req: NextApiRequest, res: NextApiRespo
         const result = await supabase.auth.api.createUser({
           email,
           password,
-          //@ts-expect-error
           user_metadata: { is_demo_user: true },
           email_confirm: true,
         });

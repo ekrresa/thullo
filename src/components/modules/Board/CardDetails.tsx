@@ -130,7 +130,7 @@ export function CardDetails({ boardOwner, members }: CardDetailsProps) {
         result.unsubscribe();
       };
     })();
-  }, [cardInfo.id, queryClient]);
+  }, [cardInfo.id, loggedInUser.data, queryClient]);
 
   const handleCardDescription = () => {
     descriptionMutation.mutate(

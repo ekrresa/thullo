@@ -368,7 +368,7 @@ export default function Board() {
   );
 }
 
-Board.getLayout = (page: React.ComponentType) => (
+Board.getLayout = (page: React.ReactNode) => (
   <Layout>
     <CardProvider>{page}</CardProvider>
   </Layout>
