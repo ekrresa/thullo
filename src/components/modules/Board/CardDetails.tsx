@@ -6,7 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { IoClose, IoPencil } from 'react-icons/io5';
 import { formatDistanceToNow } from 'date-fns';
 import { useFormik } from 'formik';
-import UseOnClickOutside from 'use-onclickoutside';
+import { useClickAway } from 'react-use';
 
 import { Modal } from '../../common/Modal';
 import { useCardContext } from '@context/CardContext';
@@ -90,7 +90,7 @@ export function CardDetails({ boardOwner, members }: CardDetailsProps) {
     enableReinitialize: true,
   });
 
-  UseOnClickOutside(titleInputRef, () => {
+  useClickAway(titleInputRef, () => {
     formik.handleSubmit();
     setChangingTitle(false);
   });

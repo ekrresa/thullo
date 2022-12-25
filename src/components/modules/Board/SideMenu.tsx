@@ -9,7 +9,7 @@ import {
 } from 'react-icons/io5';
 import { MdStickyNote2 } from 'react-icons/md';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import useOnClickOutside from 'use-onclickoutside';
+import { useClickAway } from 'react-use';
 import { toast } from 'react-hot-toast';
 
 import { useLockBodyScroll } from '@hooks/useLockBodyScroll';
@@ -47,16 +47,13 @@ export function SideMenu({ board, members }: SideMenuProps) {
     updateBoard(data, board.id)
   );
 
-  useOnClickOutside(sideMenuRef, () => toggleSideMenu(false));
+  useClickAway(sideMenuRef, () => toggleSideMenu(false));
   useLockBodyScroll({ mounted: openSideMenu });
 
   React.useEffect(() => {
     (async function () {
       await queryClient.invalidateQueries(
-        boardsQueryKeys.boardMembers(board.id, members.length),
-        {
-          refetchInactive: true,
-        }
+        boardsQueryKeys.boardMembers(board.id, members.length)
       );
     })();
   }, [board.id, members.length, queryClient]);
