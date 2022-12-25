@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import { useFormik } from 'formik';
 import { useMutation, useQueryClient } from 'react-query';
 import { BiPlus } from 'react-icons/bi';

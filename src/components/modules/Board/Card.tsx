@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import { Draggable } from 'react-beautiful-dnd';
 import { useCardContext } from '@context/CardContext';
 import { Card as CardType } from 'types/database';

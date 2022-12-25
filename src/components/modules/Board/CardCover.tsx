@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import { Menu, Transition } from '@headlessui/react';
 import { IoSearch } from 'react-icons/io5';
 import { useMutation, useQueryClient } from 'react-query';

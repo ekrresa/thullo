@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import { FaUserCircle } from 'react-icons/fa';
 import { MdStickyNote2 } from 'react-icons/md';
 import { useMutation, useQueryClient } from 'react-query';
