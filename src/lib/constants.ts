@@ -1,7 +1,6 @@
 export const ROUTES = {
   home: '/',
-  login: '/auth/login',
-  signup: '/auth/signup',
+  auth: '/auth',
   profile: '/profile',
   board: (boardId: number) => `/board/${boardId}`,
 };

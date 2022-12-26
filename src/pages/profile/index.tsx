@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import Image from "next/legacy/image";
+import Image from 'next/legacy/image';
 import { useFormik } from 'formik';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
@@ -56,23 +56,23 @@ export default function NewProfile() {
     <div className="container grid min-h-screen grid-cols-1 grid-rows-layout">
       <header className="flex flex-col items-center pt-8">
         <div className="flex items-center">
-          <Logo className="w-10 mr-2" />
-          <span className="font-bold text-5xl text-[#253858]">Thullo</span>
+          <Logo className="mr-2 w-10" />
+          <span className="text-5xl font-bold text-[#253858]">Thullo</span>
         </div>
       </header>
 
-      <section className="flex items-start justify-center mt-24">
-        <div className="flex-1 max-w-md px-8 pt-6 pb-12 bg-white rounded-lg shadow-md">
-          <h3 className="text-2xl font-medium text-center text-pencil">
+      <section className="mt-24 flex items-start justify-center">
+        <div className="max-w-md flex-1 rounded-lg bg-white px-8 pt-6 pb-12 shadow-md">
+          <h3 className="text-center text-2xl font-medium text-pencil">
             Setup your Profile
           </h3>
 
           <form className="mt-12" onSubmit={formik.handleSubmit}>
-            <div className="flex justify-center mb-10">
+            <div className="mb-10 flex justify-center">
               <input
                 type="file"
                 id="image"
-                className="absolute w-[0.1px] h-[0.1px] opacity-0 overflow-hidden -z-10"
+                className="absolute -z-10 h-[0.1px] w-[0.1px] overflow-hidden opacity-0"
                 accept="image/*"
                 onChange={e => {
                   if (e.currentTarget.files?.length) {
@@ -82,14 +82,14 @@ export default function NewProfile() {
               />
               <label
                 htmlFor="image"
-                className="relative w-40 h-40 bg-gray-100 rounded-full cursor-pointer"
+                className="relative h-40 w-40 cursor-pointer rounded-full bg-gray-100"
               >
                 {formik.values.image ? (
                   <Image
                     src={URL.createObjectURL(formik.values.image)}
                     alt=""
                     layout="fill"
-                    className="object-cover w-full h-full rounded-full"
+                    className="h-full w-full rounded-full object-cover"
                   />
                 ) : userProfile.data?.image_id ? (
                   <Image
@@ -99,14 +99,14 @@ export default function NewProfile() {
                     )}
                     alt=""
                     layout="fill"
-                    className="object-cover w-full h-full rounded-full"
+                    className="h-full w-full rounded-full object-cover"
                   />
                 ) : (
-                  <IoPersonCircle className="w-full h-full" />
+                  <IoPersonCircle className="h-full w-full" />
                 )}
 
                 <GoPencil
-                  className="absolute text-xl -rotate-90 bottom-2 right-4"
+                  className="absolute bottom-2 right-4 -rotate-90 text-xl"
                   color="#0E7490"
                 />
               </label>
@@ -116,7 +116,7 @@ export default function NewProfile() {
                 Username
               </label>
               <input
-                className="w-full px-3 py-3 mt-2 text-sm rounded-md shadow focus:outline-none"
+                className="mt-2 w-full rounded-md px-3 py-3 text-sm shadow focus:outline-none"
                 id="username"
                 name="username"
                 onChange={formik.handleChange}
@@ -128,7 +128,7 @@ export default function NewProfile() {
                 Name
               </label>
               <input
-                className="w-full px-3 py-3 mt-2 text-sm rounded-md shadow focus:outline-none"
+                className="mt-2 w-full rounded-md px-3 py-3 text-sm shadow focus:outline-none"
                 id="name"
                 name="name"
                 onChange={formik.handleChange}
@@ -137,7 +137,7 @@ export default function NewProfile() {
             </div>
 
             <Button
-              className="justify-center w-full py-4 mt-4 text-white rounded-md shadow bg-corn-blue"
+              className="mt-4 w-full justify-center rounded-md bg-corn-blue py-4 text-white shadow"
               type="submit"
               disabled={profileMutation.isLoading}
               loading={profileMutation.isLoading}
