@@ -10,9 +10,9 @@ import {
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { toast, Toaster } from 'react-hot-toast';
 
-import type { Page } from '../types/app';
+import type { Page } from '@models/app';
 import '../styles/globals.css';
-import { supabase } from 'lib/supabase';
+import { supabase } from '@lib/supabase';
 import { ROUTES } from '@lib/constants';
 
 type Props = AppProps & {

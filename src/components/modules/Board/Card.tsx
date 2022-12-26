@@ -1,7 +1,7 @@
-import Image from "next/legacy/image";
+import Image from 'next/legacy/image';
 import { Draggable } from 'react-beautiful-dnd';
 import { useCardContext } from '@context/CardContext';
-import { Card as CardType } from 'types/database';
+import { Card as CardType } from '@models/database';
 import { getCloudinaryUrl } from '@lib/utils';
 import { useIsBoardMember } from '@hooks/useIsBoardMember';
 

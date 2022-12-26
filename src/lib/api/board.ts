@@ -2,7 +2,7 @@ import { UploadApiResponse } from 'cloudinary';
 
 import { axiosClient } from '@lib/axios';
 import { supabase } from '@lib/supabase';
-import { Board, Card, List } from 'types/database';
+import { Board, Card, List } from '@models/database';
 
 export interface BoardInput {
   title: string;
