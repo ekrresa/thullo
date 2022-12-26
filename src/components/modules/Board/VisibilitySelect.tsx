@@ -12,7 +12,7 @@ export function VisibilitySelect({ getVisibility, value }: VisibilitySelectProps
   return (
     <Listbox value={value} onChange={val => getVisibility(val)}>
       <div className="relative">
-        <Listbox.Button className="flex items-center px-12 py-3 text-xs capitalize bg-gray-100 rounded-lg text-gray3">
+        <Listbox.Button className="flex items-center rounded-lg bg-gray-100 px-12 py-3 text-xs capitalize text-gray3">
           {value === 'private' ? (
             <IoMdLock className="mr-2" />
           ) : (
@@ -27,7 +27,7 @@ export function VisibilitySelect({ getVisibility, value }: VisibilitySelectProps
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <Listbox.Options className="absolute w-full mt-2 overflow-hidden bg-white rounded-lg shadow-lg focus:outline-none sm:text-sm">
+          <Listbox.Options className="absolute mt-2 w-full overflow-hidden rounded-lg bg-white shadow-lg focus:outline-none sm:text-sm">
             <Listbox.Option
               as={Button}
               className="w-full px-3 py-2 hover:bg-gray-100"

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Image from "next/legacy/image";
+import Image from 'next/legacy/image';
 import { IoIosArrowBack } from 'react-icons/io';
 
 import { Modal } from '@components/common/Modal';
@@ -38,7 +38,7 @@ export function ImageWidget({
       closeModal={closeHandler}
       closeIcon
     >
-      <h2 className="relative flex justify-center mb-8 font-medium">
+      <h2 className="relative mb-8 flex justify-center font-medium">
         {view !== 'none' && (
           <Button className="absolute left-0 -top-[2%]" onClick={() => setView('none')}>
             <IoIosArrowBack className="text-2xl" />
@@ -51,22 +51,22 @@ export function ImageWidget({
           <div className="flex-1">
             {/* Photo by Taryn Elliott from Pexels https://www.pexels.com/photo/white-and-black-picture-frame-4340919/ */}
             <Button
-              className="relative w-full h-40 overflow-hidden rounded-lg"
+              className="relative h-40 w-full overflow-hidden rounded-lg"
               onClick={() => setView('photos')}
             >
               <Image src="/photo-cover.jpg" layout="fill" unoptimized alt="" />
             </Button>
-            <h3 className="mt-2 text-sm text-center">Photos</h3>
+            <h3 className="mt-2 text-center text-sm">Photos</h3>
           </div>
 
           <div className="flex-1">
             <Button
-              className="relative w-full h-40 overflow-hidden rounded-lg"
+              className="relative h-40 w-full overflow-hidden rounded-lg"
               onClick={() => setView('colors')}
             >
               <Image src="/palette.jpg" layout="fill" unoptimized alt="" />
             </Button>
-            <h3 className="mt-2 text-sm text-center">Colors</h3>
+            <h3 className="mt-2 text-center text-sm">Colors</h3>
           </div>
         </div>
       ) : view === 'photos' ? (
