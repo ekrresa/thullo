@@ -17,6 +17,7 @@ model User {
   email          String   @unique
   name           String
   username       String   @unique @db.VarChar(50)
+  isGuest        Boolean  @default(false)
   isProfileSetup Boolean  @default(false)
   profileImage   String
   createdAt      DateTime @default(now())
