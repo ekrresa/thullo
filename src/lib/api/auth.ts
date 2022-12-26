@@ -1,5 +1,5 @@
 import { axiosClient } from '@lib/axios';
-import { SupabaseUser, UserProfile } from 'types/database';
+import { SupabaseUser, UserProfile } from '@types/database';
 import { supabase } from '../supabase';
 
 export async function signUpUser(email: string, password: string) {
