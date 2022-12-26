@@ -12,7 +12,7 @@ import { boardsQueryKeys, useFetchListCards } from '@hooks/board';
 import { createCard, deleteList, renameList } from '@lib/api/board';
 import { useUserProfile } from '@hooks/user';
 import { Card } from './Card';
-import { Card as CardType, List } from 'types/database';
+import { Card as CardType, List } from '@models/database';
 import { useIsBoardMember } from '@hooks/useIsBoardMember';
 
 interface BoardProps extends React.PropsWithChildren<unknown> {

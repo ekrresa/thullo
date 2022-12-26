@@ -8,7 +8,7 @@ import differenceBy from 'lodash.differenceby';
 import { useFetchUsers, useUserProfile } from '@hooks/user';
 import { updateBoard } from '@lib/api/board';
 import { Button } from '@components/common/Button';
-import { Board, UserProfile } from 'types/database';
+import { Board, UserProfile } from '@models/database';
 import { boardsQueryKeys } from '@hooks/board';
 
 interface BoardInviteProps {

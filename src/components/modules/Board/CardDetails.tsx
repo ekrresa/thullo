@@ -17,7 +17,7 @@ import { addComment, CommentInput, updateCard } from '@lib/api/board';
 import { useUserProfile } from '@hooks/user';
 import { Avatar } from '@components/common/Avatar';
 import { supabase } from '@lib/supabase';
-import { Card, Comment } from '../../../types/database';
+import { Card, Comment } from '@models/database';
 import { CardCover } from './CardCover';
 import { getCloudinaryUrl } from '@lib/utils';
 import { useIsBoardMember } from '@hooks/useIsBoardMember';

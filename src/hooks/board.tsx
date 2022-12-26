@@ -1,6 +1,6 @@
 import { supabase } from '@lib/supabase';
 import { useQuery } from '@tanstack/react-query';
-import { Board, Card, Comment, List, UserProfile } from 'types/database';
+import { Board, Card, Comment, List, UserProfile } from '@models/database';
 
 export const boardsQueryKeys = {
   all: () => ['boards', 'all'],

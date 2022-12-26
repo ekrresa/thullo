@@ -13,7 +13,7 @@ import { useClickAway } from 'react-use';
 import { toast } from 'react-hot-toast';
 
 import { useLockBodyScroll } from '@hooks/useLockBodyScroll';
-import { Board, UserProfile } from 'types/database';
+import { Board, UserProfile } from '@models/database';
 import { Avatar } from '@components/common/Avatar';
 import { updateBoard } from '@lib/api/board';
 import { Button } from '@components/common/Button';

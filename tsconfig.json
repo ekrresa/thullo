@@ -20,7 +20,7 @@
       "@context/*": ["src/context/*"],
       "@hooks/*": ["src/hooks/*"],
       "@lib/*": ["src/lib/*"],
-      "@types/*": ["src/types/*"],
+      "@models/*": ["src/models/*"],
       "@public/*": ["public/*"]
     }
   },

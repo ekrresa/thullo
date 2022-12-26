@@ -8,7 +8,7 @@ import { Button } from '@components/common/Button';
 import { CardCoverInput, updateCardCover } from '@lib/api/board';
 import { usePexelsPhotos } from '@hooks/photos';
 import { boardsQueryKeys } from '@hooks/board';
-import { Card } from '../../../types/database';
+import { Card } from '@models/database';
 import { useCardContext } from '@context/CardContext';
 
 interface CardLabelProps {
