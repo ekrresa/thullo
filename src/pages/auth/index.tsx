@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { signIn } from 'next-auth/react';
+import { signIn, SignInResponse } from 'next-auth/react';
 import { FaGithub } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -7,9 +7,10 @@ import { z } from 'zod';
 import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
 
-import { ROUTES } from '@lib/constants';
+import useCreateGuestUserMutation from '@hooks/auth';
 import { Input } from '@components/common/Input';
 import { Button } from '@components/common/Button';
+import { ROUTES } from '@lib/constants';
 import Logo from '@public/logo-small.svg';
 
 const FormSchema = z.object({
@@ -21,6 +22,9 @@ type FormData = z.infer<typeof FormSchema>;
 export default function AuthPage() {
   const router = useRouter();
   const searchParams = new URLSearchParams(router.query as Record<string, string>);
+  const callbackUrl = searchParams.get('from') || ROUTES.home;
+
+  const { createGuestUser, creatingGuestUser } = useCreateGuestUserMutation();
 
   const {
     register,
@@ -35,7 +39,7 @@ export default function AuthPage() {
     const signInResult = await signIn('email', {
       email: values.email.toLocaleLowerCase(),
       redirect: false,
-      callbackUrl: searchParams.get('from') || ROUTES.home,
+      callbackUrl,
     });
 
     if (!signInResult?.ok) {
@@ -43,6 +47,18 @@ export default function AuthPage() {
     }
 
     return toast.success('Login was successful. Please check your email for a link!');
+  };
+
+  const handleGuestUserResponse = (result?: SignInResponse) => {
+    if (!result?.ok) {
+      toast.error('We were unable to create a guest account for you. Please try again!');
+      return;
+    }
+
+    toast.success('Login was successful! Redirecting...');
+    setTimeout(() => {
+      router.push(callbackUrl);
+    }, 1000);
   };
 
   return (
@@ -90,7 +106,17 @@ export default function AuthPage() {
           <p>Sign in with GitHub</p>
         </Button>
 
-        <Button className="mt-2 flex w-full justify-center gap-2 rounded-md border border-slate-300 py-3 text-sm shadow-sm">
+        <Button
+          className="mt-2 flex w-full justify-center gap-2 rounded-md border border-slate-300 py-3 text-sm shadow-sm"
+          onClick={() =>
+            createGuestUser(undefined, {
+              onSuccess(result) {
+                handleGuestUserResponse(result);
+              },
+            })
+          }
+          loading={creatingGuestUser}
+        >
           Sign in as a guest
         </Button>
       </section>
