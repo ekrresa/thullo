@@ -1,10 +1,50 @@
 import * as React from 'react';
+import { signIn } from 'next-auth/react';
 import { FaGithub } from 'react-icons/fa';
-import Logo from '@public/logo-small.svg';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useRouter } from 'next/router';
+import { toast } from 'react-hot-toast';
+
+import { ROUTES } from '@lib/constants';
 import { Input } from '@components/common/Input';
 import { Button } from '@components/common/Button';
+import Logo from '@public/logo-small.svg';
+
+const FormSchema = z.object({
+  email: z.string().email().trim(),
+});
+
+type FormData = z.infer<typeof FormSchema>;
 
 export default function AuthPage() {
+  const router = useRouter();
+  const searchParams = new URLSearchParams(router.query as Record<string, string>);
+
+  const {
+    register,
+    formState: { errors, isSubmitting },
+    handleSubmit,
+  } = useForm<FormData>({
+    defaultValues: { email: '' },
+    resolver: zodResolver(FormSchema),
+  });
+
+  const onSubmit = async (values: FormData) => {
+    const signInResult = await signIn('email', {
+      email: values.email.toLocaleLowerCase(),
+      redirect: false,
+      callbackUrl: searchParams.get('from') || ROUTES.home,
+    });
+
+    if (!signInResult?.ok) {
+      return toast.error('Your sign in request failed. Please try again');
+    }
+
+    return toast.success('Login was successful. Please check your email for a link!');
+  };
+
   return (
     <div className="container flex min-h-screen flex-col">
       <header className="mt-24 flex flex-col items-center">
@@ -22,10 +62,17 @@ export default function AuthPage() {
           </h3>
         </header>
 
-        <form className="mt-12 w-full self-start">
-          <Input label="Email" className="mb-4" id="email" type="email" />
+        <form className="mt-12 w-full self-start" onSubmit={handleSubmit(onSubmit)}>
+          <Input
+            {...register('email')}
+            containerClassName="mb-4"
+            label="Email"
+            id="email"
+            errorMessage={errors.email?.message}
+          />
           <Button
             className="mt-4 w-full justify-center rounded-md bg-corn-blue py-3 text-sm text-white shadow"
+            loading={isSubmitting}
             type="submit"
           >
             Sign in with Email
