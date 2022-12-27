@@ -1,6 +1,6 @@
 import { UploadApiResponse } from 'cloudinary';
 
-import { axiosClient } from '@lib/axios';
+import { request } from '@lib/request';
 import { supabase } from '@lib/supabase';
 import { Board, Card, List } from '@models/database';
 
@@ -52,7 +52,7 @@ export async function createBoard(input: BoardInput, userId: string) {
 
   if (input.image) {
     const boardTitle = input.title.toLowerCase().split(' ').join('_');
-    const result = await axiosClient.post<UploadApiResponse>('/api/images/upload-url', {
+    const result = await request.post<UploadApiResponse>('/api/images/upload-url', {
       url: input.image,
       public_id: boardTitle,
     });
@@ -201,7 +201,7 @@ export interface CardCoverInput {
 }
 
 export async function updateCardCover({ cardId, photoId, photoUrl }: CardCoverInput) {
-  const result = await axiosClient.post<UploadApiResponse>('/api/images/upload-url', {
+  const result = await request.post<UploadApiResponse>('/api/images/upload-url', {
     url: photoUrl,
     public_id: photoId,
   });
