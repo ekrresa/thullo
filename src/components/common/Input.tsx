@@ -29,7 +29,7 @@ function InputInner(props: Props, ref: React.ForwardedRef<HTMLInputElement>) {
         className={cn(
           'block w-full rounded-md border border-slate-300 py-2 px-3 text-sm font-medium hover:border-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-600 focus:ring-offset-1',
           className,
-          errorMessage && 'border-2 border-red-300'
+          errorMessage && 'border-red-300 hover:border-red-300 focus:ring-red-600'
         )}
         aria-invalid={errorMessage ? 'true' : 'false'}
         aria-errormessage={`err-${id}`}
