@@ -152,5 +152,3 @@ export default function NewProfile() {
     </div>
   );
 }
-
-NewProfile.protected = true;

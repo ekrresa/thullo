@@ -373,7 +373,6 @@ Board.getLayout = (page: React.ReactNode) => (
     <CardProvider>{page}</CardProvider>
   </Layout>
 );
-Board.protected = true;
 
 interface InnerListProps<T> {
   list: T[];
