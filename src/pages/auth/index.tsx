@@ -101,7 +101,10 @@ export default function AuthPage() {
           <div className="flex-1 border-t border-slate-300"></div>
         </div>
 
-        <Button className="flex w-full justify-center gap-2 rounded-md border border-slate-300 py-3 text-sm shadow-sm">
+        <Button
+          className="flex w-full justify-center gap-2 rounded-md border border-slate-300 py-3 text-sm shadow-sm"
+          onClick={() => signIn('github', { callbackUrl })}
+        >
           <FaGithub className="text-xl" />
           <p>Sign in with GitHub</p>
         </Button>

@@ -1,10 +1,16 @@
 import NextAuth, { AuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import EmailProvider from 'next-auth/providers/email';
+import GitHubProvider from 'next-auth/providers/github';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 
 import { db } from '@lib/prisma';
-import { EMAIL_FROM, EMAIL_SERVER } from '@lib/constants';
+import {
+  EMAIL_FROM,
+  EMAIL_SERVER,
+  GITHUB_CLIENT_ID,
+  GITHUB_CLIENT_SECRET,
+} from '@lib/constants';
 import { parseError } from '@lib/utils';
 
 export const authOptions: AuthOptions = {
@@ -19,6 +25,10 @@ export const authOptions: AuthOptions = {
     EmailProvider({
       from: EMAIL_FROM,
       server: EMAIL_SERVER,
+    }),
+    GitHubProvider({
+      clientId: GITHUB_CLIENT_ID,
+      clientSecret: GITHUB_CLIENT_SECRET,
     }),
     CredentialsProvider({
       name: 'guest_signup',
