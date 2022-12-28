@@ -23,10 +23,8 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
     <div className="grid min-h-screen grid-cols-1 grid-rows-layout">
       <header className="mb-1 bg-white py-4 shadow-sm">
         <div className="container flex items-center">
-          <Link href={ROUTES.home} passHref>
-
+          <Link href={ROUTES.home}>
             <Logo className="w-28" />
-
           </Link>
 
           {router.query.board && board.isSuccess && (
@@ -37,12 +35,10 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
               <span className="mx-2 hidden text-3xl text-ash md:inline">&#124;</span>
 
               <Link href={ROUTES.home} passHref className="hidden md:inline">
-
                 <button className="flex items-center rounded-lg bg-off-white px-3 py-2">
                   <CgLayoutGridSmall className="text-2xl" color="#828282" />
                   <span className="ml-2 text-xs text-gray3">All Boards</span>
                 </button>
-
               </Link>
             </div>
           )}
@@ -75,10 +71,9 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
               <Link
                 key="profile"
                 href={ROUTES.profile}
-                className="block w-full border-inherit px-3 py-2 text-sm transition-colors duration-200 ease-linear hover:bg-gray-100">
-                
-                  Profile
-                
+                className="block w-full border-inherit px-3 py-2 text-sm transition-colors duration-200 ease-linear hover:bg-gray-100"
+              >
+                Profile
               </Link>,
               <Button
                 key="logout"

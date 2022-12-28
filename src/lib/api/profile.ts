@@ -1,4 +1,4 @@
-import { axiosClient } from '@lib/axios';
+import { request } from '@lib/request';
 import { supabase } from '@lib/supabase';
 import { UploadApiResponse } from 'cloudinary';
 
@@ -14,7 +14,7 @@ export async function updateProfile(data: Partial<UserProfileInput>) {
   let imageVersion: string | undefined;
 
   if (data.image) {
-    const sigResult = await axiosClient.post('/api/images/cloudinary-signature', {
+    const sigResult = await request.post('/api/images/cloudinary-signature', {
       folder: 'thullo',
       public_id: `${data.userId}_profile`,
     });
@@ -27,7 +27,7 @@ export async function updateProfile(data: Partial<UserProfileInput>) {
     formData.set('signature', sigResult.data.signature);
     formData.set('timestamp', sigResult.data.timestamp);
 
-    const uploadResult = await axiosClient.post<UploadApiResponse>(
+    const uploadResult = await request.post<UploadApiResponse>(
       `https://api.cloudinary.com/v1_1/chuck-huey/image/upload`,
       formData
     );

@@ -74,4 +74,3 @@ export default function Home() {
 }
 
 Home.getLayout = (page: React.ReactNode) => <Layout>{page}</Layout>;
-Home.protected = true;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Image from "next/legacy/image";
+import Image from 'next/legacy/image';
 
 import { usePexelsPhotos } from '@hooks/photos';
 import { Button } from '@components/common/Button';
@@ -25,11 +25,11 @@ export function PhotosGallery({ selectImage }: PhotosGalleryProps) {
   }
 
   return (
-    <div className="grid gap-2 grid-cols-colors">
+    <div className="grid grid-cols-colors gap-2">
       {photos.data?.photos.map(photo => (
         <Button
           key={photo.url}
-          className="relative overflow-hidden rounded-lg cursor-pointer h-28 hover:opacity-70 focus:ring-offset-1 focus:ring-2 focus:ring-cyan-700"
+          className="relative h-28 cursor-pointer overflow-hidden rounded-lg hover:opacity-70 focus:ring-2 focus:ring-cyan-700 focus:ring-offset-1"
           onClick={() => selectImage(photo.src.landscape)}
         >
           <Image src={photo.src.large2x} layout="fill" alt="" unoptimized />

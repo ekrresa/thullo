@@ -1,4 +1,5 @@
 import axios from 'axios';
 
-export const axiosClient = axios.create();
+export const request = axios.create();
+
 export default axios;
