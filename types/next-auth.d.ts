@@ -4,14 +4,19 @@ import { JWT } from 'next-auth/jwt';
 declare module 'next-auth' {
   interface Session {
     user: {
-      /** Checks if user has just signed up */
-      isNew: boolean;
+      id: string;
+      username: string | null;
+      isGuest: boolean;
+      isProfileSetup: boolean;
     } & DefaultSession['user'];
   }
 }
 
 declare module 'next-auth/jwt' {
   interface JWT {
-    isNewUser?: boolean;
+    id: string;
+    isGuest: boolean;
+    isProfileSetup: boolean;
+    username: string | null;
   }
 }

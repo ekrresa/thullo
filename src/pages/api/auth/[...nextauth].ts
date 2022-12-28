@@ -64,13 +64,33 @@ export const authOptions: AuthOptions = {
       return false;
     },
     async session({ session, token }) {
-      session.user.isNew = Boolean(token.isNewUser);
+      if (token) {
+        session.user.email = token.email;
+        session.user.name = token.name;
+        session.user.username = token.username;
+        session.user.id = token.id;
+        session.user.image = token.picture;
+        session.user.isGuest = token.isGuest;
+        session.user.isProfileSetup = token.isProfileSetup;
+      }
 
       return session;
     },
-    async jwt({ token, account, isNewUser }) {
-      if (account) {
-        token.isNewUser = isNewUser;
+    async jwt({ token }) {
+      const dbUser = await db.user.findFirst({
+        where: {
+          email: token.email,
+        },
+      });
+
+      if (dbUser) {
+        token.id = dbUser.id;
+        token.name = dbUser.name;
+        token.username = dbUser.username;
+        token.email = dbUser.email;
+        token.picture = dbUser.image;
+        token.isGuest = dbUser.isGuest;
+        token.isProfileSetup = dbUser.isProfileSetup;
       }
 
       return token;
