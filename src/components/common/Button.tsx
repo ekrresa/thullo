@@ -16,7 +16,7 @@ export function Button({
   return (
     <button
       className={cn(
-        'flex items-center disabled:cursor-not-allowed disabled:opacity-60',
+        'flex items-center justify-center disabled:cursor-not-allowed disabled:opacity-60',
         className
       )}
       type={type}
