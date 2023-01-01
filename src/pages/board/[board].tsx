@@ -285,8 +285,7 @@ export default function Board() {
               <div className="ml-4 mr-4 flex items-center space-x-4">
                 <div className="relative h-9 w-9 overflow-hidden rounded-xl bg-corn-blue">
                   <Avatar
-                    imageId={board.data?.owner.image_id}
-                    imageVersion={board.data?.owner.image_version}
+                    image={board.data?.owner.image_id}
                     name={board.data?.owner.name}
                   />
                 </div>
@@ -297,11 +296,7 @@ export default function Board() {
                       key={user.id}
                       className="relative h-9 w-9 overflow-hidden rounded-xl bg-corn-blue"
                     >
-                      <Avatar
-                        imageId={user.image_id}
-                        imageVersion={user.image_version}
-                        name={user.name}
-                      />
+                      <Avatar image={user.image_id} name={user.name} />
                     </div>
                   ))}
               </div>

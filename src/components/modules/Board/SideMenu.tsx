@@ -126,11 +126,7 @@ export function SideMenu({ board, members }: SideMenuProps) {
 
         <div className="mt-3 flex">
           <div className="relative h-10 w-10 overflow-hidden rounded-xl">
-            <Avatar
-              imageId={board.owner.image_id}
-              imageVersion={board.owner.image_version}
-              name={board.owner.name}
-            />
+            <Avatar image={board.owner.image_id} name={board.owner.name} />
           </div>
           <div className="ml-4">
             <div className="mb-1 text-sm font-medium text-pencil">{board.owner.name}</div>
@@ -206,11 +202,7 @@ export function SideMenu({ board, members }: SideMenuProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <div className="relative h-10 w-10 overflow-hidden rounded-xl">
-                <Avatar
-                  imageId={board.owner.image_id}
-                  imageVersion={board.owner.image_version}
-                  name={board.owner.name}
-                />
+                <Avatar image={board.owner.image_id} name={board.owner.name} />
               </div>
               <div className="ml-4 text-sm font-medium text-pencil">
                 {board.owner.name}
@@ -224,11 +216,7 @@ export function SideMenu({ board, members }: SideMenuProps) {
               <div key={member.id} className="mt-6 flex items-center justify-between">
                 <div className="flex items-center">
                   <div className="h-10 w-10 overflow-hidden rounded-xl">
-                    <Avatar
-                      imageId={member.image_id}
-                      imageVersion={member.image_version}
-                      name={member.name}
-                    />
+                    <Avatar image={member.image_id} name={member.name} />
                   </div>
                   <div className="ml-4 text-sm font-medium capitalize text-pencil">
                     {member.name}

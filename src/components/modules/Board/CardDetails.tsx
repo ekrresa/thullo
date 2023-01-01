@@ -325,8 +325,7 @@ export function CardDetails({ boardOwner, members }: CardDetailsProps) {
                         <div className="mb-3 flex space-x-4">
                           <div className="h-9 w-9 overflow-hidden rounded-xl">
                             <Avatar
-                              imageId={comment.user.image_id}
-                              imageVersion={comment.user.image_version}
+                              image={comment.user.image_id}
                               name={comment.user.name}
                             />
                           </div>
