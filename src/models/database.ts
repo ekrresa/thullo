@@ -1,3 +1,12 @@
+import { z } from 'zod';
+
+export const UserProfileInputSchema = z.object({
+  username: z.string().trim().max(50, 'Username must be less than 50 characters'),
+  name: z.string().trim(),
+});
+
+export type UserProfileInput = z.infer<typeof UserProfileInputSchema>;
+
 export interface UserProfile {
   id: string;
   name: string;

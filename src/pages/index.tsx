@@ -56,11 +56,11 @@ export default function Home() {
               <p className="mt-2 truncate px-3 text-sm">{board.title}</p>
               <div className="flex items-center px-3 pb-3">
                 <div className="relative mt-3 mr-3 h-7 w-7 overflow-hidden rounded-xl">
-                  <Avatar
+                  {/* <Avatar
                     imageId={board.owner.image_id}
                     imageVersion={board.owner.image_version}
                     name={board.owner.name}
-                  />
+                  /> */}
                 </div>
               </div>
             </Link>
