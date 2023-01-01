@@ -2,7 +2,7 @@ import * as React from 'react';
 import { cn } from '@lib/utils';
 import { AiOutlineLoading } from 'react-icons/ai';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends React.ComponentProps<'button'> {
   loading?: boolean;
 }
 
@@ -16,10 +16,11 @@ export function Button({
   return (
     <button
       className={cn(
-        'flex items-center disabled:cursor-not-allowed disabled:opacity-60',
+        'flex items-center justify-center disabled:cursor-not-allowed disabled:opacity-60',
         className
       )}
       type={type}
+      disabled={loading}
       {...props}
     >
       {loading ? (
