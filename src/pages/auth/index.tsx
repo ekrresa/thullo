@@ -22,7 +22,7 @@ type FormData = z.infer<typeof FormSchema>;
 export default function AuthPage() {
   const router = useRouter();
   const searchParams = new URLSearchParams(router.query as Record<string, string>);
-  const callbackUrl = searchParams.get('from') || ROUTES.home;
+  const callbackUrl = searchParams.get('callbackUrl') || ROUTES.home;
 
   const { createGuestUser, creatingGuestUser } = useCreateGuestUserMutation();
 
