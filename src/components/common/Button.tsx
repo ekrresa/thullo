@@ -20,6 +20,7 @@ export function Button({
         className
       )}
       type={type}
+      disabled={loading}
       {...props}
     >
       {loading ? (
