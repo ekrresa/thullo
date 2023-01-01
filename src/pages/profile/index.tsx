@@ -1,5 +1,7 @@
 import * as React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -16,6 +18,7 @@ import { reloadSession } from '@lib/utils';
 import Logo from '../../../public/logo-small.svg';
 
 export default function NewProfile() {
+  const router = useRouter();
   const { data } = useSession({ required: true });
   const userProfile = data?.user;
 
@@ -144,13 +147,22 @@ export default function NewProfile() {
               id="name"
             />
 
-            <Button
-              className="mt-4 w-full rounded-md bg-corn-blue py-3 text-sm text-white shadow"
-              type="submit"
-              loading={updatingProfile}
-            >
-              Save
-            </Button>
+            <div className="mt-4 flex items-center gap-2">
+              <Button
+                className="text-grey3 mt-4 w-full rounded-md py-3 text-sm shadow"
+                onClick={router.back}
+              >
+                Go Home
+              </Button>
+
+              <Button
+                className="mt-4 w-full rounded-md bg-corn-blue py-3 text-sm text-white shadow"
+                type="submit"
+                loading={updatingProfile}
+              >
+                Save
+              </Button>
+            </div>
           </form>
         </div>
       </section>

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { cn } from '@lib/utils';
 import { AiOutlineLoading } from 'react-icons/ai';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends React.ComponentProps<'button'> {
   loading?: boolean;
 }
 
