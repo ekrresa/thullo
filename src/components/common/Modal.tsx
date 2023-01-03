@@ -6,16 +6,17 @@ import { Button } from './Button';
 import { cn } from '@lib/utils';
 
 interface ModalProps extends React.PropsWithChildren<unknown> {
-  open?: boolean;
   trigger: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   closeIcon?: boolean;
   className?: string;
 }
 export function Modal(props: ModalProps) {
-  const { children, className, closeIcon = false, open, trigger } = props;
+  const { children, className, closeIcon = false, open, onOpenChange, trigger } = props;
 
   return (
-    <Dialog.Root open={open}>
+    <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>
 
       <Dialog.Portal>

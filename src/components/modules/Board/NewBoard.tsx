@@ -65,6 +65,8 @@ export function NewBoard() {
         </Button>
       }
       className="max-w-md overflow-visible"
+      open={isOpen}
+      onOpenChange={modalStatus => setIsOpen(modalStatus)}
       closeIcon
     >
       <form onSubmit={formik.handleSubmit}>
