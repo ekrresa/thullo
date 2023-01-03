@@ -3,9 +3,9 @@ import { signIn, SignInResponse } from 'next-auth/react';
 import { FaGithub } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
+import { z } from 'zod';
 
 import useCreateGuestUserMutation from '@hooks/auth';
 import { Input } from '@components/common/Input';
@@ -86,11 +86,7 @@ export default function AuthPage() {
             id="email"
             errorMessage={errors.email?.message}
           />
-          <Button
-            className="mt-4 w-full justify-center rounded-md bg-corn-blue py-3 text-sm text-white shadow"
-            loading={isSubmitting}
-            type="submit"
-          >
+          <Button loading={isSubmitting} variant="primary" type="submit" fullWidth>
             Sign in with Email
           </Button>
         </form>
@@ -102,15 +98,17 @@ export default function AuthPage() {
         </div>
 
         <Button
-          className="flex w-full justify-center gap-2 rounded-md border border-slate-300 py-3 text-sm shadow-sm"
+          className="gap-2"
           onClick={() => signIn('github', { callbackUrl })}
+          variant="secondary"
+          fullWidth
         >
           <FaGithub className="text-xl" />
           <p>Sign in with GitHub</p>
         </Button>
 
         <Button
-          className="mt-2 flex w-full justify-center gap-2 rounded-md border border-slate-300 py-3 text-sm shadow-sm"
+          className="mt-2 gap-2"
           onClick={() =>
             createGuestUser(undefined, {
               onSuccess(result) {
@@ -119,6 +117,8 @@ export default function AuthPage() {
             })
           }
           loading={creatingGuestUser}
+          variant="secondary"
+          fullWidth
         >
           Sign in as a guest
         </Button>

@@ -24,14 +24,14 @@ export function Modal(props: ModalProps) {
 
         <Dialog.Content
           className={cn(
-            'fixed top-[50%] left-[50%] w-full -translate-x-1/2 -translate-y-1/2 rounded bg-white p-6 shadow',
+            'fixed top-[50%] left-[50%] w-full -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-6 shadow',
             className
           )}
         >
           {closeIcon && (
             <Dialog.Close asChild>
               <Button
-                className="absolute top-1 right-1 flex h-6 w-6 items-center justify-center rounded-full hover:bg-slate-100"
+                className="absolute top-1 right-1 flex h-6 w-6 items-center justify-center rounded-full p-0 text-astronaut-700 hover:bg-slate-100"
                 aria-label="Close"
               >
                 <IoClose className="text-lg" />

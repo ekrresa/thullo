@@ -3,25 +3,24 @@ import Image from 'next/legacy/image';
 import { useFormik } from 'formik';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { BiPlus } from 'react-icons/bi';
-import { BsImage } from 'react-icons/bs';
 import toast from 'react-hot-toast';
 
 import { Modal } from '@components/common/Modal';
 import { Button } from '@components/common/Button';
 import { ImageWidget } from './ImageWidget';
 import { VisibilitySelect } from './VisibilitySelect';
-import { useUserProfile } from '@hooks/user';
+import { useGetCurrentUser } from '@hooks/user';
 import { BoardInput, createBoard } from '@lib/api/board';
 import { boardsQueryKeys } from '@hooks/board';
 import { Input } from '@components/common/Input';
 
 export function NewBoard() {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [isWidgetOpen, setWidgetOpen] = React.useState(false);
-  const user = useUserProfile();
+  const [isModalOpen, setModalOpen] = React.useState(false);
+
+  const userProfile = useGetCurrentUser();
   const queryClient = useQueryClient();
   const newBoardMutation = useMutation((data: BoardInput) =>
-    createBoard(data, user.data?.id as string)
+    createBoard(data, userProfile?.id as string)
   );
 
   const formik = useFormik({
@@ -46,7 +45,7 @@ export function NewBoard() {
           onSuccess: async () => {
             toast.success('Board created!');
             await queryClient.invalidateQueries(boardsQueryKeys.all());
-            setIsOpen(false);
+            setModalOpen(false);
           },
         }
       );
@@ -65,26 +64,12 @@ export function NewBoard() {
         </Button>
       }
       className="max-w-md overflow-visible"
-      open={isOpen}
-      onOpenChange={modalStatus => setIsOpen(modalStatus)}
+      open={isModalOpen}
+      onOpenChange={modalStatus => setModalOpen(modalStatus)}
       closeIcon
     >
       <form onSubmit={formik.handleSubmit}>
         {/* Modal to select online images and colors */}
-        <ImageWidget
-          isOpen={isWidgetOpen}
-          closeHandler={() => setWidgetOpen(false)}
-          selectCover={(cover: string) => {
-            formik.setFieldValue('cover', cover);
-            formik.setFieldValue('image', null);
-            toast.success('Color selected!');
-          }}
-          selectImage={(image: string) => {
-            formik.setFieldValue('image', image);
-            formik.setFieldValue('cover', null);
-            toast.success('Image selected!');
-          }}
-        />
 
         <div className="relative h-36 overflow-hidden rounded-lg bg-gray-200">
           {boardImage ? (
@@ -102,36 +87,41 @@ export function NewBoard() {
           placeholder="Add board title"
           labelHidden
         />
-        <div className="mt-6 flex items-center justify-between">
-          <Button
-            className="flex items-center rounded-lg border border-slate-300 bg-gray-50 px-12 py-3 text-xs text-gray3 shadow-sm"
-            onClick={() => setWidgetOpen(true)}
-          >
-            <BsImage className="mr-2" />
-            Cover
-          </Button>
 
-          <VisibilitySelect
-            getVisibility={(val: any) => formik.setFieldValue('visibility', val)}
-            value={formik.values.visibility}
+        <div className="mt-6 flex items-center justify-between">
+          <ImageWidget
+            selectCover={(cover: string) => {
+              formik.setFieldValue('cover', cover);
+              formik.setFieldValue('image', null);
+              toast.success('Color selected!');
+            }}
+            selectImage={(image: string) => {
+              formik.setFieldValue('image', image);
+              formik.setFieldValue('cover', null);
+              toast.success('Image selected!');
+            }}
           />
         </div>
 
-        <div className="mt-8 flex justify-end">
-          <Button
-            className="rounded-lg border px-3 py-3 text-xs text-gray3 hover:bg-gray-100"
-            onClick={() => setIsOpen(false)}
-          >
+        <VisibilitySelect
+          getVisibility={(val: any) => formik.setFieldValue('visibility', val)}
+          value={formik.values.visibility}
+        />
+
+        <div className="mt-8 flex gap-4">
+          <Button onClick={() => setModalOpen(false)} variant="secondary" fullWidth>
             Cancel
           </Button>
 
           <Button
-            className="ml-4 flex items-center rounded-lg bg-corn-blue px-3 py-3 text-xs text-white"
+            className="gap-2"
             type="submit"
             disabled={newBoardMutation.isLoading}
             loading={newBoardMutation.isLoading}
+            variant="primary"
+            fullWidth
           >
-            <BiPlus className="mr-2 text-sm" />
+            <BiPlus className="text-base" />
             Create
           </Button>
         </div>

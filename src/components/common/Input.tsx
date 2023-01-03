@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { cn } from '@lib/utils';
 
-interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
+interface Props extends React.ComponentProps<'input'> {
   label: string;
   labelHidden?: boolean;
   errorMessage?: string;

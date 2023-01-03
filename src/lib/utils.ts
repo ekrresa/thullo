@@ -1,10 +1,10 @@
 import { Prisma } from '@prisma/client';
-import { ClassValue, clsx } from 'clsx';
+import { cx, CxOptions } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 import request from './request';
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+export function cn(...inputs: CxOptions) {
+  return twMerge(cx(inputs));
 }
 
 export function getInitials(name: string) {

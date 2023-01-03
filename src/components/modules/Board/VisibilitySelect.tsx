@@ -12,14 +12,18 @@ export function VisibilitySelect({ getVisibility, value }: VisibilitySelectProps
   return (
     <Listbox value={value} onChange={val => getVisibility(val)}>
       <div className="relative">
-        <Listbox.Button className="flex items-center rounded-lg bg-gray-100 px-12 py-3 text-xs capitalize text-gray3">
+        <Button
+          className="mb-4 w-full bg-gray-50 px-12 py-2.5 text-gray3 shadow-sm hover:bg-astronaut-100"
+          variant="secondary"
+          fullWidth
+        >
           {value === 'private' ? (
             <IoMdLock className="mr-2" />
           ) : (
             <IoMdGlobe className="mr-2" />
           )}
           {value}
-        </Listbox.Button>
+        </Button>
 
         <Transition
           as={React.Fragment}
