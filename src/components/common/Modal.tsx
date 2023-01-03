@@ -29,8 +29,11 @@ export function Modal(props: ModalProps) {
         >
           {closeIcon && (
             <Dialog.Close asChild>
-              <Button className="absolute top-1 right-1" aria-label="Close">
-                <IoClose className="text-xl" />
+              <Button
+                className="absolute top-1 right-1 flex h-6 w-6 items-center justify-center rounded-full hover:bg-slate-100"
+                aria-label="Close"
+              >
+                <IoClose className="text-lg" />
               </Button>
             </Dialog.Close>
           )}
