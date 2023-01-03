@@ -1,3 +1,5 @@
+const { fontFamily } = require('tailwindcss/defaultTheme');
+
 module.exports = {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx}',
@@ -18,8 +20,21 @@ module.exports = {
         'off-white2': '#F8F9FD',
         'off-white3': '#DAE4FD',
         'alt-red': { 100: '#EB5757' },
+        'royal-blue': {
+          50: '#eff8ff',
+          100: '#dbeefe',
+          200: '#bfe2fe',
+          300: '#92d1fe',
+          400: '#5fb7fb',
+          500: '#3a97f7',
+          600: '#2f80ed',
+          700: '#1c63d9',
+          800: '#1d51b0',
+          900: '#1d468b',
+        },
       },
       fontFamily: {
+        sans: ['var(--font-inter)', ...fontFamily.sans],
         poppins: ['Poppins', 'sans-serif'],
         'open-sans': ['Open Sans', 'sans-serif'],
       },
