@@ -58,6 +58,7 @@ model User {
 
   Account Account[]
   Session Session[]
+  Board   Board[]
 
   @@map("users")
 }
@@ -70,3 +71,40 @@ model VerificationToken {
   @@unique([identifier, token])
   @@map("verification_tokens")
 }
+
+model Board {
+  id          String          @id @default(cuid())
+  title       String
+  description String?
+  image       String?
+  cover       String?
+  visibility  BoardVisibility
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+
+  owner  User   @relation(fields: [userId], references: [id])
+  userId String @map("user_id")
+
+  @@index([userId])
+}
+
+enum BoardVisibility {
+  PUBLIC
+  PRIVATE
+}
+
+// model UsersInBoards {
+//   invitedAt  DateTime @default(now()) @map("invited_at")
+//   acceptedAt DateTime @map("accepted_at")
+
+//   Board   Board? @relation(fields: [boardId], references: [id])
+//   boardId String @map("board_id")
+
+//   User   User?  @relation(fields: [userId], references: [id])
+//   userId String @map("user_id")
+
+//   @@id([boardId, userId])
+//   @@index([boardId])
+//   @@index([userId])
+//   @@map("users_in_boards")
+// }
