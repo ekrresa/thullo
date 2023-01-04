@@ -4,6 +4,7 @@ interface ColorsGalleryProps {
   selectCover: (input: string) => void;
 }
 
+//TODO: Add color picker
 export function ColorsGallery({ selectCover }: ColorsGalleryProps) {
   return (
     <div className="grid grid-cols-colors gap-2">

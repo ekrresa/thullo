@@ -8,6 +8,7 @@ interface PhotosGalleryProps {
   selectImage: (input: string) => void;
 }
 
+// TODO: Add next or random display of pictures functionality
 export function PhotosGallery({ selectImage }: PhotosGalleryProps) {
   const [page, setPage] = React.useState(1);
   const photos = usePexelsPhotos(page);

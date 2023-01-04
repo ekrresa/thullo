@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Image from 'next/image';
+import { Controller, useFormContext } from 'react-hook-form';
 import { BsImage } from 'react-icons/bs';
 import { IoIosArrowBack } from 'react-icons/io';
 
@@ -7,16 +8,15 @@ import { Modal } from '@components/common/Modal';
 import { Button } from '@components/common/Button';
 import { PhotosGallery } from './PhotosGallery';
 import { ColorsGallery } from './ColorsGallery';
-
-interface ImageWidgetProps {
-  selectCover: (input: string) => void;
-  selectImage: (input: string) => void;
-}
+import { BoardInput } from '@models/board';
 
 type ImageWidgetView = 'none' | 'pictures' | 'colors';
 
-export function ImageWidget({ selectCover, selectImage }: ImageWidgetProps) {
+export function ImageWidget() {
+  const [isModalOpen, setModalOpen] = React.useState(false);
   const [view, setView] = React.useState<ImageWidgetView>('none');
+
+  const { control } = useFormContext<BoardInput>();
 
   const title =
     view === 'none'
@@ -30,7 +30,7 @@ export function ImageWidget({ selectCover, selectImage }: ImageWidgetProps) {
       className="max-w-[26rem] overflow-visible"
       trigger={
         <Button
-          className="mb-4 bg-gray-50 px-12 py-2.5 text-gray3 shadow-sm hover:bg-astronaut-100"
+          className="mb-4 mt-6 bg-gray-50 px-12 py-2.5 text-slate-500 shadow-sm hover:bg-astronaut-100"
           variant="secondary"
           fullWidth
         >
@@ -38,16 +38,22 @@ export function ImageWidget({ selectCover, selectImage }: ImageWidgetProps) {
           Choose Board Cover
         </Button>
       }
+      open={isModalOpen}
+      onOpenChange={modalStatus => setModalOpen(modalStatus)}
       closeIcon
     >
-      <h2 className="relative mb-8 flex justify-center font-medium">
+      <div className="relative mb-8 flex justify-center font-medium">
         {view !== 'none' && (
-          <Button className="absolute left-0 -top-[2%]" onClick={() => setView('none')}>
+          <Button
+            className="absolute left-0 -top-0.5 flex h-8 w-8 items-center justify-center rounded-full p-0 hover:bg-slate-100"
+            onClick={() => setView('none')}
+          >
             <IoIosArrowBack className="text-2xl" />
           </Button>
         )}
-        {title}
-      </h2>
+
+        <h2>{title}</h2>
+      </div>
 
       {view === 'none' && (
         <div className="flex space-x-6">
@@ -74,9 +80,37 @@ export function ImageWidget({ selectCover, selectImage }: ImageWidgetProps) {
         </div>
       )}
 
-      {view === 'pictures' && <PhotosGallery selectImage={selectImage} />}
+      {view === 'pictures' && (
+        <Controller
+          control={control}
+          name="image"
+          render={({ field }) => (
+            <PhotosGallery
+              selectImage={url => {
+                field.onChange(url);
+                setModalOpen(false);
+                setView('none');
+              }}
+            />
+          )}
+        />
+      )}
 
-      {view === 'colors' && <ColorsGallery selectCover={selectCover} />}
+      {view === 'colors' && (
+        <Controller
+          control={control}
+          name="cover"
+          render={({ field }) => (
+            <ColorsGallery
+              selectCover={color => {
+                field.onChange(color);
+                setModalOpen(false);
+                setView('none');
+              }}
+            />
+          )}
+        />
+      )}
     </Modal>
   );
 }
