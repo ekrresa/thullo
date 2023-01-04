@@ -12,7 +12,7 @@ import { BoardInput } from '@models/board';
 
 type ImageWidgetView = 'none' | 'pictures' | 'colors';
 
-export function ImageWidget() {
+export function BoardCoverWidget() {
   const [isModalOpen, setModalOpen] = React.useState(false);
   const [view, setView] = React.useState<ImageWidgetView>('none');
 

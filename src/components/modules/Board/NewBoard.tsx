@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { Modal } from '@components/common/Modal';
 import { Button } from '@components/common/Button';
-import { ImageWidget } from './ImageWidget';
+import { BoardCoverWidget } from './BoardCoverWidget';
 import { VisibilitySelect } from './VisibilitySelect';
 import { useCreateBoard } from '@hooks/board';
 import { Input } from '@components/common/Input';
@@ -78,7 +78,7 @@ export function NewBoard() {
             labelHidden
           />
 
-          <ImageWidget />
+          <BoardCoverWidget />
 
           <Controller
             control={control}
