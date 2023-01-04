@@ -1,8 +1,9 @@
 import * as React from 'react';
 import Image from 'next/image';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
-import { BiPlus } from 'react-icons/bi';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'react-hot-toast';
+import { BiPlus } from 'react-icons/bi';
 
 import { Modal } from '@components/common/Modal';
 import { Button } from '@components/common/Button';
@@ -11,7 +12,6 @@ import { VisibilitySelect } from './VisibilitySelect';
 import { useCreateBoard } from '@hooks/board';
 import { Input } from '@components/common/Input';
 import { BoardCreateSchema, BoardInput } from '@models/board';
-import { toast } from 'react-hot-toast';
 
 export function NewBoard() {
   const [isModalOpen, setModalOpen] = React.useState(false);
@@ -33,7 +33,12 @@ export function NewBoard() {
       return toast.error('Please select a cover for the board.');
     }
 
-    createBoard(values);
+    createBoard(values, {
+      onSuccess() {
+        setModalOpen(false);
+        toast.success('Board created successfully.');
+      },
+    });
   };
 
   const { control, register, handleSubmit, watch } = formMethods;
