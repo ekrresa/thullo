@@ -1,54 +1,65 @@
 import * as React from 'react';
-import { Listbox, Transition } from '@headlessui/react';
-import { Button } from '@components/common/Button';
-import { IoMdGlobe, IoMdLock } from 'react-icons/io';
+import * as RadioGroup from '@radix-ui/react-radio-group';
+import { BoardVisibility } from '@prisma/client';
+import { cn } from '@lib/utils';
 
 interface VisibilitySelectProps {
-  getVisibility: (input: any) => void;
-  value: any;
+  getVisibility: (input: BoardVisibility) => void;
+  value: BoardVisibility;
 }
-
 export function VisibilitySelect({ getVisibility, value }: VisibilitySelectProps) {
   return (
-    <Listbox value={value} onChange={val => getVisibility(val)}>
-      <div className="relative">
-        <Button
-          className="mb-4 w-full bg-gray-50 px-12 py-2.5 text-gray3 shadow-sm hover:bg-astronaut-100"
-          variant="secondary"
-          fullWidth
-        >
-          {value === 'private' ? (
-            <IoMdLock className="mr-2" />
-          ) : (
-            <IoMdGlobe className="mr-2" />
+    <form>
+      <RadioGroup.Root
+        className="flex gap-2"
+        onValueChange={value => {
+          getVisibility(value as BoardVisibility);
+        }}
+      >
+        <RadioGroup.Item
+          className={cn(
+            'flex-1 rounded-lg border border-astronaut-200 p-4 transition-colors duration-300',
+            value === 'PUBLIC' ? 'border-astronaut-400' : ''
           )}
-          {value}
-        </Button>
-
-        <Transition
-          as={React.Fragment}
-          leave="transition ease-in duration-100"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
+          value="PUBLIC"
         >
-          <Listbox.Options className="absolute mt-2 w-full overflow-hidden rounded-lg bg-white shadow-lg focus:outline-none sm:text-sm">
-            <Listbox.Option
-              as={Button}
-              className="w-full px-3 py-2 hover:bg-gray-100"
-              value="public"
-            >
-              Public
-            </Listbox.Option>
-            <Listbox.Option
-              as={Button}
-              className="w-full px-3 py-2 hover:bg-gray-100"
-              value="private"
-            >
-              Private
-            </Listbox.Option>
-          </Listbox.Options>
-        </Transition>
-      </div>
-    </Listbox>
+          <header className="flex justify-between text-astronaut-700">
+            <p className="text-sm font-medium">Public</p>
+
+            <div className="flex h-4 w-4 items-center justify-center rounded-full border-2 border-astronaut-700">
+              {value === 'PUBLIC' && (
+                <span className="h-2 w-2 rounded-full bg-astronaut-700"></span>
+              )}
+            </div>
+          </header>
+
+          <p className="mt-4 text-left text-xs text-slate-500">
+            Anyone on the internet can view this board
+          </p>
+        </RadioGroup.Item>
+
+        <RadioGroup.Item
+          className={cn(
+            'flex-1 rounded-lg border border-astronaut-200 p-4 transition-colors duration-300',
+            value === 'PRIVATE' ? 'border-astronaut-400' : ''
+          )}
+          value="PRIVATE"
+        >
+          <header className="flex justify-between">
+            <p className="text-sm font-medium text-astronaut-700">Private</p>
+
+            <div className="flex h-4 w-4 items-center justify-center rounded-full border-2 border-astronaut-700">
+              {value === 'PRIVATE' && (
+                <span className="h-2 w-2 rounded-full bg-astronaut-700"></span>
+              )}
+            </div>
+          </header>
+
+          <p className="mt-4 text-left text-xs text-slate-500">
+            Only board members can view this board
+          </p>
+        </RadioGroup.Item>
+      </RadioGroup.Root>
+    </form>
   );
 }
