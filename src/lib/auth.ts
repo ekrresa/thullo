@@ -1,26 +1,8 @@
 import { signIn } from 'next-auth/react';
 import Chance from 'chance';
 import toast from 'react-hot-toast';
-import { supabase } from './supabase';
 
 const chance = new Chance();
-
-export async function signUpUser(email: string, password: string) {
-  const { error, session } = await supabase.auth.signUp({
-    email,
-    password,
-  });
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  if (!session) {
-    throw new Error('An error occurred. Please try again.');
-  }
-
-  return session;
-}
 
 export async function guestUserSignup() {
   const email = chance.email({ domain: 'example.com' });
