@@ -9,6 +9,7 @@ import { Button } from '@components/common/Button';
 import { PhotosGallery } from './PhotosGallery';
 import { ColorsGallery } from './ColorsGallery';
 import { BoardInput } from '@models/board';
+import { FileUpload } from './FileUpload';
 
 type ImageWidgetView = 'none' | 'pictures' | 'colors';
 
@@ -52,12 +53,12 @@ export function BoardCoverWidget() {
           </Button>
         )}
 
-        <h2>{title}</h2>
+        <h2 className="text-lg font-medium">{title}</h2>
       </div>
 
       {view === 'none' && (
-        <div className="flex space-x-6">
-          <div className="flex-1">
+        <div className="flex flex-wrap gap-4">
+          <div className="min-w-[200px] flex-1">
             {/* Photo by Taryn Elliott from Pexels https://www.pexels.com/photo/white-and-black-picture-frame-4340919/ */}
             <Button
               className="relative h-40 w-full overflow-hidden rounded-lg"
@@ -68,7 +69,7 @@ export function BoardCoverWidget() {
             <h3 className="mt-2 text-center text-sm">Pictures</h3>
           </div>
 
-          <div className="flex-1">
+          <div className="min-w-[200px] flex-1">
             <Button
               className="relative h-40 w-full overflow-hidden rounded-lg"
               onClick={() => setView('colors')}
@@ -77,6 +78,20 @@ export function BoardCoverWidget() {
             </Button>
             <h3 className="mt-2 text-center text-sm">Colors</h3>
           </div>
+
+          <Controller
+            control={control}
+            name="image"
+            render={({ field }) => (
+              <FileUpload
+                selectFile={fileString => {
+                  field.onChange(fileString);
+                  setModalOpen(false);
+                  setView('none');
+                }}
+              />
+            )}
+          />
         </div>
       )}
 

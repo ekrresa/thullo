@@ -1,12 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { unstable_getServerSession } from 'next-auth';
 import { v2 as cloudinary } from 'cloudinary';
 
 import { db } from '@lib/prisma';
 import { withMethods } from '@lib/middleware/with-methods';
 import { BoardCreateSchema } from '@models/board';
 import { parseError } from '@lib/utils';
-import { authOptions } from '../auth/[...nextauth]';
+import { withAuthentication } from '@lib/middleware/with-authentication';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
@@ -16,11 +15,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     try {
       const requestBody = BoardCreateSchema.parse(req.body);
-      const session = await unstable_getServerSession(req, res, authOptions);
-      const userId = session?.user.id;
+
+      const userId = req.session.user.id;
 
       const existingBoard = await db.board.findFirst({
-        where: { userId: session?.user.id, title: requestBody.title },
+        where: { userId, title: requestBody.title },
       });
 
       if (existingBoard) {
@@ -30,15 +29,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       if (requestBody.image) {
         const uploadResponse = await cloudinary.uploader.upload(requestBody.image, {
           folder: 'thullo/boards',
+          eager: { aspect_ratio: '16:9', quality: 80 },
         });
 
         requestBody.image = uploadResponse.secure_url;
       }
 
-      console.log(requestBody);
-
       const newBoard = await db.board.create({
-        data: { ...requestBody, userId: userId ?? '' },
+        data: { ...requestBody, userId },
       });
 
       res.status(200).json({ data: newBoard });
@@ -49,4 +47,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export default withMethods(['GET', 'POST'], handler);
+export default withMethods(['GET', 'POST'], withAuthentication(handler));
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '4mb',
+    },
+  },
+};
