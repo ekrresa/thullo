@@ -40,7 +40,12 @@ export function BoardCoverWidget() {
         </Button>
       }
       open={isModalOpen}
-      onOpenChange={modalStatus => setModalOpen(modalStatus)}
+      onOpenChange={modalStatus => {
+        setModalOpen(modalStatus);
+        if (!modalStatus) {
+          setView('none');
+        }
+      }}
       closeIcon
     >
       <div className="relative mb-8 flex justify-center font-medium">
