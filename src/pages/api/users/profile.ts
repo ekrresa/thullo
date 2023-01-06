@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { unstable_getServerSession } from 'next-auth/next';
 
 import { db } from '@lib/prisma';
-import { authOptions } from '../auth/[...nextauth]';
+import { authOptions } from '@lib/nextAuthConfig';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
