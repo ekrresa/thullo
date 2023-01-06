@@ -1,8 +1,6 @@
 import * as React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
@@ -12,28 +10,37 @@ import { Footer } from '@components/common/Footer';
 import { Button } from '@components/common/Button';
 import { Input } from '@components/common/Input';
 import { Spinner } from '@components/common/Spinner';
-import { useProfileImageUpload, useUpdateProfile } from '@hooks/user';
-import { UserProfileInput, UserProfileInputSchema } from '@models/database';
+import { useGetCurrentUser, useProfileImageUpload, useUpdateProfile } from '@hooks/user';
+import { UserProfileInput, UserProfileInputSchema } from '@models/user';
 import { reloadSession } from '@lib/utils';
+import { ROUTES } from '@lib/constants';
 import Logo from '../../../public/logo-small.svg';
 
 export default function NewProfile() {
   const router = useRouter();
-  const { data } = useSession({ required: true });
-  const userProfile = data?.user;
+  const userProfile = useGetCurrentUser();
 
   const [previewUrl, setPreviewUrl] = React.useState('');
 
   const { uploadProfileImage, uploadingProfileImage } = useProfileImageUpload();
   const { updateProfile, updatingProfile } = useUpdateProfile();
 
-  const { register, handleSubmit } = useForm<UserProfileInput>({
-    defaultValues: {
+  const formDefaultValues = React.useMemo(
+    () => ({
       username: userProfile?.username ?? '',
       name: userProfile?.name ?? '',
-    },
+    }),
+    [userProfile?.username, userProfile?.name]
+  );
+
+  const { register, handleSubmit, reset } = useForm<UserProfileInput>({
+    defaultValues: formDefaultValues,
     resolver: zodResolver(UserProfileInputSchema),
   });
+
+  React.useEffect(() => {
+    reset(formDefaultValues);
+  }, [formDefaultValues, reset]);
 
   const submitForm = (values: UserProfileInput) => {
     updateProfile(values, {
@@ -70,29 +77,29 @@ export default function NewProfile() {
                 onChange={async e => {
                   if (!e.target.files || e.target.files.length === 0) return;
 
-                  try {
-                    const file = e.target.files[0];
-                    setPreviewUrl(URL.createObjectURL(file));
+                  Array.from(e.target.files).forEach(file => {
+                    const reader = new FileReader();
 
-                    let formData = new FormData();
-                    formData.set('image', file);
-                    formData.set('userId', userProfile?.id!);
-                    formData.set('folder', 'thullo');
-                    formData.set('public_id', `${userProfile?.id}_profile`);
+                    reader.onloadend = () => {
+                      const base64String = reader.result as string;
 
-                    uploadProfileImage(formData, {
-                      onSuccess() {
-                        toast.success('profile picture updated successfully', {
-                          duration: 3000,
-                        });
-                        reloadSession();
-                      },
-                    });
-                  } catch (error) {
-                    toast.error('An error occurred while processing file upload', {
-                      duration: 3000,
-                    });
-                  }
+                      setPreviewUrl(base64String);
+
+                      uploadProfileImage(
+                        { image: base64String },
+                        {
+                          onSuccess() {
+                            toast.success('profile picture updated successfully', {
+                              duration: 3000,
+                            });
+                            reloadSession();
+                          },
+                        }
+                      );
+                    };
+
+                    reader.readAsDataURL(file);
+                  });
                 }}
               />
               <label
@@ -109,9 +116,10 @@ export default function NewProfile() {
                 ) : userProfile?.image ? (
                   <Image
                     src={userProfile?.image}
-                    alt=""
-                    fill
                     className="h-full w-full rounded-full object-cover"
+                    width={160}
+                    height={160}
+                    alt=""
                   />
                 ) : (
                   <IoPersonCircle className="h-full w-full" />
@@ -147,18 +155,20 @@ export default function NewProfile() {
               id="name"
             />
 
-            <div className="mt-4 flex items-center gap-2">
+            <div className="mt-8 flex items-center gap-2">
               <Button
-                className="text-grey3 mt-4 w-full rounded-md py-3 text-sm shadow"
-                onClick={router.back}
+                className="w-full rounded-md py-3 text-sm"
+                onClick={() => router.push(ROUTES.home)}
+                variant="secondary"
               >
                 Go Home
               </Button>
 
               <Button
-                className="mt-4 w-full rounded-md bg-corn-blue py-3 text-sm text-white shadow"
-                type="submit"
+                className="w-full rounded-md py-3 text-sm"
                 loading={updatingProfile}
+                type="submit"
+                variant="primary"
               >
                 Save
               </Button>

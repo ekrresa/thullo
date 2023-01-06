@@ -9,12 +9,21 @@ interface ButtonProps
   loading?: boolean;
 }
 export function Button(props: ButtonProps) {
-  const { children, className, loading, fullWidth, variant, ...buttonProps } = props;
+  const {
+    children,
+    className,
+    loading,
+    fullWidth,
+    variant,
+    type = 'button',
+    ...buttonProps
+  } = props;
 
   return (
     <button
       className={cn(buttonClasses({ variant, fullWidth }), className)}
       disabled={loading}
+      type={type}
       {...buttonProps}
     >
       {loading ? (

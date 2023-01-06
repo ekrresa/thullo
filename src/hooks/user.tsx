@@ -1,11 +1,14 @@
+import * as React from 'react';
 import { useSession } from 'next-auth/react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 
-import { UserProfile, UserProfileInput } from '@models/database';
-import { request } from '@lib/request';
+import { UserProfileInput } from '@models/user';
+import { UserProfile } from '@models/database';
 import { supabase } from '@lib/supabase';
 import { parseError } from '@lib/utils';
+import { updateProfile, updateProfileImage } from '@lib/api/user';
+import { ProfileImageInput } from '@models/user';
 
 export const userQueryKeys = {
   users: () => ['users'],
@@ -36,7 +39,7 @@ export function useUserProfile() {
 export function useGetCurrentUser() {
   const { data: userProfile } = useSession({ required: true });
 
-  return userProfile?.user;
+  return React.useMemo(() => userProfile?.user, [userProfile?.user]);
 }
 
 export function useFetchUsers(userId: string = '') {
@@ -60,8 +63,8 @@ export function useFetchUsers(userId: string = '') {
 
 export function useProfileImageUpload() {
   const { mutate, isLoading, ...mutationProps } = useMutation(
-    (formData: FormData) => {
-      return request.post('/api/images/profile-image', formData);
+    (payload: ProfileImageInput) => {
+      return updateProfileImage(payload);
     },
     {
       onError(error) {
@@ -80,9 +83,7 @@ export function useProfileImageUpload() {
 
 export function useUpdateProfile() {
   const { mutate, isLoading, ...mutationProps } = useMutation(
-    (payload: UserProfileInput) => {
-      return request.post('/api/users/profile', payload);
-    },
+    (payload: UserProfileInput) => updateProfile(payload),
     {
       onError(error) {
         const errorMessage = parseError(error);

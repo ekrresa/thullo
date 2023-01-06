@@ -1,24 +1,27 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { unstable_getServerSession } from 'next-auth/next';
+import nextConnect from 'next-connect';
 
 import { db } from '@lib/prisma';
-import { authOptions } from '@lib/nextAuthConfig';
+import { withAuthentication } from '@lib/middleware/with-authentication';
+import { UserProfileInputSchema } from '@models/user';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({
-      message: 'Method Not Allowed',
-    });
-  }
+const handler = nextConnect();
 
-  try {
-    const session = await unstable_getServerSession(req, res, authOptions);
-    await db.user.update({ data: req.body, where: { id: session?.user.id } });
+handler
+  .use(withAuthentication)
+  .post(async (req: NextApiRequest, res: NextApiResponse) => {
+    try {
+      const userId = req.session.user.id;
+      const requestBody = UserProfileInputSchema.parse(req.body);
 
-    return res.status(200).json({ data: 'Profile updated successfully' });
-  } catch (error) {
-    return res.status(500).json({
-      message: 'Unable to update profile.Please try again',
-    });
-  }
-}
+      await db.user.update({ data: requestBody, where: { id: userId } });
+
+      return res.status(200).json({ data: 'Profile updated successfully' });
+    } catch (error) {
+      return res.status(400).json({
+        error: 'Unable to update profile. Please try again',
+      });
+    }
+  });
+
+export default handler;
