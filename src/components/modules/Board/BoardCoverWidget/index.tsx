@@ -17,8 +17,9 @@ export function BoardCoverWidget() {
   const [isModalOpen, setModalOpen] = React.useState(false);
   const [view, setView] = React.useState<ImageWidgetView>('none');
 
-  const { control } = useFormContext<BoardInput>();
+  const { control, watch } = useFormContext<BoardInput>();
 
+  const boardColour = watch('cover');
   const title =
     view === 'none'
       ? 'Choose Cover'
@@ -122,6 +123,7 @@ export function BoardCoverWidget() {
           name="cover"
           render={({ field }) => (
             <ColourGallery
+              selectedColour={boardColour}
               selectCover={color => {
                 field.onChange(color);
                 setModalOpen(false);
