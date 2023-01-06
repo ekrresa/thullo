@@ -70,7 +70,13 @@ export function NewBoard() {
         <form onSubmit={handleSubmit(onBoardFormSubmit)}>
           <div className="relative h-36 overflow-hidden rounded-lg bg-gray-200">
             {boardImage && (
-              <Image className="object-cover" src={boardImage} alt="board cover" fill />
+              <Image
+                className="object-cover"
+                src={boardImage}
+                width={400}
+                height={144}
+                alt="board cover"
+              />
             )}
 
             {boardCover && (
