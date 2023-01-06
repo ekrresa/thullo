@@ -9,9 +9,10 @@ import { cn } from '@lib/utils';
 
 interface PictureGalleryProps {
   selectImage: (input: string) => void;
+  selectedImage: string | null;
 }
 export function PictureGallery(props: PictureGalleryProps) {
-  const { selectImage } = props;
+  const { selectImage, selectedImage } = props;
 
   const [page, setPage] = React.useState(1);
   const photos = usePexelsPhotos(page);
@@ -40,12 +41,15 @@ export function PictureGallery(props: PictureGalleryProps) {
           <Button
             key={photo.url}
             className={cn(
-              'relative h-28 cursor-pointer overflow-hidden rounded-lg p-0 hover:opacity-70'
+              'relative h-28 cursor-pointer overflow-hidden rounded-lg p-0 hover:opacity-70',
+              selectedImage === photo.src.landscape
+                ? 'ring-2 ring-astronaut-500 ring-offset-1'
+                : ''
             )}
             onClick={() => selectImage(photo.src.landscape)}
             disabled={photos.isFetching}
           >
-            <Image src={photo.src.large2x} alt="" fill unoptimized />
+            <Image src={photo.src.large} height={112} width={300} alt="" />
           </Button>
         ))}
       </div>

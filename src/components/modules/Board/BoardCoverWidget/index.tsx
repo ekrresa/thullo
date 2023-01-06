@@ -20,12 +20,13 @@ export function BoardCoverWidget() {
   const { control, watch } = useFormContext<BoardInput>();
 
   const boardColour = watch('cover');
+  const boardImage = watch('image');
   const title =
-    view === 'none'
-      ? 'Choose Cover'
-      : view === 'pictures'
+    view === 'pictures'
       ? 'Pictures by Pexels'
-      : view === 'colors' && 'Colors';
+      : view === 'colors'
+      ? 'Colors'
+      : 'Choose Cover';
 
   return (
     <Modal
@@ -107,6 +108,7 @@ export function BoardCoverWidget() {
           name="image"
           render={({ field }) => (
             <PictureGallery
+              selectedImage={boardImage}
               selectImage={url => {
                 field.onChange(url);
                 setModalOpen(false);
