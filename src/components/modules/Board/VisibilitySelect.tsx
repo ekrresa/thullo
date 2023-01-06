@@ -18,17 +18,17 @@ export function VisibilitySelect({ getVisibility, value }: VisibilitySelectProps
       >
         <RadioGroup.Item
           className={cn(
-            'flex-1 rounded-lg border border-astronaut-200 p-4 transition-colors duration-300',
-            value === 'PUBLIC' ? 'border-astronaut-400' : ''
+            'flex-1 rounded-lg border border-astronaut-200 p-4 transition duration-300',
+            value === 'PUBLIC' ? 'ring-2 ring-astronaut-500 ring-offset-1' : ''
           )}
           value="PUBLIC"
         >
-          <header className="flex justify-between text-astronaut-700">
+          <header className="flex justify-between text-astronaut-500">
             <p className="text-sm font-medium">Public</p>
 
-            <div className="flex h-4 w-4 items-center justify-center rounded-full border-2 border-astronaut-700">
+            <div className="flex h-4 w-4 items-center justify-center rounded-full border-2 border-astronaut-500">
               {value === 'PUBLIC' && (
-                <span className="h-2 w-2 rounded-full bg-astronaut-700"></span>
+                <span className="h-2 w-2 rounded-full bg-astronaut-500"></span>
               )}
             </div>
           </header>
@@ -40,17 +40,17 @@ export function VisibilitySelect({ getVisibility, value }: VisibilitySelectProps
 
         <RadioGroup.Item
           className={cn(
-            'flex-1 rounded-lg border border-astronaut-200 p-4 transition-colors duration-300',
-            value === 'PRIVATE' ? 'border-astronaut-400' : ''
+            'flex-1 rounded-lg border border-astronaut-200 p-4 transition duration-300',
+            value === 'PRIVATE' ? 'ring-2 ring-astronaut-500 ring-offset-1' : ''
           )}
           value="PRIVATE"
         >
           <header className="flex justify-between">
-            <p className="text-sm font-medium text-astronaut-700">Private</p>
+            <p className="text-sm font-medium text-astronaut-500">Private</p>
 
-            <div className="flex h-4 w-4 items-center justify-center rounded-full border-2 border-astronaut-700">
+            <div className="flex h-4 w-4 items-center justify-center rounded-full border-2 border-astronaut-500">
               {value === 'PRIVATE' && (
-                <span className="h-2 w-2 rounded-full bg-astronaut-700"></span>
+                <span className="h-2 w-2 rounded-full bg-astronaut-500"></span>
               )}
             </div>
           </header>
