@@ -11,7 +11,7 @@ export function VisibilitySelect({ getVisibility, value }: VisibilitySelectProps
   return (
     <form>
       <RadioGroup.Root
-        className="flex gap-2"
+        className="flex gap-4"
         onValueChange={value => {
           getVisibility(value as BoardVisibility);
         }}
