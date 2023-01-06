@@ -6,7 +6,7 @@ import { Button } from './Button';
 import { cn } from '@lib/utils';
 
 interface ModalProps extends React.PropsWithChildren<unknown> {
-  trigger: React.ReactNode;
+  trigger?: React.ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   closeIcon?: boolean;
@@ -17,7 +17,9 @@ export function Modal(props: ModalProps) {
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>
+      {React.isValidElement(trigger) && (
+        <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>
+      )}
 
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 cursor-pointer bg-gray-800/60" />

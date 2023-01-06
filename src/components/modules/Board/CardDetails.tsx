@@ -165,12 +165,7 @@ export function CardDetails({ boardOwner, members }: CardDetailsProps) {
   };
 
   return (
-    <Modal
-      isOpen={openCardModal}
-      className="max-w-2xl overflow-visible pb-10"
-      closeModal={handleCardModal}
-      closeIcon
-    >
+    <Modal open={openCardModal} className="max-w-2xl overflow-visible pb-10" closeIcon>
       {cardData.isLoading ? (
         <p className="text-center text-sm">Loading...</p>
       ) : (
