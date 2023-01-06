@@ -1,10 +1,10 @@
 import { Button } from '@components/common/Button';
 
-interface ColorsGalleryProps {
+interface ColourGalleryProps {
   selectCover: (input: string) => void;
 }
 
-export function ColorsGallery({ selectCover }: ColorsGalleryProps) {
+export function ColourGallery({ selectCover }: ColourGalleryProps) {
   return (
     <div className="grid grid-cols-colors gap-2">
       <Button

@@ -7,7 +7,7 @@ import { IoIosArrowBack } from 'react-icons/io';
 import { Modal } from '@components/common/Modal';
 import { Button } from '@components/common/Button';
 import { PictureGallery } from './PictureGallery';
-import { ColorsGallery } from './ColorsGallery';
+import { ColourGallery } from './ColourGallery';
 import { BoardInput } from '@models/board';
 import { FileUpload } from './FileUpload';
 
@@ -121,7 +121,7 @@ export function BoardCoverWidget() {
           control={control}
           name="cover"
           render={({ field }) => (
-            <ColorsGallery
+            <ColourGallery
               selectCover={color => {
                 field.onChange(color);
                 setModalOpen(false);
