@@ -16,7 +16,7 @@ import { BoardCreateSchema, BoardInput } from '@models/board';
 export function NewBoard() {
   const [isModalOpen, setModalOpen] = React.useState(false);
 
-  const { createBoard, creatingBoard } = useCreateBoard();
+  const { createBoard, creatingBoard, reset: resetMutation } = useCreateBoard();
 
   const formMethods = useForm<BoardInput>({
     defaultValues: {
@@ -36,12 +36,13 @@ export function NewBoard() {
     createBoard(values, {
       onSuccess() {
         setModalOpen(false);
+        reset({ title: '', image: null, cover: null, visibility: 'PRIVATE' });
         toast.success('Board created successfully.');
       },
     });
   };
 
-  const { control, register, handleSubmit, watch } = formMethods;
+  const { control, register, handleSubmit, reset, watch } = formMethods;
 
   const boardCover = watch('cover');
   const boardImage = watch('image');
@@ -56,7 +57,13 @@ export function NewBoard() {
       }
       className="max-w-md overflow-visible"
       open={isModalOpen}
-      onOpenChange={modalStatus => setModalOpen(modalStatus)}
+      onOpenChange={modalStatus => {
+        setModalOpen(modalStatus);
+        if (!modalStatus) {
+          reset({ title: '', image: null, cover: null, visibility: 'PRIVATE' });
+          resetMutation();
+        }
+      }}
       closeIcon
     >
       <FormProvider {...formMethods}>
