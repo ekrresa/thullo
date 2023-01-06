@@ -3,11 +3,11 @@ import { useSession } from 'next-auth/react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 
-import { UserProfile, UserProfileInput } from '@models/database';
-import { request } from '@lib/request';
+import { UserProfileInput } from '@models/user';
+import { UserProfile } from '@models/database';
 import { supabase } from '@lib/supabase';
 import { parseError } from '@lib/utils';
-import { updateProfileImage } from '@lib/api/user';
+import { updateProfile, updateProfileImage } from '@lib/api/user';
 import { ProfileImageInput } from '@models/user';
 
 export const userQueryKeys = {
@@ -83,9 +83,7 @@ export function useProfileImageUpload() {
 
 export function useUpdateProfile() {
   const { mutate, isLoading, ...mutationProps } = useMutation(
-    (payload: UserProfileInput) => {
-      return request.post('/api/users/profile', payload);
-    },
+    (payload: UserProfileInput) => updateProfile(payload),
     {
       onError(error) {
         const errorMessage = parseError(error);

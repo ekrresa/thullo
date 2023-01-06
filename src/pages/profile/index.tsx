@@ -11,7 +11,7 @@ import { Button } from '@components/common/Button';
 import { Input } from '@components/common/Input';
 import { Spinner } from '@components/common/Spinner';
 import { useGetCurrentUser, useProfileImageUpload, useUpdateProfile } from '@hooks/user';
-import { UserProfileInput, UserProfileInputSchema } from '@models/database';
+import { UserProfileInput, UserProfileInputSchema } from '@models/user';
 import { reloadSession } from '@lib/utils';
 import { ROUTES } from '@lib/constants';
 import Logo from '../../../public/logo-small.svg';
