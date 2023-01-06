@@ -6,7 +6,7 @@ import { IoIosArrowBack } from 'react-icons/io';
 
 import { Modal } from '@components/common/Modal';
 import { Button } from '@components/common/Button';
-import { PhotosGallery } from './PhotosGallery';
+import { PictureGallery } from './PictureGallery';
 import { ColorsGallery } from './ColorsGallery';
 import { BoardInput } from '@models/board';
 import { FileUpload } from './FileUpload';
@@ -105,7 +105,7 @@ export function BoardCoverWidget() {
           control={control}
           name="image"
           render={({ field }) => (
-            <PhotosGallery
+            <PictureGallery
               selectImage={url => {
                 field.onChange(url);
                 setModalOpen(false);

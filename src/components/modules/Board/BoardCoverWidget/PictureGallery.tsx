@@ -7,10 +7,10 @@ import { BiLeftArrow, BiRightArrow } from 'react-icons/bi';
 import { LoaderWrapper } from '@components/LoaderWrapper';
 import { cn } from '@lib/utils';
 
-interface PhotosGalleryProps {
+interface PictureGalleryProps {
   selectImage: (input: string) => void;
 }
-export function PhotosGallery(props: PhotosGalleryProps) {
+export function PictureGallery(props: PictureGalleryProps) {
   const { selectImage } = props;
 
   const [page, setPage] = React.useState(1);
