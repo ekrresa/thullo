@@ -1,6 +1,11 @@
 import { supabase } from '@lib/supabase';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
+
 import { Board, Card, Comment, List, UserProfile } from '@models/database';
+import { createBoard } from '@lib/api/board';
+import { BoardInput } from '@models/board';
+import { parseError } from '@lib/utils';
 
 export const boardsQueryKeys = {
   all: () => ['boards', 'all'],
@@ -17,6 +22,24 @@ export const boardsQueryKeys = {
 };
 
 const ONE_HOUR_IN_MILLISECONDS = 3600000;
+
+export function useCreateBoard() {
+  const { mutate, isLoading, ...mutationProps } = useMutation(
+    (payload: BoardInput) => createBoard(payload),
+    {
+      onError(error) {
+        const errorMessage = parseError(error);
+        toast.error(errorMessage);
+      },
+    }
+  );
+
+  return {
+    createBoard: mutate,
+    creatingBoard: isLoading,
+    ...mutationProps,
+  };
+}
 
 export function useFetchBoards() {
   return useQuery(

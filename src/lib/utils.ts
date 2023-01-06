@@ -1,10 +1,10 @@
 import { Prisma } from '@prisma/client';
-import { ClassValue, clsx } from 'clsx';
+import { cx, CxOptions } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 import request from './request';
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+export function cn(...inputs: CxOptions) {
+  return twMerge(cx(inputs));
 }
 
 export function getInitials(name: string) {
@@ -26,6 +26,7 @@ export function profileCloudinaryUrl(publicId: string, version: string) {
   return `https://res.cloudinary.com/chuck-huey/image/upload/c_thumb,dpr_auto,w_200,q_auto,f_auto,g_face/${version}/${publicId}.jpg`;
 }
 
+// TODO: Parse zod, prisma and cloudinary errors
 export function parseError(error: unknown): string {
   if (request.isAxiosError(error)) {
     if (error.response?.data?.message) {

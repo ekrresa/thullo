@@ -1,147 +1,132 @@
 import * as React from 'react';
-import Image from 'next/legacy/image';
-import { useFormik } from 'formik';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import Image from 'next/image';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'react-hot-toast';
 import { BiPlus } from 'react-icons/bi';
-import { BsImage } from 'react-icons/bs';
-import toast from 'react-hot-toast';
 
 import { Modal } from '@components/common/Modal';
 import { Button } from '@components/common/Button';
-import { ImageWidget } from './ImageWidget';
+import { BoardCoverWidget } from './BoardCoverWidget';
 import { VisibilitySelect } from './VisibilitySelect';
-import { useUserProfile } from '@hooks/user';
-import { BoardInput, createBoard } from '@lib/api/board';
-import { boardsQueryKeys } from '@hooks/board';
+import { useCreateBoard } from '@hooks/board';
+import { Input } from '@components/common/Input';
+import { BoardCreateSchema, BoardInput } from '@models/board';
 
 export function NewBoard() {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [isWidgetOpen, setWidgetOpen] = React.useState(false);
-  const user = useUserProfile();
-  const queryClient = useQueryClient();
-  const newBoardMutation = useMutation((data: BoardInput) =>
-    createBoard(data, user.data?.id as string)
-  );
+  const [isModalOpen, setModalOpen] = React.useState(false);
 
-  const formik = useFormik({
-    initialValues: {
-      image: undefined,
-      cover: undefined,
+  const { createBoard, creatingBoard, reset: resetMutation } = useCreateBoard();
+
+  const formMethods = useForm<BoardInput>({
+    defaultValues: {
       title: '',
-      visibility: 'public',
+      image: null,
+      cover: null,
+      visibility: 'PRIVATE',
     },
-    onSubmit: async values => {
-      newBoardMutation.mutate(
-        {
-          title: values.title,
-          image: values.image,
-          cover: values.cover,
-          visibility: values.visibility as 'public' | 'private',
-        },
-        {
-          onError: (error: any) => {
-            toast.error(error.message);
-          },
-          onSuccess: async () => {
-            toast.success('Board created!');
-            await queryClient.invalidateQueries(boardsQueryKeys.all());
-            setIsOpen(false);
-          },
-        }
-      );
-    },
+    resolver: zodResolver(BoardCreateSchema),
   });
 
-  const boardCover = formik.values.cover || null;
-  const boardImage = formik.values.image || null;
+  const onBoardFormSubmit = (values: BoardInput) => {
+    if (!values.image && !values.cover) {
+      return toast.error('Please select a cover for the board.');
+    }
+
+    createBoard(values, {
+      onSuccess() {
+        setModalOpen(false);
+        reset({ title: '', image: null, cover: null, visibility: 'PRIVATE' });
+        toast.success('Board created successfully.');
+      },
+    });
+  };
+
+  const { control, register, handleSubmit, reset, watch } = formMethods;
+
+  const boardCover = watch('cover');
+  const boardImage = watch('image');
 
   return (
-    <>
-      <Button
-        className="flex items-center rounded-lg bg-corn-blue px-3 py-2 text-xs text-white"
-        onClick={() => {
-          console.log('first');
-          setIsOpen(true);
-        }}
-      >
-        <BiPlus className="mr-2 text-sm" />
-        Add
-      </Button>
-
-      <Modal
-        isOpen={isOpen}
-        className="max-w-md overflow-visible"
-        closeModal={() => setIsOpen(false)}
-      >
-        <form onSubmit={formik.handleSubmit}>
-          {/* Modal to select online images and colors */}
-          <ImageWidget
-            isOpen={isWidgetOpen}
-            closeHandler={() => setWidgetOpen(false)}
-            selectCover={(cover: string) => {
-              formik.setFieldValue('cover', cover);
-              formik.setFieldValue('image', null);
-              toast.success('Color selected!');
-            }}
-            selectImage={(image: string) => {
-              formik.setFieldValue('image', image);
-              formik.setFieldValue('cover', null);
-              toast.success('Image selected!');
-            }}
-          />
-
+    <Modal
+      trigger={
+        <Button className="flex items-center rounded-lg bg-corn-blue px-3 py-2 text-xs text-white">
+          <BiPlus className="mr-2 text-sm" />
+          Add
+        </Button>
+      }
+      className="max-w-md overflow-visible"
+      open={isModalOpen}
+      onOpenChange={modalStatus => {
+        setModalOpen(modalStatus);
+        if (!modalStatus) {
+          reset({ title: '', image: null, cover: null, visibility: 'PRIVATE' });
+          resetMutation();
+        }
+      }}
+      closeIcon
+    >
+      <FormProvider {...formMethods}>
+        <form onSubmit={handleSubmit(onBoardFormSubmit)}>
           <div className="relative h-36 overflow-hidden rounded-lg bg-gray-200">
-            {boardImage ? (
-              <Image src={boardImage} layout="fill" alt="" />
-            ) : boardCover ? (
+            {boardImage && (
+              <Image
+                className="object-cover"
+                src={boardImage}
+                width={400}
+                height={144}
+                alt="board cover"
+              />
+            )}
+
+            {boardCover && (
               <div
                 style={{ backgroundColor: boardCover }}
                 className="h-full w-full"
               ></div>
-            ) : null}
+            )}
           </div>
 
-          <input
-            className="mt-4 w-full rounded-lg border border-ash bg-white px-3 py-3 text-xs text-pencil shadow-lg focus:outline-none"
+          <Input
+            {...register('title')}
+            label="Board Title"
+            className="mt-4 w-full rounded-lg border border-ash bg-white px-3 py-2.5 text-sm drop-shadow-xl focus:outline-none"
             id="title"
-            onChange={formik.handleChange}
-            placeholder="Add board title"
+            placeholder="Enter board title"
+            labelHidden
           />
-          <div className="mt-6 flex items-center justify-between">
-            <Button
-              className="flex items-center rounded-lg bg-gray-100 px-12 py-3 text-xs text-gray3"
-              onClick={() => setWidgetOpen(true)}
-            >
-              <BsImage className="mr-2" />
-              Cover
-            </Button>
 
-            <VisibilitySelect
-              getVisibility={(val: any) => formik.setFieldValue('visibility', val)}
-              value={formik.values.visibility}
-            />
-          </div>
+          <BoardCoverWidget />
 
-          <div className="mt-8 flex justify-end">
-            <Button
-              className="rounded-lg px-3 py-3 text-[0.625rem] text-gray3 hover:bg-gray-100"
-              onClick={() => setIsOpen(false)}
-            >
+          <Controller
+            control={control}
+            name="visibility"
+            render={({ field }) => (
+              <VisibilitySelect
+                getVisibility={(val: BoardInput['visibility']) => field.onChange(val)}
+                value={field.value}
+              />
+            )}
+          />
+
+          <div className="mt-8 flex gap-4">
+            <Button onClick={() => setModalOpen(false)} variant="secondary" fullWidth>
               Cancel
             </Button>
 
             <Button
-              className="ml-4 flex items-center rounded-lg bg-corn-blue px-3 py-3 text-[0.625rem] text-white"
+              className="gap-2"
               type="submit"
-              disabled={newBoardMutation.isLoading}
-              loading={newBoardMutation.isLoading}
+              loading={creatingBoard}
+              variant="primary"
+              fullWidth
             >
-              <BiPlus className="mr-2 text-sm" />
+              <BiPlus className="text-base" />
               Create
             </Button>
           </div>
         </form>
-      </Modal>
-    </>
+      </FormProvider>
+    </Modal>
   );
 }

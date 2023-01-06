@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply font-open-sans;
+    @apply font-sans;
     @apply bg-white;
     @apply text-gray-700;
   }
@@ -15,7 +15,7 @@
   h4,
   h5,
   h6 {
-    @apply font-poppins;
+    @apply font-sans;
   }
 }
 

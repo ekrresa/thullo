@@ -1,65 +1,49 @@
 import * as React from 'react';
-import { Dialog, Transition } from '@headlessui/react';
-import { Button } from './Button';
+import * as Dialog from '@radix-ui/react-dialog';
 import { IoClose } from 'react-icons/io5';
 
+import { Button } from './Button';
+import { cn } from '@lib/utils';
+
 interface ModalProps extends React.PropsWithChildren<unknown> {
-  isOpen: boolean;
-  closeModal: () => void;
+  trigger?: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   closeIcon?: boolean;
   className?: string;
 }
+export function Modal(props: ModalProps) {
+  const { children, className, closeIcon = false, open, onOpenChange, trigger } = props;
 
-export function Modal({
-  children,
-  className,
-  closeIcon = false,
-  closeModal,
-  isOpen,
-}: ModalProps) {
   return (
-    <Transition show={isOpen} as={React.Fragment} appear>
-      <Dialog as="div" className="relative z-10" onClose={closeModal}>
-        <Transition.Child
-          as={React.Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <Dialog.Overlay className="fixed inset-0 bg-gray-800 opacity-20" />
-        </Transition.Child>
+    <Dialog.Root open={open} onOpenChange={onOpenChange}>
+      {React.isValidElement(trigger) && (
+        <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>
+      )}
 
-        <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center">
-            <Transition.Child
-              as={React.Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95"
-              enterTo="opacity-100 scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95"
-            >
-              <div
-                className={`relative mt-24 mb-8 inline-block w-full transform overflow-hidden rounded-2xl bg-white p-6 shadow-xl transition-all ${className}`}
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 cursor-pointer bg-gray-800/60" />
+
+        <Dialog.Content
+          className={cn(
+            'fixed top-[50%] left-[50%] w-full -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-6 shadow',
+            className
+          )}
+        >
+          {closeIcon && (
+            <Dialog.Close asChild>
+              <Button
+                className="absolute top-1 right-1 flex h-6 w-6 items-center justify-center rounded-full p-0 text-astronaut-700 hover:bg-slate-100"
+                aria-label="Close"
               >
-                {closeIcon && (
-                  <Button
-                    className="absolute -top-2 -right-2 rounded-lg bg-corn-blue p-1 text-white"
-                    onClick={closeModal}
-                  >
-                    <IoClose className="text-xl" />
-                  </Button>
-                )}
-                {children}
-              </div>
-            </Transition.Child>
-          </div>
-        </div>
-      </Dialog>
-    </Transition>
+                <IoClose className="text-lg" />
+              </Button>
+            </Dialog.Close>
+          )}
+
+          {children}
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 }

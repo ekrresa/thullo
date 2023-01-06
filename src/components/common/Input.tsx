@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { cn } from '@lib/utils';
 
-interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
+interface Props extends React.ComponentProps<'input'> {
   label: string;
   labelHidden?: boolean;
   errorMessage?: string;
@@ -20,9 +20,11 @@ function InputInner(props: Props, ref: React.ForwardedRef<HTMLInputElement>) {
 
   return (
     <div className={containerClassName}>
-      <label className="mb-1 block text-sm text-pencil" htmlFor={id}>
-        {label}
-      </label>
+      {!labelHidden && (
+        <label className="mb-1 block text-sm text-pencil" htmlFor={id}>
+          {label}
+        </label>
+      )}
 
       <input
         ref={ref}
@@ -31,6 +33,7 @@ function InputInner(props: Props, ref: React.ForwardedRef<HTMLInputElement>) {
           className,
           errorMessage && 'border-red-300 hover:border-red-300 focus:ring-red-600'
         )}
+        aria-label={labelHidden ? label : undefined}
         aria-invalid={errorMessage ? 'true' : 'false'}
         aria-errormessage={`err-${id}`}
         id={id}

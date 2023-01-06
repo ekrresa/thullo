@@ -1,9 +1,11 @@
-import { supabase } from '@lib/supabase';
+import { useSession } from 'next-auth/react';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
+
 import { UserProfile, UserProfileInput } from '@models/database';
 import { request } from '@lib/request';
+import { supabase } from '@lib/supabase';
 import { parseError } from '@lib/utils';
-import toast from 'react-hot-toast';
 
 export const userQueryKeys = {
   users: () => ['users'],
@@ -29,6 +31,12 @@ export function useUserProfile() {
     },
     { staleTime: Infinity }
   );
+}
+
+export function useGetCurrentUser() {
+  const { data: userProfile } = useSession({ required: true });
+
+  return userProfile?.user;
 }
 
 export function useFetchUsers(userId: string = '') {
