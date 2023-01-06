@@ -58,27 +58,6 @@ export function BoardCoverWidget() {
 
       {view === 'none' && (
         <div className="flex flex-wrap gap-4">
-          <div className="min-w-[200px] flex-1">
-            {/* Photo by Taryn Elliott from Pexels https://www.pexels.com/photo/white-and-black-picture-frame-4340919/ */}
-            <Button
-              className="relative h-40 w-full overflow-hidden rounded-lg"
-              onClick={() => setView('pictures')}
-            >
-              <Image src="/photo-cover.jpg" alt="Picture cover" fill unoptimized />
-            </Button>
-            <h3 className="mt-2 text-center text-sm">Pictures</h3>
-          </div>
-
-          <div className="min-w-[200px] flex-1">
-            <Button
-              className="relative h-40 w-full overflow-hidden rounded-lg"
-              onClick={() => setView('colors')}
-            >
-              <Image src="/palette.jpg" alt="Color cover" fill unoptimized />
-            </Button>
-            <h3 className="mt-2 text-center text-sm">Colors</h3>
-          </div>
-
           <Controller
             control={control}
             name="image"
@@ -92,6 +71,27 @@ export function BoardCoverWidget() {
               />
             )}
           />
+
+          <div className="min-w-[200px] flex-1">
+            {/* Photo by Taryn Elliott from Pexels https://www.pexels.com/photo/white-and-black-picture-frame-4340919/ */}
+            <Button
+              className="relative h-40 w-full overflow-hidden rounded-lg"
+              onClick={() => setView('pictures')}
+            >
+              <Image src="/photo-cover.jpg" alt="Picture cover" fill unoptimized />
+            </Button>
+            <h3 className="mt-2 text-center text-sm">Choose a Picture</h3>
+          </div>
+
+          <div className="min-w-[200px] flex-1">
+            <Button
+              className="relative h-40 w-full overflow-hidden rounded-lg"
+              onClick={() => setView('colors')}
+            >
+              <Image src="/palette.jpg" alt="Color cover" fill unoptimized />
+            </Button>
+            <h3 className="mt-2 text-center text-sm">Choose a Color</h3>
+          </div>
         </div>
       )}
 

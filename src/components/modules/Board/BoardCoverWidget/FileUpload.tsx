@@ -26,7 +26,6 @@ export function FileUpload({ selectFile }: Props) {
     onDrop,
     accept: {
       'image/*': ['.png', '.jpeg', '.jpg'],
-      'video/*': ['.mp4', '.webm'],
     },
     multiple: false,
     maxFiles: 1,
@@ -37,7 +36,7 @@ export function FileUpload({ selectFile }: Props) {
       <div
         {...getRootProps({
           className:
-            'flex h-40 items-center justify-center rounded-lg border-4 border-double border-astronaut-300 p-4 transition hover:cursor-pointer hover:border-astronaut-400',
+            'flex h-40 items-center justify-center rounded-lg border-4 border-double border-astronaut-300 p-4 transition hover:cursor-pointer hover:border-astronaut-500 ease-out',
         })}
       >
         <input {...getInputProps()} />
@@ -46,7 +45,7 @@ export function FileUpload({ selectFile }: Props) {
         </p>
       </div>
 
-      <h3 className="mt-2 text-center text-sm">Choose File</h3>
+      <h3 className="mt-2 text-center text-sm">Choose a File</h3>
     </div>
   );
 }
