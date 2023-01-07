@@ -27,7 +27,7 @@ import {
 } from '@lib/api/board';
 import { useUserProfile } from '@hooks/user';
 import { Card, List as ListType } from '@models/database';
-import { Avatar } from '@components/common/Avatar';
+import { Avatar } from '@components/Avatar';
 import { IsOwner } from '@components/common/IsOwner';
 import { useIsBoardMember } from '@hooks/useIsBoardMember';
 
