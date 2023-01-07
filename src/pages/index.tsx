@@ -3,7 +3,7 @@ import Image from 'next/legacy/image';
 import Link from 'next/link';
 import { IoMdLock } from 'react-icons/io';
 
-import { Layout } from '../components/common/Layout';
+import { Layout } from '../components/Layout';
 import { NewBoard } from '../components/modules/Board/NewBoard';
 import { useFetchBoards } from '@hooks/board';
 import { getCloudinaryUrl } from '@lib/utils';

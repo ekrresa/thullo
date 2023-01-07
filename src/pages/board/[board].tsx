@@ -4,7 +4,7 @@ import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 
-import { Layout } from '@components/common/Layout';
+import { Layout } from '@components/Layout';
 import { List } from '@components/modules/Board/List';
 import { SideMenu } from '@components/modules/Board/SideMenu';
 import { VisibilitySwitch } from '@components/modules/Board/VisibilitySwitch';

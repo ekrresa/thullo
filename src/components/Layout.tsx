@@ -1,23 +1,24 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { signOut, useSession } from 'next-auth/react';
+import { signOut } from 'next-auth/react';
 import { CgLayoutGridSmall } from 'react-icons/cg';
 import { FaCaretDown } from 'react-icons/fa';
 
-import { Footer } from './Footer';
-import { Dropdown } from './Dropdown';
-import { Button } from './Button';
-import { Avatar } from './Avatar';
+import { Footer } from './common/Footer';
+import { Dropdown } from './common/Dropdown';
+import { Button } from './common/Button';
+import { Avatar } from './common/Avatar';
 import { useFetchSingleBoard } from '@hooks/board';
-import Logo from '../../../public/logo.svg';
+import Logo from '@public/logo.svg';
 import { ROUTES } from '@lib/constants';
+import { useGetCurrentUser } from '@hooks/user';
 
 export function Layout({ children }: React.PropsWithChildren<unknown>) {
   const router = useRouter();
   const board = useFetchSingleBoard(Number(router.query.board));
 
-  const { data: userProfile, status } = useSession();
+  const userProfile = useGetCurrentUser({ requireAuth: false });
 
   return (
     <div className="grid min-h-screen grid-cols-1 grid-rows-layout">
@@ -43,7 +44,7 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
             </div>
           )}
 
-          {status === 'unauthenticated' && (
+          {!Boolean(userProfile) && (
             <Link
               href={ROUTES.auth}
               className="ml-auto rounded-md bg-corn-blue py-2 px-4 text-sm text-white"
@@ -52,29 +53,23 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
             </Link>
           )}
 
-          {status === 'authenticated' && (
+          {Boolean(userProfile) && (
             <Dropdown
               className="ml-auto"
               header={
-                userProfile?.user.username ? (
+                userProfile?.username ? (
                   <div className="mb-2 px-3 py-2 text-center text-sm opacity-60">
-                    {userProfile?.user.username}
+                    {userProfile?.username}
                   </div>
                 ) : null
               }
               panel={
                 <div className="flex items-center">
-                  {userProfile?.user.image && userProfile?.user.name ? (
+                  {userProfile?.image && userProfile?.name ? (
                     <div className="h-9 w-9 overflow-hidden rounded-xl">
-                      <Avatar
-                        image={userProfile.user.image}
-                        name={userProfile.user.name}
-                      />
+                      <Avatar image={userProfile.image} name={userProfile.name} />
                     </div>
                   ) : null}
-                  <p className="ml-3 hidden w-24 truncate text-sm capitalize sm:inline-block">
-                    {userProfile?.user.name}
-                  </p>
                   <FaCaretDown className="ml-2 hidden sm:inline-block" />
                 </div>
               }
