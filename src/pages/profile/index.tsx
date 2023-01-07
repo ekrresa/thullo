@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
@@ -17,7 +17,6 @@ import { ROUTES } from '@lib/constants';
 import Logo from '../../../public/logo-small.svg';
 
 export default function NewProfile() {
-  const router = useRouter();
   const userProfile = useGetCurrentUser();
 
   const [previewUrl, setPreviewUrl] = React.useState('');
@@ -157,8 +156,9 @@ export default function NewProfile() {
 
             <div className="mt-8 flex items-center gap-2">
               <Button
+                as={Link}
+                href={ROUTES.home}
                 className="w-full rounded-md py-3 text-sm"
-                onClick={() => router.push(ROUTES.home)}
                 variant="secondary"
               >
                 Go Home

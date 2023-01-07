@@ -3,13 +3,17 @@ import { AiOutlineLoading } from 'react-icons/ai';
 import { cva, VariantProps } from 'class-variance-authority';
 import { cn } from '@lib/utils';
 
-interface ButtonProps
+interface ButtonProps<T extends React.ElementType>
   extends React.ComponentProps<'button'>,
     VariantProps<typeof buttonClasses> {
+  as?: T;
   loading?: boolean;
 }
-export function Button(props: ButtonProps) {
+export function Button<T extends React.ElementType = 'button'>(
+  props: ButtonProps<T> & Omit<React.ComponentPropsWithoutRef<T>, keyof ButtonProps<T>>
+) {
   const {
+    as,
     children,
     className,
     loading,
@@ -19,8 +23,10 @@ export function Button(props: ButtonProps) {
     ...buttonProps
   } = props;
 
+  const Component = as || 'button';
+
   return (
-    <button
+    <Component
       className={cn(buttonClasses({ variant, fullWidth }), className)}
       disabled={loading}
       type={type}
@@ -31,7 +37,7 @@ export function Button(props: ButtonProps) {
       ) : (
         children
       )}
-    </button>
+    </Component>
   );
 }
 
