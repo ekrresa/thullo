@@ -6,9 +6,9 @@ import { CgLayoutGridSmall } from 'react-icons/cg';
 import { FaCaretDown } from 'react-icons/fa';
 
 import { Footer } from './common/Footer';
-import { Dropdown } from './common/Dropdown';
+import { Dropdown } from './Dropdown';
 import { Button } from './common/Button';
-import { Avatar } from './common/Avatar';
+import { Avatar } from './Avatar';
 import { useFetchSingleBoard } from '@hooks/board';
 import Logo from '@public/logo.svg';
 import { ROUTES } from '@lib/constants';
@@ -55,7 +55,6 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
 
           {Boolean(userProfile) && (
             <Dropdown
-              className="ml-auto"
               header={
                 userProfile?.username ? (
                   <div className="mb-2 px-3 py-2 text-center text-sm opacity-60">
@@ -63,8 +62,8 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
                   </div>
                 ) : null
               }
-              panel={
-                <div className="flex items-center">
+              trigger={
+                <div className="ml-auto flex items-center">
                   {userProfile?.image && userProfile?.name ? (
                     <div className="h-9 w-9 overflow-hidden rounded-xl">
                       <Avatar image={userProfile.image} name={userProfile.name} />
@@ -77,13 +76,13 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
                 <Link
                   key="profile"
                   href={ROUTES.profile}
-                  className="block w-full border-inherit px-3 py-2 text-center text-sm transition-colors duration-200 ease-linear hover:bg-gray-100"
+                  className="block w-full text-center transition-colors duration-200 ease-linear hover:bg-gray-100"
                 >
                   Profile
                 </Link>,
                 <Button
                   key="logout"
-                  className="w-full border-inherit px-3 py-2 text-sm transition-colors duration-200 ease-linear hover:bg-gray-100"
+                  className="w-full p-0 transition-colors duration-200 ease-linear hover:bg-gray-100"
                   onClick={() => {
                     signOut();
                   }}

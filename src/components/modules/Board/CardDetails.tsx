@@ -15,7 +15,7 @@ import { TextArea } from '@components/common/TextArea';
 import { Button } from '@components/common/Button';
 import { addComment, CommentInput, updateCard } from '@lib/api/board';
 import { useUserProfile } from '@hooks/user';
-import { Avatar } from '@components/common/Avatar';
+import { Avatar } from '@components/Avatar';
 import { supabase } from '@lib/supabase';
 import { Card, Comment } from '@models/database';
 import { CardCover } from './CardCover';
