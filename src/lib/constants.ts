@@ -2,7 +2,7 @@ export const ROUTES = {
   home: '/',
   auth: '/auth',
   profile: '/profile',
-  board: (boardId: number) => `/board/${boardId}`,
+  board: (boardId: string) => `/board/${boardId}`,
 };
 
 export const EMAIL_SERVER = process.env.EMAIL_SERVER;
