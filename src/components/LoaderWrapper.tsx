@@ -37,7 +37,7 @@ export function LoaderWrapper(props: Props) {
 
       {/* Error section */}
       {Boolean(errorMessage) && (
-        <div className="flex flex-col">
+        <div className="flex flex-col items-center gap-4">
           <p className="text-center text-sm text-roman-500">{errorMessage}</p>
           <Button aria-label="Retry request" onClick={onRetryClick} variant="primary">
             Try Again
