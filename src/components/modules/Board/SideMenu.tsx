@@ -14,7 +14,7 @@ import { toast } from 'react-hot-toast';
 
 import { useLockBodyScroll } from '@hooks/useLockBodyScroll';
 import { Board, UserProfile } from '@models/database';
-import { Avatar } from '@components/common/Avatar';
+import { Avatar } from '@components/Avatar';
 import { updateBoard } from '@lib/api/board';
 import { Button } from '@components/common/Button';
 import { boardsQueryKeys } from '@hooks/board';

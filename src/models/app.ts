@@ -5,3 +5,7 @@ export type Page<P = {}> = NextPage<P> & {
   getLayout?: (page: ReactElement) => ReactNode;
   protected: boolean;
 };
+
+export interface BaseResponse<T> {
+  data: T;
+}

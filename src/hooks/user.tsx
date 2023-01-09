@@ -36,8 +36,12 @@ export function useUserProfile() {
   );
 }
 
-export function useGetCurrentUser() {
-  const { data: userProfile } = useSession({ required: true });
+interface CurrentUserProps {
+  requireAuth: boolean;
+}
+export function useGetCurrentUser(props?: CurrentUserProps) {
+  const { requireAuth = true } = props || {};
+  const { data: userProfile } = useSession({ required: requireAuth });
 
   return React.useMemo(() => userProfile?.user, [userProfile?.user]);
 }

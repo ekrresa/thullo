@@ -40,7 +40,8 @@ export function BoardInvite({ board, members }: BoardInviteProps) {
             boardsQueryKeys.board(board.id),
             oldData => {
               if (oldData) {
-                return { ...oldData, members: data.members };
+                //TODO: re-add members back
+                return { ...oldData };
               }
             }
           );

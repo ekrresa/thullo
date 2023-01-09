@@ -2,8 +2,9 @@ import { UploadApiResponse } from 'cloudinary';
 
 import { request } from '@lib/request';
 import { supabase } from '@lib/supabase';
-import { Board, Card, List } from '@models/database';
-import { BoardInput } from '@models/board';
+import { Card, List } from '@models/database';
+import { BoardInput, Board } from '@models/board';
+import { BaseResponse } from '@models/app';
 
 export interface BoardUpdate {
   title: string;
@@ -32,6 +33,10 @@ export interface CardInput {
 
 export async function createBoard(input: BoardInput) {
   return request.post('/api/boards', input);
+}
+
+export async function fetchBoards() {
+  return request.get<BaseResponse<Board[]>>('/api/boards');
 }
 
 export async function updateBoard(input: Partial<BoardUpdate>, boardId: number) {
