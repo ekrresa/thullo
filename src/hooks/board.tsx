@@ -1,14 +1,14 @@
 import { supabase } from '@lib/supabase';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 
 import { Board, Card, Comment, List, UserProfile } from '@models/database';
-import { createBoard } from '@lib/api/board';
+import { createBoard, fetchBoards } from '@lib/api/board';
 import { BoardInput } from '@models/board';
 import { parseError } from '@lib/utils';
 
 export const boardsQueryKeys = {
-  all: () => ['boards', 'all'],
+  all: () => ['boards'],
   board: (boardId: number) => ['board', { boardId }],
   boardMembers: (boardId: number, numOfMembers: number) => [
     'board',
@@ -24,12 +24,17 @@ export const boardsQueryKeys = {
 const ONE_HOUR_IN_MILLISECONDS = 3600000;
 
 export function useCreateBoard() {
+  const queryClient = useQueryClient();
+
   const { mutate, isLoading, ...mutationProps } = useMutation(
     (payload: BoardInput) => createBoard(payload),
     {
       onError(error) {
         const errorMessage = parseError(error);
         toast.error(errorMessage);
+      },
+      onSuccess() {
+        queryClient.invalidateQueries(boardsQueryKeys.all());
       },
     }
   );
@@ -42,23 +47,19 @@ export function useCreateBoard() {
 }
 
 export function useFetchBoards() {
-  return useQuery(
+  const { data, error, ...result } = useQuery(
     boardsQueryKeys.all(),
-    async () => {
-      const result = await supabase
-        .from<Board>('boards')
-        .select(
-          `id, title, cover, image_id, image_version, visibility, owner (name, username, image_id, image_version)`
-        )
-        .order('updated_at', { ascending: false });
-
-      if (result.status === 401) await supabase.auth.signOut();
-      if (result.error) throw result.error;
-
-      return result.data;
-    },
-    { staleTime: ONE_HOUR_IN_MILLISECONDS }
+    async () => fetchBoards(),
+    {
+      staleTime: ONE_HOUR_IN_MILLISECONDS,
+    }
   );
+
+  return {
+    boards: data?.data.data,
+    error: error ? parseError(error) : undefined,
+    ...result,
+  };
 }
 
 export function useFetchSingleBoard(boardId: number) {

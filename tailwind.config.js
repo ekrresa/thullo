@@ -51,7 +51,7 @@ module.exports = {
         'open-sans': ['Open Sans', 'sans-serif'],
       },
       gridTemplateColumns: {
-        list: 'repeat(auto-fill, minmax(min(14rem, 100%), 1fr))',
+        list: 'repeat(auto-fill, minmax(min(220px, 100%), 1fr))',
         colors: 'repeat(auto-fill, minmax(min(8rem, 100%), 1fr))',
       },
       gridTemplateRows: {
@@ -60,5 +60,5 @@ module.exports = {
       },
     },
   },
-  plugins: [require('@tailwindcss/typography')],
+  plugins: [require('tailwindcss-animate'), require('@tailwindcss/typography')],
 };
