@@ -5,7 +5,7 @@ import { signOut } from 'next-auth/react';
 import { CgLayoutGridSmall } from 'react-icons/cg';
 import { FaCaretDown } from 'react-icons/fa';
 
-import { Footer } from './common/Footer';
+import { Footer } from './Footer';
 import { Dropdown } from './Dropdown';
 import { Button } from './common/Button';
 import { Avatar } from './Avatar';

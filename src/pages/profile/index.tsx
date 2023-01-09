@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
 import { IoPersonCircle } from 'react-icons/io5';
 
-import { Footer } from '@components/common/Footer';
+import { Footer } from '@components/Footer';
 import { Button } from '@components/common/Button';
 import { Input } from '@components/Input';
 import { Spinner } from '@components/common/Spinner';
