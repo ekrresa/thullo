@@ -47,13 +47,11 @@ export function useCreateBoard() {
 }
 
 export function useFetchBoards() {
-  const { data, error, ...result } = useQuery(
-    boardsQueryKeys.all(),
-    async () => fetchBoards(),
-    {
-      staleTime: ONE_HOUR_IN_MILLISECONDS,
-    }
-  );
+  const { data, error, ...result } = useQuery({
+    queryKey: boardsQueryKeys.all(),
+    queryFn: async () => fetchBoards(),
+    staleTime: ONE_HOUR_IN_MILLISECONDS,
+  });
 
   return {
     boards: data?.data.data,
@@ -63,9 +61,9 @@ export function useFetchBoards() {
 }
 
 export function useFetchSingleBoard(boardId: number) {
-  return useQuery(
-    boardsQueryKeys.board(boardId),
-    async () => {
+  return useQuery({
+    queryKey: boardsQueryKeys.board(boardId),
+    queryFn: async () => {
       const result = await supabase
         .from<Board>('boards')
         .select(
@@ -79,14 +77,15 @@ export function useFetchSingleBoard(boardId: number) {
 
       return result.data;
     },
-    { enabled: Boolean(boardId), staleTime: ONE_HOUR_IN_MILLISECONDS }
-  );
+    enabled: Boolean(boardId),
+    staleTime: ONE_HOUR_IN_MILLISECONDS,
+  });
 }
 
 export function useFetchBoardMembers(boardId: number, members: string[]) {
-  return useQuery(
-    boardsQueryKeys.boardMembers(boardId, members.length),
-    async () => {
+  return useQuery({
+    queryKey: boardsQueryKeys.boardMembers(boardId, members.length),
+    queryFn: async () => {
       const boardMembersP = members.map(async userId => {
         const result = await supabase
           .from<UserProfile>('profiles')
@@ -102,14 +101,15 @@ export function useFetchBoardMembers(boardId: number, members: string[]) {
 
       return await Promise.all(boardMembersP);
     },
-    { enabled: Boolean(members && members?.length), staleTime: ONE_HOUR_IN_MILLISECONDS }
-  );
+    enabled: Boolean(members && members?.length),
+    staleTime: ONE_HOUR_IN_MILLISECONDS,
+  });
 }
 
 export function useFetchBoardLists(boardId: number) {
-  return useQuery(
-    boardsQueryKeys.boardLists(boardId),
-    async () => {
+  return useQuery({
+    queryKey: boardsQueryKeys.boardLists(boardId),
+    queryFn: async () => {
       const result = await supabase
         .from<List>('lists')
         .select()
@@ -121,14 +121,15 @@ export function useFetchBoardLists(boardId: number) {
 
       return result.data;
     },
-    { enabled: Boolean(boardId), staleTime: ONE_HOUR_IN_MILLISECONDS }
-  );
+    enabled: Boolean(boardId),
+    staleTime: ONE_HOUR_IN_MILLISECONDS,
+  });
 }
 
 export function useFetchListCards(listId: number) {
-  return useQuery(
-    boardsQueryKeys.boardListCards(listId),
-    async () => {
+  return useQuery({
+    queryKey: boardsQueryKeys.boardListCards(listId),
+    queryFn: async () => {
       const result = await supabase
         .from<Card>('cards')
         .select()
@@ -140,14 +141,15 @@ export function useFetchListCards(listId: number) {
 
       return result.data;
     },
-    { enabled: Boolean(listId), staleTime: ONE_HOUR_IN_MILLISECONDS }
-  );
+    enabled: Boolean(listId),
+    staleTime: ONE_HOUR_IN_MILLISECONDS,
+  });
 }
 
 export function useFetchCardInfo(cardId: number) {
-  return useQuery(
-    boardsQueryKeys.card(cardId),
-    async () => {
+  return useQuery({
+    queryKey: boardsQueryKeys.card(cardId),
+    queryFn: async () => {
       const result = await supabase
         .from<Card>('cards')
         .select()
@@ -159,17 +161,15 @@ export function useFetchCardInfo(cardId: number) {
 
       return result.data;
     },
-    {
-      enabled: Boolean(cardId),
-      staleTime: ONE_HOUR_IN_MILLISECONDS,
-    }
-  );
+    enabled: Boolean(cardId),
+    staleTime: ONE_HOUR_IN_MILLISECONDS,
+  });
 }
 
 export function useFetchCardComments(cardId: number) {
-  return useQuery(
-    boardsQueryKeys.cardComments(cardId),
-    async () => {
+  return useQuery({
+    queryKey: boardsQueryKeys.cardComments(cardId),
+    queryFn: async () => {
       const result = await supabase
         .from<Comment>('comments')
         .select(`id, text, created_at, user(id, name, username, image_id, image_version)`)
@@ -181,9 +181,7 @@ export function useFetchCardComments(cardId: number) {
 
       return result.data;
     },
-    {
-      enabled: Boolean(cardId),
-      staleTime: ONE_HOUR_IN_MILLISECONDS,
-    }
-  );
+    enabled: Boolean(cardId),
+    staleTime: ONE_HOUR_IN_MILLISECONDS,
+  });
 }

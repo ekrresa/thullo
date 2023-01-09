@@ -8,9 +8,9 @@ export const pexelsPhotosQueryKeys = {
 const ONE_HOUR_IN_MILLISECONDS = 3600000;
 
 export function usePexelsPhotos(page: number) {
-  return useQuery(
-    pexelsPhotosQueryKeys.photos(page),
-    async () => {
+  return useQuery({
+    queryKey: pexelsPhotosQueryKeys.photos(page),
+    queryFn: async () => {
       return (await pexelsClient.photos.search({
         query: 'landscape',
         orientation: 'landscape',
@@ -18,6 +18,6 @@ export function usePexelsPhotos(page: number) {
         per_page: 8,
       })) as Photos & ErrorResponse;
     },
-    { staleTime: ONE_HOUR_IN_MILLISECONDS }
-  );
+    staleTime: ONE_HOUR_IN_MILLISECONDS,
+  });
 }

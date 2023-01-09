@@ -18,9 +18,9 @@ export const userQueryKeys = {
 export function useUserProfile() {
   const user = supabase.auth.user();
 
-  return useQuery(
-    userQueryKeys.profile(),
-    async () => {
+  return useQuery({
+    queryKey: userQueryKeys.profile(),
+    queryFn: async () => {
       const result = await supabase
         .from<UserProfile>('profiles')
         .select()
@@ -32,8 +32,8 @@ export function useUserProfile() {
 
       return result.data;
     },
-    { staleTime: Infinity }
-  );
+    staleTime: Infinity,
+  });
 }
 
 interface CurrentUserProps {
@@ -47,9 +47,9 @@ export function useGetCurrentUser(props?: CurrentUserProps) {
 }
 
 export function useFetchUsers(userId: string = '') {
-  return useQuery(
-    userQueryKeys.users(),
-    async () => {
+  return useQuery({
+    queryKey: userQueryKeys.users(),
+    queryFn: async () => {
       const result = await supabase
         .from<UserProfile>('profiles')
         .select()
@@ -61,8 +61,9 @@ export function useFetchUsers(userId: string = '') {
 
       return result.data;
     },
-    { enabled: Boolean(userId), staleTime: Infinity }
-  );
+    enabled: Boolean(userId),
+    staleTime: Infinity,
+  });
 }
 
 export function useProfileImageUpload() {
