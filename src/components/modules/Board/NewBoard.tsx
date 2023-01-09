@@ -10,7 +10,7 @@ import { Button } from '@components/common/Button';
 import { BoardCoverWidget } from './BoardCoverWidget';
 import { VisibilitySelect } from './VisibilitySelect';
 import { useCreateBoard } from '@hooks/board';
-import { Input } from '@components/common/Input';
+import { Input } from '@components/Input';
 import { BoardCreateSchema, BoardInput } from '@models/index';
 
 export function NewBoard() {

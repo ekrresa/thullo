@@ -8,7 +8,7 @@ import { IoPersonCircle } from 'react-icons/io5';
 
 import { Footer } from '@components/common/Footer';
 import { Button } from '@components/common/Button';
-import { Input } from '@components/common/Input';
+import { Input } from '@components/Input';
 import { Spinner } from '@components/common/Spinner';
 import { useGetCurrentUser, useProfileImageUpload, useUpdateProfile } from '@hooks/user';
 import { UserProfileInput, UserProfileInputSchema } from '@models/user';
