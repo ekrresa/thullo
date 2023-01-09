@@ -8,7 +8,7 @@ import { toast } from 'react-hot-toast';
 import { z } from 'zod';
 
 import useCreateGuestUserMutation from '@hooks/auth';
-import { Input } from '@components/common/Input';
+import { Input } from '@components/Input';
 import { Button } from '@components/common/Button';
 import { ROUTES } from '@lib/constants';
 import Logo from '@public/logo-small.svg';

@@ -5,8 +5,8 @@ import { signOut } from 'next-auth/react';
 import { CgLayoutGridSmall } from 'react-icons/cg';
 import { FaCaretDown } from 'react-icons/fa';
 
-import { Footer } from './common/Footer';
-import { Dropdown } from './Dropdown';
+import { Footer } from './Footer';
+import { Dropdown, DropdownItem } from './Dropdown';
 import { Button } from './common/Button';
 import { Avatar } from './Avatar';
 import { useFetchSingleBoard } from '@hooks/board';
@@ -74,25 +74,27 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
                   <FaCaretDown className="ml-2 hidden sm:inline-block" />
                 </div>
               }
-              list={[
+            >
+              <DropdownItem>
                 <Link
                   key="profile"
                   href={ROUTES.profile}
-                  className="block w-full text-center transition-colors duration-200 ease-linear hover:bg-gray-100"
+                  className="block w-full text-center"
                 >
                   Profile
-                </Link>,
-                <Button
-                  key="logout"
-                  className="w-full p-0 transition-colors duration-200 ease-linear hover:bg-gray-100"
-                  onClick={() => {
-                    signOut();
-                  }}
-                >
-                  Log out
-                </Button>,
-              ]}
-            />
+                </Link>
+              </DropdownItem>
+
+              <Button
+                key="logout"
+                className="w-full rounded-none py-1.5 text-roman-600 transition-colors hover:bg-roman-500 hover:text-white"
+                onClick={() => {
+                  signOut();
+                }}
+              >
+                Log out
+              </Button>
+            </Dropdown>
           )}
         </div>
       </header>
