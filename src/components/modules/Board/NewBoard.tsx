@@ -7,7 +7,7 @@ import { BiPlus } from 'react-icons/bi';
 
 import { Modal } from '@components/common/Modal';
 import { Button } from '@components/common/Button';
-import { BoardCoverWidget } from './BoardCoverWidget';
+import { BoardCoverWidget } from '../../BoardCoverWidget';
 import { VisibilitySelect } from './VisibilitySelect';
 import { useCreateBoard } from '@hooks/board';
 import { Input } from '@components/Input';
