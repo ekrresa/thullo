@@ -11,7 +11,7 @@ import { BoardCoverWidget } from './BoardCoverWidget';
 import { VisibilitySelect } from './VisibilitySelect';
 import { useCreateBoard } from '@hooks/board';
 import { Input } from '@components/common/Input';
-import { BoardCreateSchema, BoardInput } from '@models/board';
+import { BoardCreateSchema, BoardInput } from '@models/index';
 
 export function NewBoard() {
   const [isModalOpen, setModalOpen] = React.useState(false);
@@ -50,7 +50,10 @@ export function NewBoard() {
   return (
     <Modal
       trigger={
-        <Button className="flex items-center rounded-lg bg-corn-blue px-3 py-2 text-xs text-white">
+        <Button
+          className="flex items-center rounded-md px-3 py-2 text-xs"
+          variant="primary"
+        >
           <BiPlus className="mr-2 text-sm" />
           Add
         </Button>

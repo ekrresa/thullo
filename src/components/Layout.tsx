@@ -45,12 +45,14 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
           )}
 
           {!Boolean(userProfile) && (
-            <Link
+            <Button
+              as={Link}
               href={ROUTES.auth}
-              className="ml-auto rounded-md bg-corn-blue py-2 px-4 text-sm text-white"
+              className="ml-auto rounded-md py-1.5 px-4 text-sm"
+              variant="secondary"
             >
               Login
-            </Link>
+            </Button>
           )}
 
           {Boolean(userProfile) && (

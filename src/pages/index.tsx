@@ -34,13 +34,17 @@ export default function Home() {
           </div>
         }
       >
-        <div className="mt-8 grid grid-cols-list gap-x-8 gap-y-6 rounded-lg bg-gray-50 p-5">
-          {boardsResult.boards && boardsResult.boards.length > 0 ? (
-            boardsResult.boards.map(board => <BoardCard key={board.id} board={board} />)
-          ) : (
-            <div>There are no boards right now. Why not create one!</div>
-          )}
-        </div>
+        {boardsResult.boards && boardsResult.boards.length > 0 ? (
+          <div className="mt-8 grid grid-cols-list gap-x-8 gap-y-6 rounded-lg bg-gray-50 p-5">
+            {boardsResult.boards.map(board => (
+              <BoardCard key={board.id} board={board} />
+            ))}
+          </div>
+        ) : (
+          <div className="mt-8 rounded-lg bg-gray-50 p-5 text-center">
+            There are no boards right now. Why not create one!
+          </div>
+        )}
       </LoaderWrapper>
     </section>
   );
