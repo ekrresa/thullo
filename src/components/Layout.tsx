@@ -9,38 +9,47 @@ import { Footer } from './Footer';
 import { Dropdown, DropdownItem } from './Dropdown';
 import { Button } from './common/Button';
 import { Avatar } from './Avatar';
-import { useFetchSingleBoard } from '@hooks/board';
-import Logo from '@public/logo.svg';
+import { useGetSingleBoard } from '@hooks/board';
 import { ROUTES } from '@lib/constants';
 import { useGetCurrentUser } from '@hooks/user';
+import Logo from '@public/logo.svg';
+import MobileLogo from '@public/logo-small.svg';
 
 export function Layout({ children }: React.PropsWithChildren<unknown>) {
   const router = useRouter();
-  const board = useFetchSingleBoard(Number(router.query.board));
+
+  const [boardOwner, boardId] = (router.query.board as string[]) || [];
+
+  const { board } = useGetSingleBoard(boardOwner, boardId);
 
   const userProfile = useGetCurrentUser({ requireAuth: false });
 
   return (
     <div className="grid min-h-screen grid-cols-1 grid-rows-layout">
       <header className="mb-1 bg-white py-4 shadow-sm">
-        <div className="container flex items-center">
+        <div className="container flex items-center justify-between">
           <Link href={ROUTES.home}>
-            <Logo className="w-28" />
+            <Logo className="hidden w-28 md:inline-block" />
+            <MobileLogo className="w-8 md:hidden" />
           </Link>
 
-          {router.query.board && board.isSuccess && (
-            <div className="mx-auto flex items-center">
-              <h1 className="w-52 truncate text-lg text-pencil sm:w-auto">
-                {board.data.title}
+          {board && (
+            <div className="flex gap-2">
+              <h1 className="self-center truncate text-lg font-medium text-slate-700 sm:w-auto">
+                {board.title}
               </h1>
-              <span className="mx-2 hidden text-3xl text-ash md:inline">&#124;</span>
+              <span className="hidden w-0.5 flex-1 self-stretch bg-astronaut-100 text-2xl md:inline"></span>
 
-              <Link href={ROUTES.home} passHref className="hidden md:inline">
-                <button className="flex items-center rounded-lg bg-off-white px-3 py-2">
-                  <CgLayoutGridSmall className="text-2xl" color="#828282" />
-                  <span className="ml-2 text-xs text-gray3">All Boards</span>
-                </button>
-              </Link>
+              <Button
+                as={Link}
+                href={ROUTES.home}
+                passHref
+                className="hidden gap-2 rounded-lg px-2.5 py-0.5 text-sm text-slate-500 md:flex"
+                variant="transparent"
+              >
+                <CgLayoutGridSmall className="text-3xl" />
+                <span>All Boards</span>
+              </Button>
             </div>
           )}
 
@@ -48,10 +57,10 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
             <Button
               as={Link}
               href={ROUTES.auth}
-              className="ml-auto rounded-md py-1.5 px-4 text-sm"
-              variant="secondary"
+              className="rounded-md py-1.5 px-4 text-xs uppercase"
+              variant="transparent"
             >
-              Login
+              Sign in
             </Button>
           )}
 
@@ -65,7 +74,7 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
                 ) : null
               }
               trigger={
-                <div className="ml-auto flex items-center">
+                <div className="flex items-center">
                   {userProfile?.image && userProfile?.name ? (
                     <div className="h-9 w-9 overflow-hidden rounded-xl">
                       <Avatar image={userProfile.image} name={userProfile.name} />

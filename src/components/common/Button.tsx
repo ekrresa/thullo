@@ -42,7 +42,7 @@ export function Button<T extends React.ElementType = 'button'>(
 }
 
 const buttonClasses = cva(
-  'flex items-center justify-center rounded-lg transition-colors text-sm shadow-sm py-2.5 px-6 disabled:cursor-not-allowed disabled:opacity-60',
+  'flex items-center justify-center rounded-lg transition-all text-sm shadow-sm py-2.5 px-6 disabled:cursor-not-allowed disabled:opacity-60',
   {
     variants: {
       variant: {
@@ -50,6 +50,8 @@ const buttonClasses = cva(
         secondary:
           'text-astronaut-900 bg-astronaut-100 border border-astronaut-200 hover:bg-astronaut-200',
         danger: 'bg-roman-500 text-white hover:bg-roman-600',
+        transparent:
+          'bg-transparent shadow-none border border-slate-300 hover:bg-slate-100',
       },
       fullWidth: {
         true: 'w-full',
