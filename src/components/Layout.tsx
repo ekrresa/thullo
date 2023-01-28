@@ -3,15 +3,15 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { signOut } from 'next-auth/react';
 import { CgLayoutGridSmall } from 'react-icons/cg';
-import { FaCaretDown } from 'react-icons/fa';
+import { IoPersonCircle } from 'react-icons/io5';
 
 import { Footer } from './Footer';
 import { Dropdown, DropdownItem } from './Dropdown';
 import { Button } from './common/Button';
 import { Avatar } from './Avatar';
+import { useProfileStore } from 'src/stores/profile';
 import { useGetSingleBoard } from '@hooks/board';
 import { ROUTES } from '@lib/constants';
-import { useGetCurrentUser } from '@hooks/user';
 import Logo from '@public/logo.svg';
 import MobileLogo from '@public/logo-small.svg';
 
@@ -21,8 +21,7 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
   const [boardOwner, boardId] = (router.query.board as string[]) || [];
 
   const { board } = useGetSingleBoard(boardOwner, boardId);
-
-  const userProfile = useGetCurrentUser({ requireAuth: false });
+  const userProfile = useProfileStore(state => state.info);
 
   return (
     <div className="grid min-h-screen grid-cols-1 grid-rows-layout">
@@ -64,23 +63,24 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
             </Button>
           )}
 
-          {Boolean(userProfile) && (
+          {userProfile && (
             <Dropdown
               header={
                 userProfile?.username ? (
                   <div className="mb-2 px-3 py-2 text-center text-sm opacity-60">
-                    {userProfile?.username}
+                    {userProfile.username}
                   </div>
                 ) : null
               }
               trigger={
                 <div className="flex items-center">
-                  {userProfile?.image && userProfile?.name ? (
-                    <div className="h-9 w-9 overflow-hidden rounded-xl">
+                  <div className="h-9 w-9 overflow-hidden rounded-xl">
+                    {userProfile?.image || userProfile?.name ? (
                       <Avatar image={userProfile.image} name={userProfile.name} />
-                    </div>
-                  ) : null}
-                  <FaCaretDown className="ml-2 hidden sm:inline-block" />
+                    ) : (
+                      <IoPersonCircle className="h-full w-full" />
+                    )}
+                  </div>
                 </div>
               }
             >
