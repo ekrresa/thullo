@@ -23,7 +23,7 @@ export function Avatar(props: AvatarProps) {
       />
 
       {Boolean(name) && (
-        <AvatarPrimitives.Fallback className="flex h-full w-full items-center justify-center bg-white font-medium text-astronaut-900">
+        <AvatarPrimitives.Fallback className="flex h-full w-full items-center justify-center rounded-full border border-slate-300 bg-white text-sm font-medium text-slate-700 transition-colors hover:border-inherit hover:bg-slate-700 hover:text-white">
           {getInitials(name!)}
         </AvatarPrimitives.Fallback>
       )}

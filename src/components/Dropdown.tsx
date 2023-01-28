@@ -16,13 +16,13 @@ export function Dropdown({ header, children, trigger }: DropdownProps) {
 
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          className="min-w-max origin-top-right overflow-hidden rounded-md border border-slate-50 bg-white shadow-md animate-in slide-in-from-top-2 md:w-32"
-          sideOffset={5}
+          className="min-w-max origin-top-right overflow-hidden rounded-md border border-slate-50 bg-white shadow-lg animate-in slide-in-from-top-2 md:w-32"
+          sideOffset={3}
         >
           {header}
           {children}
 
-          <DropdownMenu.Arrow className="fill-white" />
+          <DropdownMenu.Arrow className="fill-gray-100" />
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>

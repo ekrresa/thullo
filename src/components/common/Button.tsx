@@ -42,13 +42,14 @@ export function Button<T extends React.ElementType = 'button'>(
 }
 
 const buttonClasses = cva(
-  'flex items-center justify-center rounded-lg transition-all text-sm shadow-sm py-2.5 px-6 disabled:cursor-not-allowed disabled:opacity-60',
+  'flex items-center justify-center font-medium rounded-lg transition-all text-sm shadow-sm py-2.5 px-6 disabled:cursor-not-allowed disabled:opacity-60',
   {
     variants: {
       variant: {
-        primary: 'bg-astronaut-500 text-white hover:bg-astronaut-600',
+        primary:
+          'bg-brand-500 text-white hover:bg-brand-600 focus:ring-1 focus:ring-offset-1 focus:ring-brand-500',
         secondary:
-          'text-astronaut-900 bg-astronaut-100 border border-astronaut-200 hover:bg-astronaut-200',
+          'text-slate-700 bg-transparent border border-slate-200 hover:bg-slate-50 hover:border-slate-400',
         danger: 'bg-roman-500 text-white hover:bg-roman-600',
         transparent:
           'bg-transparent shadow-none border border-slate-300 hover:bg-slate-100',
