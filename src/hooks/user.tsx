@@ -7,8 +7,9 @@ import { UserProfileInput } from '@models/user';
 import { UserProfile } from '@models/database';
 import { supabase } from '@lib/supabase';
 import { parseError } from '@lib/utils';
-import { updateProfile, updateProfileImage } from '@lib/api/user';
+import { UserService } from '@lib/api/user';
 import { ProfileImageInput } from '@models/user';
+import { useProfileStore } from 'src/stores/profile';
 
 export const userQueryKeys = {
   users: () => ['users'],
@@ -34,6 +35,12 @@ export function useUserProfile() {
     },
     staleTime: Infinity,
   });
+}
+
+export function useGetUserProfile() {
+  const { mutate } = useMutation(() => UserService.getUserProfile());
+
+  return { getUserProfile: mutate };
 }
 
 interface CurrentUserProps {
@@ -69,7 +76,7 @@ export function useFetchUsers(userId: string = '') {
 export function useProfileImageUpload() {
   const { mutate, isLoading, ...mutationProps } = useMutation(
     (payload: ProfileImageInput) => {
-      return updateProfileImage(payload);
+      return UserService.updateProfileImage(payload);
     },
     {
       onError(error) {
@@ -87,12 +94,17 @@ export function useProfileImageUpload() {
 }
 
 export function useUpdateProfile() {
+  const updateProfile = useProfileStore(state => state.updateProfile);
+
   const { mutate, isLoading, ...mutationProps } = useMutation(
-    (payload: UserProfileInput) => updateProfile(payload),
+    (payload: UserProfileInput) => UserService.updateProfile(payload),
     {
       onError(error) {
         const errorMessage = parseError(error);
         toast.error(errorMessage);
+      },
+      onSuccess(response) {
+        updateProfile(response.data);
       },
     }
   );

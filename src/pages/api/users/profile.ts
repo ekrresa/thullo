@@ -39,9 +39,21 @@ handler
       const userId = req.session.user.id;
       const requestBody = UserProfileInputSchema.parse(req.body);
 
-      await db.user.update({ data: requestBody, where: { id: userId } });
+      const updatedUser = await db.user.update({
+        data: requestBody,
+        where: { id: userId },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          username: true,
+          image: true,
+          isGuest: true,
+          isProfileSetup: true,
+        },
+      });
 
-      return res.status(200).json({ data: 'Profile updated successfully' });
+      return res.status(200).json(updatedUser);
     } catch (error) {
       return res.status(400).json({
         error: 'Unable to update profile. Please try again',

@@ -64,10 +64,13 @@ function ProfileProvider({ children }: React.PropsWithChildren<{}>) {
     if (status === 'authenticated') {
       getUserProfile(undefined, {
         onSuccess(response) {
-          const userInfo = response.data;
-          updateProfile(userInfo);
+          updateProfile(response.data);
         },
       });
+    }
+
+    if (status === 'unauthenticated') {
+      updateProfile(null);
     }
   }, [getUserProfile, status, updateProfile]);
 
