@@ -22,12 +22,21 @@ handler.use(withAuthentication).post(async (req, res) => {
       eager: { width: 300, height: 300, quality: 70 },
     });
 
-    await db.user.update({
+    const updatedUser = await db.user.update({
       data: { image: uploadResponse.secure_url },
       where: { id: userId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        username: true,
+        image: true,
+        isGuest: true,
+        isProfileSetup: true,
+      },
     });
 
-    return res.status(200).json({ data: uploadResponse.secure_url });
+    return res.status(200).json(updatedUser);
   } catch (error) {
     res.status(400).json({ error: 'An error occurred while uploading file' });
   }

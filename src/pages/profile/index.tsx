@@ -14,14 +14,29 @@ import { UserProfileInput, UserProfileInputSchema } from '@models/user';
 import { ROUTES } from '@lib/constants';
 import { useProfileStore } from 'src/stores/profile';
 import { Layout } from '@components/Layout';
+import { useFileSelect } from '@hooks/useFileSelect';
+import { cn } from '@lib/utils';
 
-export default function NewProfile() {
+export default function Profile() {
   const userProfile = useProfileStore(state => state.info);
-
-  const [previewUrl, setPreviewUrl] = React.useState('');
 
   const { uploadProfileImage, uploadingProfileImage } = useProfileImageUpload();
   const { updateProfile, updatingProfile } = useUpdateProfile();
+
+  const { fileString, getInputProps, getRootProps } = useFileSelect({
+    onFileSelect(fileString) {
+      uploadProfileImage(
+        { image: fileString },
+        {
+          onSuccess() {
+            toast.success('profile picture updated successfully', {
+              duration: 3000,
+            });
+          },
+        }
+      );
+    },
+  });
 
   const formDefaultValues = React.useMemo(
     () => ({
@@ -51,82 +66,49 @@ export default function NewProfile() {
   return (
     <div className="container grid grid-cols-1 grid-rows-layout">
       <section className="mt-24 flex items-start justify-center">
-        <div className="max-w-md flex-1 rounded-lg bg-white px-8 pt-6 pb-12 sm:shadow-profile">
+        <div className="max-w-md flex-1 rounded-lg bg-white px-4 pt-6 pb-12 sm:px-8 sm:shadow-profile">
           <h1 className="text-center text-3xl font-semibold text-slate-700">
             Your Profile
           </h1>
 
           <form className="mt-12" onSubmit={handleSubmit(submitForm)}>
             <div className="mb-10 flex flex-col items-center">
-              <input
-                type="file"
-                id="image"
-                className="absolute -z-10 h-[0.1px] w-[0.1px] overflow-hidden opacity-0 disabled:cursor-not-allowed"
-                accept="image/*"
-                disabled={uploadingProfileImage}
-                onChange={async e => {
-                  if (!e.target.files || e.target.files.length === 0) return;
+              <div {...getRootProps()}>
+                <input {...getInputProps({ disabled: uploadingProfileImage })} />
 
-                  Array.from(e.target.files).forEach(file => {
-                    const reader = new FileReader();
+                <div
+                  className={cn(
+                    'relative block h-40 w-40 cursor-pointer rounded-full bg-gray-100',
+                    uploadingProfileImage ? 'cursor-not-allowed' : ''
+                  )}
+                >
+                  {userProfile?.image || fileString ? (
+                    <Image
+                      src={userProfile?.image || fileString!}
+                      className="h-full w-full rounded-full object-cover"
+                      width={160}
+                      height={160}
+                      alt="profile picture"
+                    />
+                  ) : (
+                    <IoPersonCircle className="h-full w-full" />
+                  )}
 
-                    reader.onloadend = () => {
-                      const base64String = reader.result as string;
+                  {uploadingProfileImage && (
+                    <Spinner className="absolute top-0 left-0 rounded-full bg-black/50 text-3xl text-white" />
+                  )}
 
-                      setPreviewUrl(base64String);
-
-                      uploadProfileImage(
-                        { image: base64String },
-                        {
-                          onSuccess() {
-                            toast.success('profile picture updated successfully', {
-                              duration: 3000,
-                            });
-                          },
-                        }
-                      );
-                    };
-
-                    reader.readAsDataURL(file);
-                  });
-                }}
-              />
-              <label
-                htmlFor="image"
-                className="relative block h-40 w-40 cursor-pointer rounded-full bg-gray-100"
-              >
-                {previewUrl ? (
-                  <Image
-                    src={previewUrl}
-                    alt=""
-                    className="h-full w-full rounded-full object-cover"
-                    fill
-                  />
-                ) : userProfile?.image ? (
-                  <Image
-                    src={userProfile?.image}
-                    className="h-full w-full rounded-full object-cover"
-                    width={160}
-                    height={160}
-                    alt=""
-                  />
-                ) : (
-                  <IoPersonCircle className="h-full w-full" />
-                )}
-
-                {uploadingProfileImage && (
-                  <Spinner className="absolute rounded-full bg-black/50 text-3xl text-white" />
-                )}
-
-                {!uploadingProfileImage && (
-                  <p className="absolute inset-0 flex items-center justify-center rounded-full bg-black/0 text-sm text-white/0  transition-colors hover:bg-black/50 hover:text-white">
-                    Edit
-                  </p>
-                )}
-              </label>
+                  {!uploadingProfileImage && (
+                    <p className="absolute inset-0 flex items-center justify-center rounded-full bg-black/0 text-sm text-white/0  transition-colors hover:bg-black/50 hover:text-white">
+                      {userProfile?.image ? 'Edit' : 'Upload'}
+                    </p>
+                  )}
+                </div>
+              </div>
 
               <p className="mt-2 text-xs font-normal text-slate-500">
-                Click on the box above to edit your profile picture
+                Click on the box above to {userProfile?.image ? 'edit' : 'upload'} your
+                profile picture
               </p>
             </div>
 
@@ -170,4 +152,4 @@ export default function NewProfile() {
   );
 }
 
-NewProfile.getLayout = (page: React.ReactNode) => <Layout>{page}</Layout>;
+Profile.getLayout = (page: React.ReactNode) => <Layout>{page}</Layout>;

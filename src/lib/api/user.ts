@@ -7,7 +7,7 @@ export async function getUserProfile() {
 }
 
 export async function updateProfileImage(input: ProfileImageInput) {
-  return request.post('/api/users/profile-image', input);
+  return request.post<User>('/api/users/profile-image', input);
 }
 
 export async function updateProfile(input: UserProfileInput) {

@@ -74,6 +74,8 @@ export function useFetchUsers(userId: string = '') {
 }
 
 export function useProfileImageUpload() {
+  const updateProfile = useProfileStore(state => state.updateProfile);
+
   const { mutate, isLoading, ...mutationProps } = useMutation(
     (payload: ProfileImageInput) => {
       return UserService.updateProfileImage(payload);
@@ -82,6 +84,9 @@ export function useProfileImageUpload() {
       onError(error) {
         const errorMessage = parseError(error);
         toast.error(errorMessage);
+      },
+      onSuccess(response) {
+        updateProfile(response.data);
       },
     }
   );
