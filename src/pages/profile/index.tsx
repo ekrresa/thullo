@@ -1,42 +1,32 @@
-import * as React from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import toast from 'react-hot-toast';
-import { IoPersonCircle } from 'react-icons/io5';
+import * as React from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { IoPersonCircle } from 'react-icons/io5'
 
-import { Button } from '@components/common/Button';
-import { Input } from '@components/Input';
-import { Spinner } from '@components/common/Spinner';
-import { useProfileImageUpload, useUpdateProfile } from '@hooks/user';
-import { UserProfileInput, UserProfileInputSchema } from '@models/user';
-import { ROUTES } from '@lib/constants';
-import { useProfileStore } from 'src/stores/profile';
-import { Layout } from '@components/Layout';
-import { useFileSelect } from '@hooks/useFileSelect';
-import { cn } from '@lib/utils';
+import { useFileSelect } from '@hooks/useFileSelect'
+import { useUpdateProfile, useUpdateProfileImage } from '@hooks/user'
+import { useProfileStore } from '@stores/profile'
+import { Input } from '@components/Input'
+import { Layout } from '@components/Layout'
+import { Button } from '@components/common/Button'
+import { Spinner } from '@components/common/Spinner'
+import { ROUTES } from '@lib/constants'
+import { cn } from '@lib/utils'
+import { UserProfileInput, UserProfileInputSchema } from '@models/user'
 
 export default function Profile() {
-  const userProfile = useProfileStore(state => state.info);
+  const userProfile = useProfileStore(state => state.info)
 
-  const { uploadProfileImage, uploadingProfileImage } = useProfileImageUpload();
-  const { updateProfile, updatingProfile } = useUpdateProfile();
+  const { updateProfile, updatingProfile } = useUpdateProfile()
+  const { updateProfileImage, updatingProfileImage } = useUpdateProfileImage()
 
   const { fileString, getInputProps, getRootProps } = useFileSelect({
     onFileSelect(fileString) {
-      uploadProfileImage(
-        { image: fileString },
-        {
-          onSuccess() {
-            toast.success('profile picture updated successfully', {
-              duration: 3000,
-            });
-          },
-        }
-      );
+      updateProfileImage({ image: fileString })
     },
-  });
+  })
 
   const formDefaultValues = React.useMemo(
     () => ({
@@ -44,24 +34,20 @@ export default function Profile() {
       name: userProfile?.name ?? '',
     }),
     [userProfile?.username, userProfile?.name]
-  );
+  )
 
   const { register, handleSubmit, reset } = useForm<UserProfileInput>({
     defaultValues: formDefaultValues,
     resolver: zodResolver(UserProfileInputSchema),
-  });
+  })
 
   React.useEffect(() => {
-    reset(formDefaultValues);
-  }, [formDefaultValues, reset]);
+    reset(formDefaultValues)
+  }, [formDefaultValues, reset])
 
   const submitForm = (values: UserProfileInput) => {
-    updateProfile(values, {
-      onSuccess() {
-        toast.success('profile updated successfully', { duration: 3000 });
-      },
-    });
-  };
+    updateProfile(values)
+  }
 
   return (
     <div className="container grid grid-cols-1 grid-rows-layout">
@@ -74,12 +60,12 @@ export default function Profile() {
           <form className="mt-12" onSubmit={handleSubmit(submitForm)}>
             <div className="mb-10 flex flex-col items-center">
               <div {...getRootProps()}>
-                <input {...getInputProps({ disabled: uploadingProfileImage })} />
+                <input {...getInputProps({ disabled: updatingProfileImage })} />
 
                 <div
                   className={cn(
                     'relative block h-40 w-40 cursor-pointer rounded-full bg-gray-100',
-                    uploadingProfileImage ? 'cursor-not-allowed' : ''
+                    updatingProfileImage ? 'cursor-not-allowed' : ''
                   )}
                 >
                   {userProfile?.image || fileString ? (
@@ -94,11 +80,11 @@ export default function Profile() {
                     <IoPersonCircle className="h-full w-full" />
                   )}
 
-                  {uploadingProfileImage && (
+                  {updatingProfileImage && (
                     <Spinner className="absolute top-0 left-0 rounded-full bg-black/50 text-3xl text-white" />
                   )}
 
-                  {!uploadingProfileImage && (
+                  {!updatingProfileImage && (
                     <p className="absolute inset-0 flex items-center justify-center rounded-full bg-black/0 text-sm text-white/0  transition-colors hover:bg-black/50 hover:text-white">
                       {userProfile?.image ? 'Edit' : 'Upload'}
                     </p>
@@ -149,7 +135,7 @@ export default function Profile() {
         </div>
       </section>
     </div>
-  );
+  )
 }
 
-Profile.getLayout = (page: React.ReactNode) => <Layout>{page}</Layout>;
+Profile.getLayout = (page: React.ReactNode) => <Layout>{page}</Layout>

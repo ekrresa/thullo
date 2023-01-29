@@ -1,5 +1,5 @@
-import { Prisma } from '@prisma/client';
-import { z } from 'zod';
+import { Prisma } from '@prisma/client'
+import { z } from 'zod'
 
 export const UserSchema = z.object({
   id: z.string(),
@@ -12,20 +12,20 @@ export const UserSchema = z.object({
   isProfileSetup: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
-});
-
-export const ProfileImageUpdateSchema = z.object({
-  image: z.string(),
-});
-
-export type ProfileImageInput = z.infer<typeof ProfileImageUpdateSchema>;
+})
 
 export const UserProfileInputSchema = z.object({
-  username: z.string().trim().max(50, 'Username must be less than 50 characters'),
-  name: z.string().trim(),
-});
+  image: z.string().trim().optional(),
+  username: z
+    .string()
+    .trim()
+    .min(2, 'Username must have at least 2 characters')
+    .max(20, 'Username must be less than 20 characters')
+    .optional(),
+  name: z.string().trim().optional(),
+})
 
-export type UserProfileInput = z.infer<typeof UserProfileInputSchema>;
+export type UserProfileInput = z.infer<typeof UserProfileInputSchema>
 
 const user = Prisma.validator<Prisma.UserArgs>()({
   select: {
@@ -37,6 +37,6 @@ const user = Prisma.validator<Prisma.UserArgs>()({
     isGuest: true,
     isProfileSetup: true,
   },
-});
+})
 
-export type User = Prisma.UserGetPayload<typeof user>;
+export type User = Prisma.UserGetPayload<typeof user>

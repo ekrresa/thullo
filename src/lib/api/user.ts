@@ -1,21 +1,16 @@
-import request from '@lib/request';
-import { ProfileImageInput, UserProfileInput } from '@models/user';
-import { User } from '@models/index';
+import request from '@lib/request'
+import { User } from '@models/index'
+import { UserProfileInput } from '@models/user'
 
 export async function getUserProfile() {
-  return request.get<User>('/api/users/profile');
-}
-
-export async function updateProfileImage(input: ProfileImageInput) {
-  return request.post<User>('/api/users/profile-image', input);
+  return request.get<User>('/api/users/profile')
 }
 
 export async function updateProfile(input: UserProfileInput) {
-  return request.post<User>('/api/users/profile', input);
+  return request.post<User>('/api/users/profile', input)
 }
 
 export const UserService = {
   getUserProfile,
-  updateProfileImage,
   updateProfile,
-};
+}
