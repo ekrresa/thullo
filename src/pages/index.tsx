@@ -1,22 +1,22 @@
-import * as React from 'react';
+import * as React from 'react'
 
-import { Layout } from '../components/Layout';
-import { NewBoard } from '../components/modules/Board/NewBoard';
-import { useFetchBoards } from '@hooks/board';
-import { LoaderWrapper } from '@components/LoaderWrapper';
-import { useGetCurrentUser } from '@hooks/user';
-import { BoardCard } from '@components/modules/Board/BoardCard';
+import { useFetchBoards } from '@hooks/board'
+import { useAuth } from '@hooks/user'
+import { Layout } from '@components/Layout'
+import { LoaderWrapper } from '@components/LoaderWrapper'
+import { BoardCard } from '@components/board/BoardCard'
+import { NewBoard } from '@components/board/NewBoard'
 
 export default function Home() {
-  const boardsResult = useFetchBoards();
-  const userProfile = useGetCurrentUser({ requireAuth: false });
+  const boardsResult = useFetchBoards()
+  const isAuthenticated = useAuth()
 
   return (
     <section className="mx-auto mt-16 max-w-6xl px-4">
       <header className="flex items-center justify-between">
         <h2 className="text-lg text-astronaut-900">All Boards</h2>
 
-        {Boolean(userProfile) && <NewBoard />}
+        {isAuthenticated && <NewBoard />}
       </header>
 
       <LoaderWrapper
@@ -47,7 +47,7 @@ export default function Home() {
         )}
       </LoaderWrapper>
     </section>
-  );
+  )
 }
 
-Home.getLayout = (page: React.ReactNode) => <Layout>{page}</Layout>;
+Home.getLayout = (page: React.ReactNode) => <Layout>{page}</Layout>

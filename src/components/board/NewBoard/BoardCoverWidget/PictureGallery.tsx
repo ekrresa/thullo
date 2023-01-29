@@ -1,21 +1,21 @@
-import * as React from 'react';
-import Image from 'next/image';
+import * as React from 'react'
+import Image from 'next/image'
+import { BiLeftArrow, BiRightArrow } from 'react-icons/bi'
 
-import { usePexelsPhotos } from '@hooks/photos';
-import { Button } from '@components/common/Button';
-import { BiLeftArrow, BiRightArrow } from 'react-icons/bi';
-import { LoaderWrapper } from '@components/LoaderWrapper';
-import { cn } from '@lib/utils';
+import { usePexelsPhotos } from '@hooks/photos'
+import { LoaderWrapper } from '@components/LoaderWrapper'
+import { Button } from '@components/common/Button'
+import { cn } from '@lib/utils'
 
 interface PictureGalleryProps {
-  selectImage: (input: string) => void;
-  selectedImage: string | null;
+  selectImage: (input: string) => void
+  selectedImage: string | null
 }
 export function PictureGallery(props: PictureGalleryProps) {
-  const { selectImage, selectedImage } = props;
+  const { selectImage, selectedImage } = props
 
-  const [page, setPage] = React.useState(1);
-  const photos = usePexelsPhotos(page);
+  const [page, setPage] = React.useState(1)
+  const photos = usePexelsPhotos(page)
 
   return (
     <LoaderWrapper
@@ -58,7 +58,7 @@ export function PictureGallery(props: PictureGalleryProps) {
         <Button
           className="flex h-10 w-10 items-center justify-center rounded-full border bg-slate-50 p-0 shadow-sm"
           onClick={() => {
-            setPage(page => page - 1);
+            setPage(page => page - 1)
           }}
           disabled={page === 1}
         >
@@ -68,18 +68,18 @@ export function PictureGallery(props: PictureGalleryProps) {
         <Button
           className="flex h-10 w-10 items-center justify-center rounded-full border bg-slate-50 p-0 shadow-sm"
           onClick={() => {
-            setPage(page => page + 1);
+            setPage(page => page + 1)
           }}
         >
           <BiRightArrow className="text-slate-500" />
         </Button>
       </div>
     </LoaderWrapper>
-  );
+  )
 }
 
 function EmptyTile() {
   return (
     <div className="relative h-28 animate-pulse overflow-hidden rounded-lg bg-slate-200 shadow-none"></div>
-  );
+  )
 }

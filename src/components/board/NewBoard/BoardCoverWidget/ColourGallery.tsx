@@ -1,12 +1,12 @@
-import { Button } from '@components/common/Button';
-import { cn } from '@lib/utils';
+import { Button } from '@components/common/Button'
+import { cn } from '@lib/utils'
 
 interface ColourGalleryProps {
-  selectCover: (input: string) => void;
-  selectedColour: string | null;
+  selectCover: (input: string) => void
+  selectedColour: string | null
 }
 export function ColourGallery(props: ColourGalleryProps) {
-  const { selectCover, selectedColour } = props;
+  const { selectCover, selectedColour } = props
 
   return (
     <div className="grid grid-cols-colors gap-2">
@@ -74,5 +74,5 @@ export function ColourGallery(props: ColourGalleryProps) {
         onClick={() => selectCover('#05c7b7')}
       ></Button>
     </div>
-  );
+  )
 }

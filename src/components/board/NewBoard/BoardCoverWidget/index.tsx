@@ -1,39 +1,39 @@
-import * as React from 'react';
-import Image from 'next/image';
-import { Controller, useFormContext } from 'react-hook-form';
-import { BsImage } from 'react-icons/bs';
-import { IoIosArrowBack } from 'react-icons/io';
+import * as React from 'react'
+import Image from 'next/image'
+import { Controller, useFormContext } from 'react-hook-form'
+import { BsImage } from 'react-icons/bs'
+import { IoIosArrowBack } from 'react-icons/io'
 
-import { Modal } from '@components/common/Modal';
-import { Button } from '@components/common/Button';
-import { PictureGallery } from './PictureGallery';
-import { ColourGallery } from './ColourGallery';
-import { BoardInput } from '@models/board';
-import { FileUpload } from './FileUpload';
+import { Button } from '@components/common/Button'
+import { Modal } from '@components/common/Modal'
+import { BoardInput } from '@models/board'
+import { ColourGallery } from './ColourGallery'
+import { FileUpload } from './FileUpload'
+import { PictureGallery } from './PictureGallery'
 
-type ImageWidgetView = 'none' | 'pictures' | 'colors';
+type ImageWidgetView = 'none' | 'pictures' | 'colors'
 
 export function BoardCoverWidget() {
-  const [isModalOpen, setModalOpen] = React.useState(false);
-  const [view, setView] = React.useState<ImageWidgetView>('none');
+  const [isModalOpen, setModalOpen] = React.useState(false)
+  const [view, setView] = React.useState<ImageWidgetView>('none')
 
-  const { control, watch } = useFormContext<BoardInput>();
+  const { control, watch } = useFormContext<BoardInput>()
 
-  const boardColour = watch('cover');
-  const boardImage = watch('image');
+  const boardColour = watch('cover')
+  const boardImage = watch('image')
   const title =
     view === 'pictures'
       ? 'Pictures by Pexels'
       : view === 'colors'
       ? 'Colors'
-      : 'Choose Cover';
+      : 'Choose Cover'
 
   return (
     <Modal
       className="max-w-[26rem] overflow-visible"
       trigger={
         <Button
-          className="mb-4 mt-6 bg-gray-50 px-12 py-2.5 text-slate-500 shadow-sm hover:bg-astronaut-100"
+          className="mb-4 mt-6 bg-gray-50 px-12 py-2.5 text-slate-500 shadow-sm"
           variant="secondary"
           fullWidth
         >
@@ -43,9 +43,9 @@ export function BoardCoverWidget() {
       }
       open={isModalOpen}
       onOpenChange={modalStatus => {
-        setModalOpen(modalStatus);
+        setModalOpen(modalStatus)
         if (!modalStatus) {
-          setView('none');
+          setView('none')
         }
       }}
       closeIcon
@@ -71,9 +71,9 @@ export function BoardCoverWidget() {
             render={({ field }) => (
               <FileUpload
                 selectFile={fileString => {
-                  field.onChange(fileString);
-                  setModalOpen(false);
-                  setView('none');
+                  field.onChange(fileString)
+                  setModalOpen(false)
+                  setView('none')
                 }}
               />
             )}
@@ -110,9 +110,9 @@ export function BoardCoverWidget() {
             <PictureGallery
               selectedImage={boardImage}
               selectImage={url => {
-                field.onChange(url);
-                setModalOpen(false);
-                setView('none');
+                field.onChange(url)
+                setModalOpen(false)
+                setView('none')
               }}
             />
           )}
@@ -127,14 +127,14 @@ export function BoardCoverWidget() {
             <ColourGallery
               selectedColour={boardColour}
               selectCover={color => {
-                field.onChange(color);
-                setModalOpen(false);
-                setView('none');
+                field.onChange(color)
+                setModalOpen(false)
+                setView('none')
               }}
             />
           )}
         />
       )}
     </Modal>
-  );
+  )
 }

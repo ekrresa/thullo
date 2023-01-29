@@ -1,22 +1,22 @@
-import * as React from 'react';
-import Image from 'next/image';
-import { Controller, FormProvider, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { toast } from 'react-hot-toast';
-import { BiPlus } from 'react-icons/bi';
+import * as React from 'react'
+import Image from 'next/image'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { toast } from 'react-hot-toast'
+import { BiPlus } from 'react-icons/bi'
 
-import { Modal } from '@components/common/Modal';
-import { Button } from '@components/common/Button';
-import { BoardCoverWidget } from '../../BoardCoverWidget';
-import { VisibilitySelect } from './VisibilitySelect';
-import { useCreateBoard } from '@hooks/board';
-import { Input } from '@components/Input';
-import { BoardCreateSchema, BoardInput } from '@models/index';
+import { useCreateBoard } from '@hooks/board'
+import { Input } from '@components/Input'
+import { Button } from '@components/common/Button'
+import { Modal } from '@components/common/Modal'
+import { BoardCreateSchema, BoardInput } from '@models/index'
+import { VisibilitySelect } from '../../board/NewBoard/VisibilitySelect'
+import { BoardCoverWidget } from './BoardCoverWidget'
 
 export function NewBoard() {
-  const [isModalOpen, setModalOpen] = React.useState(false);
+  const [isModalOpen, setModalOpen] = React.useState(false)
 
-  const { createBoard, creatingBoard, reset: resetMutation } = useCreateBoard();
+  const { createBoard, creatingBoard, reset: resetMutation } = useCreateBoard()
 
   const formMethods = useForm<BoardInput>({
     defaultValues: {
@@ -26,26 +26,26 @@ export function NewBoard() {
       visibility: 'PRIVATE',
     },
     resolver: zodResolver(BoardCreateSchema),
-  });
+  })
 
   const onBoardFormSubmit = (values: BoardInput) => {
     if (!values.image && !values.cover) {
-      return toast.error('Please select a cover for the board.');
+      return toast.error('Please select a cover for the board.')
     }
 
     createBoard(values, {
       onSuccess() {
-        setModalOpen(false);
-        reset({ title: '', image: null, cover: null, visibility: 'PRIVATE' });
-        toast.success('Board created successfully.');
+        setModalOpen(false)
+        reset({ title: '', image: null, cover: null, visibility: 'PRIVATE' })
+        toast.success('Board created successfully.')
       },
-    });
-  };
+    })
+  }
 
-  const { control, register, handleSubmit, reset, watch } = formMethods;
+  const { control, register, handleSubmit, reset, watch } = formMethods
 
-  const boardCover = watch('cover');
-  const boardImage = watch('image');
+  const boardCover = watch('cover')
+  const boardImage = watch('image')
 
   return (
     <Modal
@@ -61,10 +61,10 @@ export function NewBoard() {
       className="max-w-md overflow-visible"
       open={isModalOpen}
       onOpenChange={modalStatus => {
-        setModalOpen(modalStatus);
+        setModalOpen(modalStatus)
         if (!modalStatus) {
-          reset({ title: '', image: null, cover: null, visibility: 'PRIVATE' });
-          resetMutation();
+          reset({ title: '', image: null, cover: null, visibility: 'PRIVATE' })
+          resetMutation()
         }
       }}
       closeIcon
@@ -96,6 +96,7 @@ export function NewBoard() {
             className="mt-4 w-full rounded-lg border border-ash bg-white px-3 py-2.5 text-sm drop-shadow-xl focus:outline-none"
             id="title"
             placeholder="Enter board title"
+            autoFocus
             labelHidden
           />
 
@@ -131,5 +132,5 @@ export function NewBoard() {
         </form>
       </FormProvider>
     </Modal>
-  );
+  )
 }

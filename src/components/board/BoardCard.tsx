@@ -1,19 +1,21 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import { IoMdLock } from 'react-icons/io';
+import Image from 'next/image'
+import Link from 'next/link'
+import { IoMdLock } from 'react-icons/io'
 
-import { Avatar } from '@components/Avatar';
-import { ROUTES } from '@lib/constants';
-import { Board } from '@models/index';
+import { Avatar } from '@components/Avatar'
+import { ROUTES } from '@lib/constants'
+import { BoardListWithMembers } from '@models/index'
 
 interface Props {
-  board: Board;
+  board: BoardListWithMembers
 }
 export function BoardCard({ board }: Props) {
+  const owner = board.members.find(member => member.isOwner)
+
   return (
     <Link
       key={board.id}
-      href={ROUTES.board(board.id)}
+      href={ROUTES.board(board.id, owner?.member.username!)}
       className="relative flex flex-col rounded-lg bg-white p-4 shadow transition-transform hover:scale-105"
     >
       {board.visibility === 'PRIVATE' && (
@@ -32,8 +34,8 @@ export function BoardCard({ board }: Props) {
       <p className="mt-2 truncate px-2 text-base font-medium">{board.title}</p>
 
       <div className="mt-3 flex items-center px-2">
-        <Avatar image={board.owner.image} name={board.owner.name} />
+        <Avatar image={owner?.member.image!} name={owner?.member.name!} />
       </div>
     </Link>
-  );
+  )
 }
