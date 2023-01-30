@@ -4,7 +4,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { IoClose } from 'react-icons/io5'
 
 import { cn } from '@lib/utils'
-import { Button } from './Button'
+import { Button } from './common/Button'
 
 interface ModalProps extends React.PropsWithChildren<unknown> {
   trigger?: React.ReactNode
@@ -16,22 +16,14 @@ interface ModalProps extends React.PropsWithChildren<unknown> {
 export function Modal(props: ModalProps) {
   const { children, className, closeIcon = false, open, onOpenChange, trigger } = props
 
-  let [isOpen, setIsOpen] = React.useState(open)
-
   return (
-    <Dialog.Root
-      open={isOpen}
-      onOpenChange={open => {
-        onOpenChange?.(open)
-        setIsOpen(open)
-      }}
-    >
+    <Dialog.Root open={open} onOpenChange={onOpenChange}>
       {React.isValidElement(trigger) && (
         <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>
       )}
 
       <Dialog.Portal forceMount>
-        <Transition.Root show={isOpen}>
+        <Transition.Root show={open}>
           <Transition.Child
             as={React.Fragment}
             enter="ease-out duration-300"

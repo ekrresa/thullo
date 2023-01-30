@@ -4,11 +4,12 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import { BiPlus } from 'react-icons/bi'
+import slugify from 'slugify'
 
 import { useCreateBoard } from '@hooks/board'
 import { Input } from '@components/Input'
+import { Modal } from '@components/Modal'
 import { Button } from '@components/common/Button'
-import { Modal } from '@components/common/Modal'
 import { BoardCreateSchema, BoardInput } from '@models/index'
 import { VisibilitySelect } from '../../board/NewBoard/VisibilitySelect'
 import { BoardCoverWidget } from './BoardCoverWidget'
@@ -21,6 +22,7 @@ export function NewBoard() {
   const formMethods = useForm<BoardInput>({
     defaultValues: {
       title: '',
+      slug: '',
       image: null,
       cover: null,
       visibility: 'PRIVATE',
@@ -32,6 +34,8 @@ export function NewBoard() {
     if (!values.image && !values.cover) {
       return toast.error('Please select a cover for the board.')
     }
+
+    values.slug = slugify(values.title, { lower: true })
 
     createBoard(values, {
       onSuccess() {

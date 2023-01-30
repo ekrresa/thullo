@@ -45,6 +45,7 @@
     "react-hot-toast": "^2.4.0",
     "react-icons": "^4.7.1",
     "react-use": "^17.4.0",
+    "slugify": "^1.6.5",
     "tailwind-merge": "^1.8.1",
     "zod": "^3.20.2",
     "zustand": "^4.3.2"

@@ -3,13 +3,13 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 
 import { Board, Card, Comment, List, UserProfile } from '@models/database';
-import { createBoard, fetchBoards } from '@lib/api/board';
-import { BoardInput } from '@models/board';
+import { createBoard, fetchBoards, getSingleBoard, updateBoard } from '@lib/api/board';
+import { BoardInput, BoardUpdate } from '@models/board';
 import { parseError } from '@lib/utils';
 
 export const boardsQueryKeys = {
   all: () => ['boards'],
-  board: (boardId: number) => ['board', { boardId }],
+  board: (boardOwner: string, boardId: string) => ['board', { boardId, boardOwner }],
   boardMembers: (boardId: number, numOfMembers: number) => [
     'board',
     'members',
@@ -60,26 +60,43 @@ export function useFetchBoards() {
   };
 }
 
-export function useFetchSingleBoard(boardId: number) {
-  return useQuery({
-    queryKey: boardsQueryKeys.board(boardId),
-    queryFn: async () => {
-      const result = await supabase
-        .from<Board>('boards')
-        .select(
-          `id, title, cover, description, image_id, image_version, visibility, created_at, updated_at, members, owner (id, name, username, image_id, image_version)`
-        )
-        .match({ id: boardId })
-        .single();
-
-      if (result.status === 401) await supabase.auth.signOut();
-      if (result.error) throw result.error;
-
-      return result.data;
-    },
-    enabled: Boolean(boardId),
+export function useGetSingleBoard(boardOwner: string, boardId: string) {
+  const { data, error, ...queryResult } = useQuery({
+    queryKey: boardsQueryKeys.board(boardOwner, boardId),
+    queryFn: async () => getSingleBoard(boardOwner, boardId),
     staleTime: ONE_HOUR_IN_MILLISECONDS,
+    enabled: Boolean(boardId && boardOwner),
   });
+
+  return {
+    board: data?.data.data,
+    error: error ? parseError(error) : undefined,
+    ...queryResult,
+  };
+}
+
+export function useUpdateBoard(boardOwner: string, boardId: string) {
+  const queryClient = useQueryClient();
+
+  const { mutate, isLoading, ...mutationResult } = useMutation(
+    (payload: BoardUpdate) => updateBoard(boardId, payload),
+    {
+      onError(error) {
+        const errorMessage = parseError(error);
+        toast.error(errorMessage);
+      },
+      onSuccess() {
+        toast.success('Board updated!');
+        return queryClient.invalidateQueries(boardsQueryKeys.board(boardOwner, boardId));
+      },
+    }
+  );
+
+  return {
+    updateBoard: mutate,
+    updatingBoard: isLoading,
+    ...mutationResult,
+  };
 }
 
 export function useFetchBoardMembers(boardId: number, members: string[]) {

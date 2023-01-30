@@ -4,8 +4,8 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { BsImage } from 'react-icons/bs'
 import { IoIosArrowBack } from 'react-icons/io'
 
+import { Modal } from '@components/Modal'
 import { Button } from '@components/common/Button'
-import { Modal } from '@components/common/Modal'
 import { BoardInput } from '@models/board'
 import { ColourGallery } from './ColourGallery'
 import { FileUpload } from './FileUpload'
@@ -43,6 +43,7 @@ export function BoardCoverWidget() {
       }
       open={isModalOpen}
       onOpenChange={modalStatus => {
+        console.log({ modalStatus })
         setModalOpen(modalStatus)
         if (!modalStatus) {
           setView('none')
