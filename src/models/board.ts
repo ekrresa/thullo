@@ -64,6 +64,7 @@ const boardWithMembers = Prisma.validator<Prisma.BoardArgs>()({
     image: true,
     description: true,
     title: true,
+    slug: true,
     visibility: true,
     updatedAt: true,
     createdAt: true,
