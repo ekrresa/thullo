@@ -15,7 +15,7 @@ export function BoardCard({ board }: Props) {
   return (
     <Link
       key={board.id}
-      href={ROUTES.board(board.id, owner?.member.username!)}
+      href={ROUTES.board(owner?.member.username!, board.slug)}
       className="relative flex flex-col rounded-lg bg-white p-4 shadow transition-transform hover:scale-105"
     >
       {board.visibility === 'PRIVATE' && (
