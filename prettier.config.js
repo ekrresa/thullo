@@ -23,8 +23,5 @@ module.exports = {
   importOrderParserPlugins: ['typescript', 'jsx', 'decorators-legacy'],
   importOrderMergeDuplicateImports: true,
   importOrderCombineTypeAndValueImports: true,
-  plugins: [
-    require.resolve('prettier-plugin-tailwindcss'),
-    require.resolve('@ianvs/prettier-plugin-sort-imports'),
-  ],
+  plugins: [require.resolve('@ianvs/prettier-plugin-sort-imports')],
 }
