@@ -37,10 +37,8 @@ export async function fetchBoards() {
   return request.get<BaseResponse<BoardListWithMembers[]>>('/api/boards')
 }
 
-export async function getSingleBoard(boardOwner: string, boardId: string) {
-  return request.get<BaseResponse<BoardWithMembers>>(
-    `/api/boards/${boardOwner}/${boardId}`
-  )
+export async function getSingleBoard(username: string, slug: string) {
+  return request.get<BoardWithMembers>(`/api/boards/${username}/${slug}`)
 }
 
 export async function updateBoard(boardId: string, input: BoardUpdate) {

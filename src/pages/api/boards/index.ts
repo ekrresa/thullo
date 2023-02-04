@@ -36,6 +36,7 @@ requestHandler.get(async (req, res) => {
         image: true,
         description: true,
         title: true,
+        slug: true,
         visibility: true,
         updatedAt: true,
         members: {
