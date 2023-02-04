@@ -2,10 +2,10 @@ import * as React from 'react'
 
 import { useFetchBoards } from '@hooks/board'
 import { useAuth } from '@hooks/user'
-import { Layout } from '@components/Layout'
 import { LoaderWrapper } from '@components/LoaderWrapper'
 import { BoardCard } from '@components/board/BoardCard'
 import { NewBoard } from '@components/board/NewBoard'
+import { Layout } from '@components/layout'
 
 export default function Home() {
   const boardsResult = useFetchBoards()

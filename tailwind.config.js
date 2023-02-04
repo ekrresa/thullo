@@ -1,11 +1,13 @@
 const { fontFamily } = require('tailwindcss/defaultTheme')
 
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       boxShadow: {
         card: '0px 4px 12px rgba(0, 0, 0, 0.05)',
+        popover: 'rgba(149, 157, 165, 0.2) 0px 8px 24px',
         profile: 'rgba(0, 0, 0, 0.1) 0px 0px 5px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px',
       },
       colors: {
