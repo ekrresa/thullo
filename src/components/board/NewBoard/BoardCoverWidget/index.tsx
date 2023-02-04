@@ -41,15 +41,13 @@ export function BoardCoverWidget() {
           Choose Board Cover
         </Button>
       }
-      open={isModalOpen}
-      onOpenChange={modalStatus => {
-        console.log({ modalStatus })
+      isOpen={isModalOpen}
+      onClose={modalStatus => {
         setModalOpen(modalStatus)
         if (!modalStatus) {
           setView('none')
         }
       }}
-      closeIcon
     >
       <div className="relative mb-8 flex justify-center font-medium">
         {view !== 'none' && (

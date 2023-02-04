@@ -63,15 +63,14 @@ export function NewBoard() {
         </Button>
       }
       className="max-w-md overflow-visible"
-      open={isModalOpen}
-      onOpenChange={modalStatus => {
+      isOpen={isModalOpen}
+      onClose={modalStatus => {
         setModalOpen(modalStatus)
         if (!modalStatus) {
           reset({ title: '', image: null, cover: null, visibility: 'PRIVATE' })
           resetMutation()
         }
       }}
-      closeIcon
     >
       <FormProvider {...formMethods}>
         <form onSubmit={handleSubmit(onBoardFormSubmit)}>
