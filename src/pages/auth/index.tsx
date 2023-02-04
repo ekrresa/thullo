@@ -1,30 +1,30 @@
-import * as React from 'react';
-import { signIn, SignInResponse } from 'next-auth/react';
-import { FaGithub } from 'react-icons/fa';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/router';
-import { toast } from 'react-hot-toast';
-import { z } from 'zod';
+import * as React from 'react'
+import { useRouter } from 'next/router'
+import { zodResolver } from '@hookform/resolvers/zod'
+import Logo from '@public/logo-small.svg'
+import { SignInResponse, signIn } from 'next-auth/react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'react-hot-toast'
+import { FaGithub } from 'react-icons/fa'
+import { z } from 'zod'
 
-import useCreateGuestUserMutation from '@hooks/auth';
-import { Input } from '@components/Input';
-import { Button } from '@components/common/Button';
-import { ROUTES } from '@lib/constants';
-import Logo from '@public/logo-small.svg';
+import useCreateGuestUserMutation from '@hooks/auth'
+import { Input } from '@components/Input'
+import { Button } from '@components/common/Button'
+import { ROUTES } from '@lib/constants'
 
 const FormSchema = z.object({
   email: z.string().email().trim(),
-});
+})
 
-type FormData = z.infer<typeof FormSchema>;
+type FormData = z.infer<typeof FormSchema>
 
 export default function AuthPage() {
-  const router = useRouter();
-  const searchParams = new URLSearchParams(router.query as Record<string, string>);
-  const callbackUrl = searchParams.get('callbackUrl') || ROUTES.home;
+  const router = useRouter()
+  const searchParams = new URLSearchParams(router.query as Record<string, string>)
+  const callbackUrl = searchParams.get('callbackUrl') || ROUTES.home
 
-  const { createGuestUser, creatingGuestUser } = useCreateGuestUserMutation();
+  const { createGuestUser, creatingGuestUser } = useCreateGuestUserMutation()
 
   const {
     register,
@@ -33,33 +33,33 @@ export default function AuthPage() {
   } = useForm<FormData>({
     defaultValues: { email: '' },
     resolver: zodResolver(FormSchema),
-  });
+  })
 
   const onSubmit = async (values: FormData) => {
     const signInResult = await signIn('email', {
       email: values.email.toLocaleLowerCase(),
       redirect: false,
       callbackUrl,
-    });
+    })
 
     if (!signInResult?.ok) {
-      return toast.error('Your sign in request failed. Please try again');
+      return toast.error('Your sign in request failed. Please try again')
     }
 
-    return toast.success('Login was successful. Please check your email for a link!');
-  };
+    return toast.success('Login was successful. Please check your email for a link!')
+  }
 
   const handleGuestUserResponse = (result?: SignInResponse) => {
     if (!result?.ok) {
-      toast.error('We were unable to create a guest account for you. Please try again!');
-      return;
+      toast.error('We were unable to create a guest account for you. Please try again!')
+      return
     }
 
-    toast.success('Login was successful! Redirecting...');
+    toast.success('Login was successful! Redirecting...')
     setTimeout(() => {
-      router.push(callbackUrl);
-    }, 1000);
-  };
+      router.push(callbackUrl)
+    }, 1000)
+  }
 
   return (
     <div className="container flex min-h-screen flex-col">
@@ -112,7 +112,7 @@ export default function AuthPage() {
           onClick={() =>
             createGuestUser(undefined, {
               onSuccess(result) {
-                handleGuestUserResponse(result);
+                handleGuestUserResponse(result)
               },
             })
           }
@@ -124,5 +124,5 @@ export default function AuthPage() {
         </Button>
       </section>
     </div>
-  );
+  )
 }

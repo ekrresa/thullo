@@ -1,6 +1,7 @@
 import * as React from 'react'
+import { VariantProps, cva } from 'class-variance-authority'
 import { AiOutlineLoading } from 'react-icons/ai'
-import { cva, VariantProps } from 'class-variance-authority'
+
 import { cn } from '@lib/utils'
 
 interface ButtonProps<T extends React.ElementType>
@@ -52,6 +53,7 @@ const buttonClasses = cva(
         danger: 'bg-roman-500 text-white hover:bg-roman-600',
         transparent:
           'bg-transparent shadow-none border border-slate-300 hover:bg-slate-100',
+        plain: 'p-0 shadow-none',
       },
       fullWidth: {
         true: 'w-full',
