@@ -37,7 +37,7 @@ export function ProfileDropdown() {
         leaveFrom="opacity-100 translate-y-0"
         leaveTo="opacity-0 -translate-y-1"
       >
-        <Popover.Panel className="absolute top-10 left-1/2 flex min-w-max -translate-x-1/2 flex-col items-center gap-1 overflow-hidden rounded-lg bg-white p-2 shadow-popover ring-1 ring-black/5 md:w-32">
+        <Popover.Panel className="absolute top-10 left-1/2 z-10 flex min-w-max -translate-x-1/2 flex-col items-center gap-1 overflow-hidden rounded-lg bg-white p-2 shadow-popover ring-1 ring-black/5 md:w-32">
           <Popover.Button
             as={Link}
             href={ROUTES.profile}
