@@ -1,32 +1,40 @@
-import { SessionProvider } from 'next-auth/react';
-import { Inter as FontSans } from '@next/font/google';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { Toaster } from 'react-hot-toast';
-import type { AppProps } from 'next/app';
-import type { Session } from 'next-auth';
+import * as React from 'react'
+import type { AppProps } from 'next/app'
+import { Inter as FontSans } from '@next/font/google'
+import {
+  DehydratedState,
+  Hydrate,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import type { Session } from 'next-auth'
+import { SessionProvider, useSession } from 'next-auth/react'
+import { Toaster } from 'react-hot-toast'
+import { useProfileStore } from 'src/stores/profile'
 
-import type { Page } from '@models/app';
-import '../styles/globals.css';
+import { useGetUserProfile } from '@hooks/user'
+import type { NextPageWithLayout } from '@models/app'
+import '../styles/globals.css'
 
-type Props = AppProps<{ session: Session }> & {
-  Component: Page;
-};
+type AppPropsWithLayout = AppProps<{
+  session: Session
+  dehydratedState: DehydratedState
+}> & {
+  Component: NextPageWithLayout
+}
 
 const fontSans = FontSans({
   subsets: ['latin'],
   variable: '--font-inter',
-});
+})
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: { refetchOnWindowFocus: false },
-  },
-});
+export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+  const { session, ...otherPageProps } = pageProps
 
-export default function MyApp({ Component, pageProps }: Props) {
-  const { session, ...otherPageProps } = pageProps;
-  const renderLayout = Component.getLayout ?? (page => page);
+  const [queryClient] = React.useState(() => new QueryClient())
+
+  const renderLayout = Component.getLayout ?? (page => page)
 
   return (
     <SessionProvider session={session}>
@@ -38,7 +46,12 @@ export default function MyApp({ Component, pageProps }: Props) {
                 font-family: ${fontSans.style.fontFamily};
               }
             `}</style>
-            <Component {...otherPageProps} />
+
+            <Hydrate state={pageProps.dehydratedState}>
+              <ProfileProvider>
+                <Component {...otherPageProps} />
+              </ProfileProvider>
+            </Hydrate>
           </>
         )}
 
@@ -46,5 +59,27 @@ export default function MyApp({ Component, pageProps }: Props) {
         <Toaster toastOptions={{ duration: 3000 }} />
       </QueryClientProvider>
     </SessionProvider>
-  );
+  )
+}
+
+function ProfileProvider({ children }: React.PropsWithChildren<{}>) {
+  const { status } = useSession()
+  const { getUserProfile } = useGetUserProfile()
+  const updateProfile = useProfileStore(state => state.updateProfile)
+
+  React.useEffect(() => {
+    if (status === 'authenticated') {
+      getUserProfile(undefined, {
+        onSuccess(response) {
+          updateProfile(response.data)
+        },
+      })
+    }
+
+    if (status === 'unauthenticated') {
+      updateProfile(null)
+    }
+  }, [getUserProfile, status, updateProfile])
+
+  return <>{children}</>
 }

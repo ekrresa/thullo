@@ -1,13 +1,14 @@
-import * as React from 'react';
-import { Button } from './common/Button';
-import { Spinner } from './common/Spinner';
-import { cn } from '@lib/utils';
+import * as React from 'react'
+
+import { cn } from '@lib/utils'
+import { Spinner } from './Spinner'
+import { Button } from './common/Button'
 
 interface Props extends React.ComponentProps<'div'> {
-  loading: boolean;
-  loaderContent?: React.ReactNode;
-  errorMessage?: string;
-  onRetryClick: () => void;
+  loading: boolean
+  loaderContent?: React.ReactNode
+  errorMessage?: string
+  onRetryClick: () => void
 }
 export function LoaderWrapper(props: Props) {
   const {
@@ -18,10 +19,10 @@ export function LoaderWrapper(props: Props) {
     loaderContent,
     className,
     ...otherProps
-  } = props;
+  } = props
 
   if (!loading && !errorMessage) {
-    return <>{children}</>;
+    return <>{children}</>
   }
 
   return (
@@ -45,5 +46,5 @@ export function LoaderWrapper(props: Props) {
         </div>
       )}
     </div>
-  );
+  )
 }

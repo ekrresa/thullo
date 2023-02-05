@@ -1,14 +1,15 @@
-const { fontFamily } = require('tailwindcss/defaultTheme');
+const { fontFamily } = require('tailwindcss/defaultTheme')
 
+/** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    './src/pages/**/*.{js,ts,jsx,tsx}',
-    './src/components/**/*.{js,ts,jsx,tsx}',
-    './src/modules/**/*.{js,ts,jsx,tsx}',
-  ],
+  content: ['./src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
-      boxShadow: { card: ' 0px 4px 12px rgba(0, 0, 0, 0.05)' },
+      boxShadow: {
+        card: '0px 4px 12px rgba(0, 0, 0, 0.05)',
+        popover: 'rgba(149, 157, 165, 0.2) 0px 8px 24px',
+        profile: 'rgba(0, 0, 0, 0.1) 0px 0px 5px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px',
+      },
       colors: {
         'corn-blue': '#2F80ED',
         'light-pencil': '#BDBDBD',
@@ -44,10 +45,21 @@ module.exports = {
           800: '#8c2539',
           900: '#782337',
         },
+        brand: {
+          50: '#eff8ff',
+          100: '#dbeefe',
+          200: '#bfe2fe',
+          300: '#93d1fd',
+          400: '#60b7fa',
+          500: '#3b98f6',
+          600: '#2f80ec',
+          700: '#1d64d8',
+          800: '#1e51af',
+          900: '#1e468a',
+        },
       },
       fontFamily: {
         sans: ['var(--font-inter)', ...fontFamily.sans],
-        poppins: ['Poppins', 'sans-serif'],
         'open-sans': ['Open Sans', 'sans-serif'],
       },
       gridTemplateColumns: {
@@ -60,5 +72,5 @@ module.exports = {
       },
     },
   },
-  plugins: [require('tailwindcss-animate'), require('@tailwindcss/typography')],
-};
+  plugins: [require('@tailwindcss/typography')],
+}

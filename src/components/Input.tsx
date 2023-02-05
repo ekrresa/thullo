@@ -1,11 +1,12 @@
-import * as React from 'react';
-import { cn } from '@lib/utils';
+import * as React from 'react'
+
+import { cn } from '@lib/utils'
 
 interface Props extends React.ComponentProps<'input'> {
-  label: string;
-  labelHidden?: boolean;
-  errorMessage?: string;
-  containerClassName?: string;
+  label: string
+  labelHidden?: boolean
+  errorMessage?: string
+  containerClassName?: string
 }
 function InputInner(props: Props, ref: React.ForwardedRef<HTMLInputElement>) {
   const {
@@ -16,12 +17,12 @@ function InputInner(props: Props, ref: React.ForwardedRef<HTMLInputElement>) {
     containerClassName,
     errorMessage,
     ...inputProps
-  } = props;
+  } = props
 
   return (
     <div className={containerClassName}>
       {!labelHidden && (
-        <label className="mb-1 block text-sm text-pencil" htmlFor={id}>
+        <label className="mb-1 block text-sm text-slate-500" htmlFor={id}>
           {label}
         </label>
       )}
@@ -29,9 +30,9 @@ function InputInner(props: Props, ref: React.ForwardedRef<HTMLInputElement>) {
       <input
         ref={ref}
         className={cn(
-          'block w-full rounded-md border border-slate-300 py-2 px-3 text-sm font-medium hover:border-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-600 focus:ring-offset-1',
+          'block w-full rounded-md border border-slate-300 py-2 px-3 text-sm font-medium transition-all hover:border-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:ring-offset-1',
           className,
-          errorMessage && 'border-red-300 hover:border-red-300 focus:ring-red-600'
+          errorMessage && 'border-red-300 hover:border-roman-500 focus:ring-roman-600'
         )}
         aria-label={labelHidden ? label : undefined}
         aria-invalid={errorMessage ? 'true' : 'false'}
@@ -47,7 +48,7 @@ function InputInner(props: Props, ref: React.ForwardedRef<HTMLInputElement>) {
         </p>
       )}
     </div>
-  );
+  )
 }
 
-export const Input = React.forwardRef(InputInner);
+export const Input = React.forwardRef(InputInner)

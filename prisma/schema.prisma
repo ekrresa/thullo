@@ -25,8 +25,7 @@ model Account {
   scope             String?
   id_token          String? @db.Text
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@index([userId])
@@ -45,20 +44,20 @@ model Session {
 }
 
 model User {
-  id             String    @id @default(cuid())
+  id             String         @id @default(cuid())
   name           String?
-  email          String?   @unique
-  emailVerified  DateTime? @map("email_verified")
-  username       String?   @unique @db.VarChar(100)
-  isGuest        Boolean   @default(false) @map("is_guest")
-  isProfileSetup Boolean   @default(false) @map("is_profile_setup")
+  email          String         @unique
+  emailVerified  DateTime?      @map("email_verified")
+  username       String?        @unique @db.VarChar(100)
+  isGuest        Boolean        @default(false) @map("is_guest")
+  isProfileSetup Boolean        @default(false) @map("is_profile_setup")
   image          String?
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @updatedAt @map("updated_at")
-
-  Account Account[]
-  Session Session[]
-  Board   Board[]
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt @map("updated_at")
+  accounts       Account[]
+  sessions       Session[]
+  boards         BoardMembers[]
+  invites        BoardInvite[]
 
   @@map("users")
 }
@@ -75,18 +74,50 @@ model VerificationToken {
 model Board {
   id          String          @id @default(cuid())
   title       String
+  slug        String
   description String?
   image       String?
   cover       String?
   visibility  BoardVisibility
   createdAt   DateTime        @default(now()) @map("created_at")
   updatedAt   DateTime        @updatedAt @map("updated_at")
+  members     BoardMembers[]
+  invites     BoardInvite[]
 
-  owner  User   @relation(fields: [userId], references: [id])
-  userId String @map("user_id")
-
-  @@index([userId])
   @@map("boards")
+}
+
+model BoardMembers {
+  board     Board    @relation(fields: [boardId], references: [id])
+  boardId   String   @map("board_id")
+  member    User     @relation(fields: [memberId], references: [id])
+  memberId  String   @map("member_id")
+  role      Role
+  isOwner   Boolean  @default(false) @map("is_owner")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@id([boardId, memberId])
+  @@index([boardId])
+  @@index([memberId])
+  @@map("board_members")
+}
+
+model BoardInvite {
+  id          String    @id @default(cuid())
+  email       String
+  board       Board     @relation(fields: [boardId], references: [id])
+  boardId     String    @map("board_id")
+  invitedBy   User      @relation(fields: [invitedById], references: [id])
+  invitedById String    @map("invited_by_id")
+  role        Role
+  accepted    Boolean?
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime? @map("updated_at")
+
+  @@index([boardId])
+  @@index([invitedById])
+  @@map("board_invites")
 }
 
 enum BoardVisibility {
@@ -94,18 +125,7 @@ enum BoardVisibility {
   PRIVATE
 }
 
-// model UsersInBoards {
-//   invitedAt  DateTime @default(now()) @map("invited_at")
-//   acceptedAt DateTime @map("accepted_at")
-
-//   Board   Board? @relation(fields: [boardId], references: [id])
-//   boardId String @map("board_id")
-
-//   User   User?  @relation(fields: [userId], references: [id])
-//   userId String @map("user_id")
-
-//   @@id([boardId, userId])
-//   @@index([boardId])
-//   @@index([userId])
-//   @@map("users_in_boards")
-// }
+enum Role {
+  ADMIN
+  MEMBER
+}

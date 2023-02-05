@@ -3,5 +3,6 @@
     ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
   ],
   "typescript.tsdk": "node_modules/typescript/lib",
-  "prisma.fileWatcher": true
+  "prisma.fileWatcher": true,
+  "diffEditor.wordWrap": "on"
 }

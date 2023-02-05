@@ -1,11 +1,12 @@
-import * as React from 'react';
-import * as RadioGroup from '@radix-ui/react-radio-group';
-import { BoardVisibility } from '@prisma/client';
-import { cn } from '@lib/utils';
+import * as React from 'react'
+import { BoardVisibility } from '@prisma/client'
+import * as RadioGroup from '@radix-ui/react-radio-group'
+
+import { cn } from '@lib/utils'
 
 interface VisibilitySelectProps {
-  getVisibility: (input: BoardVisibility) => void;
-  value: BoardVisibility;
+  getVisibility: (input: BoardVisibility) => void
+  value: BoardVisibility
 }
 export function VisibilitySelect({ getVisibility, value }: VisibilitySelectProps) {
   return (
@@ -13,13 +14,13 @@ export function VisibilitySelect({ getVisibility, value }: VisibilitySelectProps
       <RadioGroup.Root
         className="flex gap-4"
         onValueChange={value => {
-          getVisibility(value as BoardVisibility);
+          getVisibility(value as BoardVisibility)
         }}
       >
         <RadioGroup.Item
           className={cn(
             'flex-1 rounded-lg border border-astronaut-200 p-4 transition duration-300',
-            value === 'PUBLIC' ? 'ring-2 ring-astronaut-500 ring-offset-1' : ''
+            value === 'PUBLIC' ? 'ring-1 ring-brand-500 ring-offset-1' : ''
           )}
           value="PUBLIC"
         >
@@ -41,7 +42,7 @@ export function VisibilitySelect({ getVisibility, value }: VisibilitySelectProps
         <RadioGroup.Item
           className={cn(
             'flex-1 rounded-lg border border-astronaut-200 p-4 transition duration-300',
-            value === 'PRIVATE' ? 'ring-2 ring-astronaut-500 ring-offset-1' : ''
+            value === 'PRIVATE' ? 'ring-1 ring-brand-500 ring-offset-1' : ''
           )}
           value="PRIVATE"
         >
@@ -61,5 +62,5 @@ export function VisibilitySelect({ getVisibility, value }: VisibilitySelectProps
         </RadioGroup.Item>
       </RadioGroup.Root>
     </form>
-  );
+  )
 }

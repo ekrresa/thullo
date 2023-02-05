@@ -1,11 +1,10 @@
-import { NextPage } from 'next';
-import { ReactElement, ReactNode } from 'react';
+import { ReactElement, ReactNode } from 'react'
+import { NextPage } from 'next'
 
-export type Page<P = {}> = NextPage<P> & {
-  getLayout?: (page: ReactElement) => ReactNode;
-  protected: boolean;
-};
+export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: ReactElement) => ReactNode
+}
 
 export interface BaseResponse<T> {
-  data: T;
+  data: T
 }

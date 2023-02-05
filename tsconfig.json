@@ -21,6 +21,7 @@
       "@hooks/*": ["src/hooks/*"],
       "@lib/*": ["src/lib/*"],
       "@models/*": ["src/models/*"],
+      "@stores/*": ["src/stores/*"],
       "@public/*": ["public/*"]
     }
   },

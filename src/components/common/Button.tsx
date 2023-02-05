@@ -1,16 +1,18 @@
-import * as React from 'react';
-import { AiOutlineLoading } from 'react-icons/ai';
-import { cva, VariantProps } from 'class-variance-authority';
-import { cn } from '@lib/utils';
+import * as React from 'react'
+import { VariantProps, cva } from 'class-variance-authority'
+import { AiOutlineLoading } from 'react-icons/ai'
+
+import { cn } from '@lib/utils'
 
 interface ButtonProps<T extends React.ElementType>
   extends React.ComponentProps<'button'>,
     VariantProps<typeof buttonClasses> {
-  as?: T;
-  loading?: boolean;
+  as?: T
+  loading?: boolean
 }
-export function Button<T extends React.ElementType = 'button'>(
-  props: ButtonProps<T> & Omit<React.ComponentPropsWithoutRef<T>, keyof ButtonProps<T>>
+function ButtonInner<T extends React.ElementType = 'button'>(
+  props: ButtonProps<T> & Omit<React.ComponentPropsWithoutRef<T>, keyof ButtonProps<T>>,
+  ref: React.ForwardedRef<T>
 ) {
   const {
     as,
@@ -21,12 +23,14 @@ export function Button<T extends React.ElementType = 'button'>(
     variant,
     type = 'button',
     ...buttonProps
-  } = props;
+  } = props
 
-  const Component = as || 'button';
+  const Element = as || 'button'
 
   return (
-    <Component
+    //@ts-expect-error
+    <Element
+      ref={ref}
       className={cn(buttonClasses({ variant, fullWidth }), className)}
       disabled={loading}
       type={type}
@@ -37,23 +41,28 @@ export function Button<T extends React.ElementType = 'button'>(
       ) : (
         children
       )}
-    </Component>
-  );
+    </Element>
+  )
 }
 
 const buttonClasses = cva(
-  'flex items-center justify-center rounded-lg transition-colors text-sm shadow-sm py-2.5 px-6 disabled:cursor-not-allowed disabled:opacity-60',
+  'flex items-center justify-center font-medium rounded-lg transition-all text-sm shadow-sm py-2.5 px-6 disabled:cursor-not-allowed disabled:opacity-60 focus:ring-1 focus:ring-offset-1',
   {
     variants: {
       variant: {
-        primary: 'bg-astronaut-500 text-white hover:bg-astronaut-600',
+        primary: 'bg-brand-500 text-white hover:bg-brand-600 focus:ring-brand-500',
         secondary:
-          'text-astronaut-900 bg-astronaut-100 border border-astronaut-200 hover:bg-astronaut-200',
+          'text-slate-700 bg-transparent border border-slate-200 hover:bg-slate-50 hover:border-slate-400',
         danger: 'bg-roman-500 text-white hover:bg-roman-600',
+        transparent:
+          'bg-transparent shadow-none border border-slate-300 hover:bg-slate-100',
+        plain: 'p-0 shadow-none',
       },
       fullWidth: {
         true: 'w-full',
       },
     },
   }
-);
+)
+
+export const Button = React.forwardRef(ButtonInner)
