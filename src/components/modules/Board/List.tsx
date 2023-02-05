@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { IoEllipsisHorizontalSharp } from 'react-icons/io5';
 import { Menu, Transition } from '@headlessui/react';
 import { useFormik } from 'formik';
-import { useClickAway } from 'react-use';
+import UseOnClickOutside from 'use-onclickoutside';
 import { toast } from 'react-hot-toast';
 
 import { AddNewItem } from './AddNewItem';
@@ -12,7 +12,7 @@ import { boardsQueryKeys, useFetchListCards } from '@hooks/board';
 import { createCard, deleteList, renameList } from '@lib/api/board';
 import { useUserProfile } from '@hooks/user';
 import { Card } from './Card';
-import { Card as CardType, List } from '@models/database';
+import { Card as CardType, List } from 'types/database';
 import { useIsBoardMember } from '@hooks/useIsBoardMember';
 
 interface BoardProps extends React.PropsWithChildren<unknown> {
@@ -57,7 +57,7 @@ export function List({ boardId, boardOwner, listId, title, index, members }: Boa
     },
   });
 
-  useClickAway(titleInputRef, () => {
+  UseOnClickOutside(titleInputRef, () => {
     formik.handleSubmit();
     setEditing(false);
   });
