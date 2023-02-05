@@ -10,8 +10,9 @@ interface ButtonProps<T extends React.ElementType>
   as?: T
   loading?: boolean
 }
-export function Button<T extends React.ElementType = 'button'>(
-  props: ButtonProps<T> & Omit<React.ComponentPropsWithoutRef<T>, keyof ButtonProps<T>>
+function ButtonInner<T extends React.ElementType = 'button'>(
+  props: ButtonProps<T> & Omit<React.ComponentPropsWithoutRef<T>, keyof ButtonProps<T>>,
+  ref: React.ForwardedRef<T>
 ) {
   const {
     as,
@@ -24,10 +25,12 @@ export function Button<T extends React.ElementType = 'button'>(
     ...buttonProps
   } = props
 
-  const Component = as || 'button'
+  const Element = as || 'button'
 
   return (
-    <Component
+    //@ts-expect-error
+    <Element
+      ref={ref}
       className={cn(buttonClasses({ variant, fullWidth }), className)}
       disabled={loading}
       type={type}
@@ -38,7 +41,7 @@ export function Button<T extends React.ElementType = 'button'>(
       ) : (
         children
       )}
-    </Component>
+    </Element>
   )
 }
 
@@ -61,3 +64,5 @@ const buttonClasses = cva(
     },
   }
 )
+
+export const Button = React.forwardRef(ButtonInner)
