@@ -22,18 +22,16 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
   return (
     <div className="grid min-h-screen grid-cols-1 grid-rows-layout">
       <header className="mb-1 bg-white py-4 shadow-sm">
-        <div className="container flex items-center justify-between">
+        <div className="container flex items-center justify-between gap-4">
           <Link href={ROUTES.home}>
             <Logo className="hidden w-28 md:inline-block" />
             <MobileLogo className="w-8 md:hidden" />
           </Link>
 
           {board && (
-            <div className="flex gap-2">
-              <h1 className="self-center truncate font-open-sans text-xl font-medium text-slate-700 sm:w-auto">
-                {board.title}
-              </h1>
-            </div>
+            <h1 className="self-center truncate font-open-sans text-xl font-medium text-slate-700 sm:w-auto">
+              {board.title}
+            </h1>
           )}
 
           {!isAuthenticated ? (
