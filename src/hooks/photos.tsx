@@ -1,5 +1,5 @@
+import { useQuery } from '@tanstack/react-query';
 import { ErrorResponse, pexelsClient, Photos } from '@lib/pexels';
-import { useQuery } from 'react-query';
 
 export const pexelsPhotosQueryKeys = {
   photos: (page: number) => ['pexels', 'photos', { page }],
@@ -8,15 +8,16 @@ export const pexelsPhotosQueryKeys = {
 const ONE_HOUR_IN_MILLISECONDS = 3600000;
 
 export function usePexelsPhotos(page: number) {
-  return useQuery(
-    pexelsPhotosQueryKeys.photos(page),
-    async () => {
+  return useQuery({
+    queryKey: pexelsPhotosQueryKeys.photos(page),
+    queryFn: async () => {
       return (await pexelsClient.photos.search({
-        query: 'nature',
+        query: 'landscape',
+        orientation: 'landscape',
         page,
-        per_page: 9,
+        per_page: 8,
       })) as Photos & ErrorResponse;
     },
-    { staleTime: ONE_HOUR_IN_MILLISECONDS }
-  );
+    staleTime: ONE_HOUR_IN_MILLISECONDS,
+  });
 }

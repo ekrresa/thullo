@@ -1,12 +1,11 @@
-import { useUserProfile } from './user';
+import { useUserProfile } from './user'
 
-export function useIsBoardMember(ownerId: string, members: string[]) {
-  const loggedInUser = useUserProfile();
+export function useIsBoardMember(members: string[]) {
+  const loggedInUser = useUserProfile()
 
-  if (!loggedInUser.data?.id) return false;
+  if (!loggedInUser.data?.id) return false
 
-  const isMemberOfTheBoard =
-    loggedInUser.data.id === ownerId || members.includes(loggedInUser.data.id);
+  const isMemberOfTheBoard = members.includes(loggedInUser.data.id)
 
-  return isMemberOfTheBoard;
+  return isMemberOfTheBoard
 }

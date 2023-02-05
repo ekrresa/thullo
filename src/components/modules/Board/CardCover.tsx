@@ -1,14 +1,14 @@
 import * as React from 'react';
-import Image from 'next/image';
+import Image from 'next/legacy/image';
 import { Menu, Transition } from '@headlessui/react';
 import { IoSearch } from 'react-icons/io5';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { Button } from '@components/common/Button';
 import { CardCoverInput, updateCardCover } from '@lib/api/board';
 import { usePexelsPhotos } from '@hooks/photos';
 import { boardsQueryKeys } from '@hooks/board';
-import { Card } from '../../../types/database';
+import { Card } from '@models/database';
 import { useCardContext } from '@context/CardContext';
 
 interface CardLabelProps {

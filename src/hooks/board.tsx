@@ -1,10 +1,15 @@
-import { supabase } from '@lib/supabase';
-import { useQuery } from 'react-query';
-import { Board, Card, Comment, List, UserProfile } from 'types/database';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import toast from 'react-hot-toast'
+
+import { createBoard, fetchBoards } from '@lib/api/board'
+import { supabase } from '@lib/supabase'
+import { parseError } from '@lib/utils'
+import { BoardCreateInput } from '@models/board'
+import { Card, Comment, List, UserProfile } from '@models/database'
 
 export const boardsQueryKeys = {
-  all: () => ['boards', 'all'],
-  board: (boardId: number) => ['board', { boardId }],
+  all: () => ['boards'],
+  board: (ownerUsername: string, slug: string) => ['board', { slug, ownerUsername }],
   boardMembers: (boardId: number, numOfMembers: number) => [
     'board',
     'members',
@@ -14,152 +19,147 @@ export const boardsQueryKeys = {
   boardListCards: (listId: number) => ['board', 'lists', 'cards', { listId }],
   card: (cardId: number) => ['list', 'card', { cardId }],
   cardComments: (cardId: number) => ['card', 'comments', { cardId }],
-};
-
-const ONE_HOUR_IN_MILLISECONDS = 3600000;
-
-export function useFetchBoards() {
-  return useQuery(
-    boardsQueryKeys.all(),
-    async () => {
-      const result = await supabase
-        .from<Board>('boards')
-        .select(
-          `id, title, cover, image_id, image_version, visibility, owner (name, username, image_id, image_version)`
-        )
-        .order('updated_at', { ascending: false });
-
-      if (result.status === 401) await supabase.auth.signOut();
-      if (result.error) throw result.error;
-
-      return result.data;
-    },
-    { staleTime: ONE_HOUR_IN_MILLISECONDS }
-  );
 }
 
-export function useFetchSingleBoard(boardId: number) {
-  return useQuery(
-    boardsQueryKeys.board(boardId),
-    async () => {
-      const result = await supabase
-        .from<Board>('boards')
-        .select(
-          `id, title, cover, description, image_id, image_version, visibility, created_at, updated_at, members, owner (id, name, username, image_id, image_version)`
-        )
-        .match({ id: boardId })
-        .single();
+const ONE_HOUR_IN_MILLISECONDS = 3600000
 
-      if (result.status === 401) await supabase.auth.signOut();
-      if (result.error) throw result.error;
+export function useCreateBoard() {
+  const queryClient = useQueryClient()
 
-      return result.data;
-    },
-    { enabled: Boolean(boardId), staleTime: ONE_HOUR_IN_MILLISECONDS }
-  );
+  const { mutate, isLoading, ...mutationProps } = useMutation(
+    (payload: BoardCreateInput) => createBoard(payload),
+    {
+      onError(error) {
+        const errorMessage = parseError(error)
+        toast.error(errorMessage)
+      },
+      onSuccess() {
+        queryClient.invalidateQueries(boardsQueryKeys.all())
+      },
+    }
+  )
+
+  return {
+    createBoard: mutate,
+    creatingBoard: isLoading,
+    ...mutationProps,
+  }
+}
+
+export function useFetchBoards() {
+  const { data, error, ...result } = useQuery({
+    queryKey: boardsQueryKeys.all(),
+    queryFn: async () => fetchBoards(),
+    staleTime: ONE_HOUR_IN_MILLISECONDS,
+  })
+
+  return {
+    boards: data?.data.data,
+    error: error ? parseError(error) : undefined,
+    ...result,
+  }
 }
 
 export function useFetchBoardMembers(boardId: number, members: string[]) {
-  return useQuery(
-    boardsQueryKeys.boardMembers(boardId, members.length),
-    async () => {
+  return useQuery({
+    queryKey: boardsQueryKeys.boardMembers(boardId, members.length),
+    queryFn: async () => {
       const boardMembersP = members.map(async userId => {
         const result = await supabase
           .from<UserProfile>('profiles')
           .select()
           .match({ id: userId })
-          .single();
+          .single()
 
-        if (result.status === 401) await supabase.auth.signOut();
-        if (result.error) throw result.error;
+        if (result.status === 401) await supabase.auth.signOut()
+        if (result.error) throw result.error
 
-        return result.data;
-      });
+        return result.data
+      })
 
-      return await Promise.all(boardMembersP);
+      return await Promise.all(boardMembersP)
     },
-    { enabled: Boolean(members && members?.length), staleTime: ONE_HOUR_IN_MILLISECONDS }
-  );
+    enabled: Boolean(members && members?.length),
+    staleTime: ONE_HOUR_IN_MILLISECONDS,
+  })
 }
 
 export function useFetchBoardLists(boardId: number) {
-  return useQuery(
-    boardsQueryKeys.boardLists(boardId),
-    async () => {
+  return useQuery({
+    queryKey: boardsQueryKeys.boardLists(boardId),
+    queryFn: async () => {
       const result = await supabase
         .from<List>('lists')
         .select()
         .match({ board_id: boardId })
-        .order('position', { ascending: true });
+        .order('position', { ascending: true })
 
-      if (result.status === 401) await supabase.auth.signOut();
-      if (result.error) throw result.error;
+      if (result.status === 401) await supabase.auth.signOut()
+      if (result.error) throw result.error
 
-      return result.data;
+      return result.data
     },
-    { enabled: Boolean(boardId), staleTime: ONE_HOUR_IN_MILLISECONDS }
-  );
+    enabled: Boolean(boardId),
+    staleTime: ONE_HOUR_IN_MILLISECONDS,
+  })
 }
 
 export function useFetchListCards(listId: number) {
-  return useQuery(
-    boardsQueryKeys.boardListCards(listId),
-    async () => {
+  return useQuery({
+    queryKey: boardsQueryKeys.boardListCards(listId),
+    queryFn: async () => {
       const result = await supabase
         .from<Card>('cards')
         .select()
         .match({ list_id: listId })
-        .order('position', { ascending: true });
+        .order('position', { ascending: true })
 
-      if (result.status === 401) await supabase.auth.signOut();
-      if (result.error) throw result.error;
+      if (result.status === 401) await supabase.auth.signOut()
+      if (result.error) throw result.error
 
-      return result.data;
+      return result.data
     },
-    { enabled: Boolean(listId), staleTime: ONE_HOUR_IN_MILLISECONDS }
-  );
+    enabled: Boolean(listId),
+    staleTime: ONE_HOUR_IN_MILLISECONDS,
+  })
 }
 
 export function useFetchCardInfo(cardId: number) {
-  return useQuery(
-    boardsQueryKeys.card(cardId),
-    async () => {
+  return useQuery({
+    queryKey: boardsQueryKeys.card(cardId),
+    queryFn: async () => {
       const result = await supabase
         .from<Card>('cards')
         .select()
         .match({ id: cardId })
-        .single();
+        .single()
 
-      if (result.status === 401) await supabase.auth.signOut();
-      if (result.error) throw result.error;
+      if (result.status === 401) await supabase.auth.signOut()
+      if (result.error) throw result.error
 
-      return result.data;
+      return result.data
     },
-    {
-      enabled: Boolean(cardId),
-      staleTime: ONE_HOUR_IN_MILLISECONDS,
-    }
-  );
+    enabled: Boolean(cardId),
+    staleTime: ONE_HOUR_IN_MILLISECONDS,
+  })
 }
 
 export function useFetchCardComments(cardId: number) {
-  return useQuery(
-    boardsQueryKeys.cardComments(cardId),
-    async () => {
+  return useQuery({
+    queryKey: boardsQueryKeys.cardComments(cardId),
+    queryFn: async () => {
       const result = await supabase
         .from<Comment>('comments')
         .select(`id, text, created_at, user(id, name, username, image_id, image_version)`)
         .match({ card_id: cardId })
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
 
-      if (result.status === 401) await supabase.auth.signOut();
-      if (result.error) throw result.error;
+      if (result.status === 401) await supabase.auth.signOut()
+      if (result.error) throw result.error
 
-      return result.data;
+      return result.data
     },
-    {
-      enabled: Boolean(cardId),
-      staleTime: ONE_HOUR_IN_MILLISECONDS,
-    }
-  );
+    enabled: Boolean(cardId),
+    staleTime: ONE_HOUR_IN_MILLISECONDS,
+  })
 }

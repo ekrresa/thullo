@@ -1,0 +1,8 @@
+{
+  "tailwindCSS.experimental.classRegex": [
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "prisma.fileWatcher": true,
+  "diffEditor.wordWrap": "on"
+}

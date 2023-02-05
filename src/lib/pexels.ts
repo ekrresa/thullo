@@ -1,5 +1,5 @@
 import { createClient } from 'pexels';
+import { PEXELS_API_KEY } from './constants';
 
-const pexelsAPIKEY = process.env.NEXT_PUBLIC_PEXELS_API_KEY as string;
-export const pexelsClient = createClient(pexelsAPIKEY);
+export const pexelsClient = createClient(PEXELS_API_KEY!);
 export * from 'pexels';

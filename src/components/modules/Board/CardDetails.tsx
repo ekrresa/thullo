@@ -1,12 +1,12 @@
 import * as React from 'react';
-import Image from 'next/image';
+import Image from 'next/legacy/image';
 import { FaUserCircle } from 'react-icons/fa';
 import { MdStickyNote2 } from 'react-icons/md';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { IoClose, IoPencil } from 'react-icons/io5';
 import { formatDistanceToNow } from 'date-fns';
 import { useFormik } from 'formik';
-import UseOnClickOutside from 'use-onclickoutside';
+import { useClickAway } from 'react-use';
 
 import { Modal } from '../../common/Modal';
 import { useCardContext } from '@context/CardContext';
@@ -15,9 +15,9 @@ import { TextArea } from '@components/common/TextArea';
 import { Button } from '@components/common/Button';
 import { addComment, CommentInput, updateCard } from '@lib/api/board';
 import { useUserProfile } from '@hooks/user';
-import { Avatar } from '@components/common/Avatar';
+import { Avatar } from '@components/Avatar';
 import { supabase } from '@lib/supabase';
-import { Card, Comment } from '../../../types/database';
+import { Card, Comment } from '@models/database';
 import { CardCover } from './CardCover';
 import { getCloudinaryUrl } from '@lib/utils';
 import { useIsBoardMember } from '@hooks/useIsBoardMember';
@@ -90,7 +90,7 @@ export function CardDetails({ boardOwner, members }: CardDetailsProps) {
     enableReinitialize: true,
   });
 
-  UseOnClickOutside(titleInputRef, () => {
+  useClickAway(titleInputRef, () => {
     formik.handleSubmit();
     setChangingTitle(false);
   });
@@ -106,7 +106,7 @@ export function CardDetails({ boardOwner, members }: CardDetailsProps) {
     (async () => {
       const result = await supabase
         .from(`comments:card_id=eq.${cardInfo.id}`)
-        .on('INSERT', payload => {
+        .on('INSERT', (payload: any) => {
           const oldComments = queryClient.getQueryData<Comment[]>(
             boardsQueryKeys.cardComments(cardInfo.id)
           );
@@ -130,7 +130,7 @@ export function CardDetails({ boardOwner, members }: CardDetailsProps) {
         result.unsubscribe();
       };
     })();
-  }, [cardInfo.id, queryClient]);
+  }, [cardInfo.id, loggedInUser.data, queryClient]);
 
   const handleCardDescription = () => {
     descriptionMutation.mutate(
@@ -165,12 +165,7 @@ export function CardDetails({ boardOwner, members }: CardDetailsProps) {
   };
 
   return (
-    <Modal
-      isOpen={openCardModal}
-      className="max-w-2xl overflow-visible pb-10"
-      closeModal={handleCardModal}
-      closeIcon
-    >
+    <Modal open={openCardModal} className="max-w-2xl overflow-visible pb-10" closeIcon>
       {cardData.isLoading ? (
         <p className="text-center text-sm">Loading...</p>
       ) : (
@@ -319,14 +314,13 @@ export function CardDetails({ boardOwner, members }: CardDetailsProps) {
 
               <div className="mt-12 space-y-8">
                 {cardComments.data &&
-                  cardComments.data.map(comment => (
+                  cardComments.data.map((comment: any) => (
                     <div className="" key={comment.id}>
                       <div className="flex justify-between ">
                         <div className="mb-3 flex space-x-4">
                           <div className="h-9 w-9 overflow-hidden rounded-xl">
                             <Avatar
-                              imageId={comment.user.image_id}
-                              imageVersion={comment.user.image_version}
+                              image={comment.user.image_id}
                               name={comment.user.name}
                             />
                           </div>
