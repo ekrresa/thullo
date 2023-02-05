@@ -1,23 +1,6 @@
 import { Prisma } from '@prisma/client'
 import { z } from 'zod'
 
-import { UserSchema } from '.'
-
-export const BoardSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  description: z.string().nullable(),
-  image: z.string().nullable(),
-  cover: z.string().nullable(),
-  visibility: z.union([z.literal('PUBLIC'), z.literal('PRIVATE')]),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  userId: z.string(),
-  owner: UserSchema,
-})
-
-export type Board = z.infer<typeof BoardSchema>
-
 export const BoardCreateSchema = z.object({
   title: z.string(),
   slug: z.string().trim().default(''),
@@ -26,7 +9,7 @@ export const BoardCreateSchema = z.object({
   visibility: z.union([z.literal('PRIVATE'), z.literal('PUBLIC')]),
 })
 
-export type BoardInput = z.infer<typeof BoardCreateSchema>
+export type BoardCreateInput = z.infer<typeof BoardCreateSchema>
 
 export const BoardUpdateSchema = z.object({
   title: z.string().optional(),
@@ -80,27 +63,6 @@ const boardWithMembers = Prisma.validator<Prisma.BoardArgs>()({
   },
 })
 
-export type BoardWithMembers = Prisma.BoardGetPayload<typeof boardWithMembers>
-
 export type BoardListWithMembers = Prisma.BoardGetPayload<typeof boardListWithMembers>
-
-export const BoardListWithMembersSchema: z.ZodType<BoardListWithMembers> = z.object({
-  id: z.string(),
-  title: z.string(),
-  slug: z.string(),
-  description: z.string().nullable(),
-  image: z.string().nullable(),
-  cover: z.string().nullable(),
-  visibility: z.union([z.literal('PUBLIC'), z.literal('PRIVATE')]),
-  updatedAt: z.date(),
-  members: z.array(
-    z.object({
-      isOwner: z.boolean(),
-      member: z.object({
-        image: z.string().nullable(),
-        name: z.string().nullable(),
-        username: z.string().nullable(),
-      }),
-    })
-  ),
-})
+export type BoardWithMembers = Prisma.BoardGetPayload<typeof boardWithMembers>
+export type Board = Omit<BoardWithMembers, 'members'>

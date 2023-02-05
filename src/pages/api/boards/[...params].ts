@@ -57,28 +57,17 @@ handler.use(withAuthentication).put(async (req, res) => {
     const [boardId] = req.query.params as string[]
     const input = BoardUpdateSchema.parse(req.body)
 
-    const existingBoard = await db.board.findFirst({
-      where: {
-        title: input.title,
-        members: {
-          every: { memberId: { equals: userId }, isOwner: { equals: true } },
-        },
-      },
-      include: {
-        members: true,
-      },
-    })
-
-    if (!existingBoard) {
-      throw new Error(`Board does not exist.`)
-    }
-
-    await db.board.update({
+    const board = await db.board.update({
       where: {
         id: boardId,
+        // members: {
+        //   every: { memberId: { equals: userId }, isOwner: { equals: true } },
+        // },
       },
       data: input,
     })
+
+    res.status(200).json(board)
   } catch (error) {
     const message = parseError(error)
     res.status(400).json({ error: message })

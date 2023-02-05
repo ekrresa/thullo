@@ -2,11 +2,14 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import { QueryClient, dehydrate } from '@tanstack/react-query'
 
-import { boardsQueryKeys, useGetSingleBoard } from '@hooks/board'
+import { boardsQueryKeys } from '@hooks/board'
 import { Avatar } from '@components/Avatar'
 import { LoaderWrapper } from '@components/LoaderWrapper'
+import { SideMenu } from '@components/board/SideMenu'
+import { VisibilitySwitch } from '@components/board/VisibilitySwitch'
+import { useGetBoardDetails } from '@components/board/hooks'
 import { Layout } from '@components/layout'
-import { VisibilitySwitch } from '@components/modules/Board/VisibilitySwitch'
+import { getBoardDetails } from '@lib/api/board'
 
 export default function BoardPage() {
   const router = useRouter()
@@ -14,7 +17,7 @@ export default function BoardPage() {
   const [username, slug] = (router.query.board as string[]) || []
 
   // const loggedInUser = useUserProfile();
-  const boardQuery = useGetSingleBoard(username, slug)
+  const boardQuery = useGetBoardDetails(username, slug)
 
   const board = boardQuery.board
   const boardOwner = board?.members.find(member => member.isOwner)
@@ -31,21 +34,13 @@ export default function BoardPage() {
 
           <div className="flex justify-between">
             <div className="flex items-center">
-              {board && (
-                <VisibilitySwitch
-                  boardId={board.id}
-                  boardOwner={username}
-                  visibility={board.visibility}
-                />
-              )}
+              {board && <VisibilitySwitch board={board} />}
 
-              <div className="mx-4 flex items-center space-x-4">
-                <div className="relative h-9 w-9 overflow-hidden rounded-xl">
-                  <Avatar
-                    image={boardOwner?.member.image ?? ''}
-                    name={boardOwner?.member.name ?? ''}
-                  />
-                </div>
+              <div className="mx-4 flex items-center gap-4">
+                <Avatar
+                  image={boardOwner?.member.image ?? ''}
+                  name={boardOwner?.member.name ?? ''}
+                />
 
                 {/* {boardMembers.data &&
                   boardMembers.data.map(user => (
@@ -65,7 +60,7 @@ export default function BoardPage() {
               )} */}
             </div>
 
-            {/* <SideMenu board={board} members={boardMembers.data ?? []} /> */}
+            {/* <SideMenu board={board} /> */}
           </div>
 
           {/* <DragDropContext onDragEnd={handleDragEnd}>
@@ -129,6 +124,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
 
   await queryClient.prefetchQuery({
     queryKey: boardsQueryKeys.board(username, slug),
+    queryFn: async () => getBoardDetails(username, slug),
     staleTime: 1000 * 60 * 5,
   })
 

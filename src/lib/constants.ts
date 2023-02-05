@@ -2,7 +2,7 @@ export const ROUTES = {
   home: '/',
   auth: '/auth',
   profile: '/profile',
-  board: (username: string, slug: string) => `/${username}/${slug}`,
+  board: (ownerUsername: string, slug: string) => `/${ownerUsername}/${slug}`,
 }
 
 export const EMAIL_SERVER = process.env.EMAIL_SERVER

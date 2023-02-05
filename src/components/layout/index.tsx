@@ -4,8 +4,8 @@ import { useRouter } from 'next/router'
 import MobileLogo from '@public/logo-small.svg'
 import Logo from '@public/logo.svg'
 
-import { useGetSingleBoard } from '@hooks/board'
 import { useAuth } from '@hooks/user'
+import { useGetBoardDetails } from '@components/board/hooks'
 import { ROUTES } from '@lib/constants'
 import { Footer } from '../Footer'
 import { Button } from '../common/Button'
@@ -15,7 +15,7 @@ export function Layout({ children }: React.PropsWithChildren<unknown>) {
   const router = useRouter()
 
   const [username, slug] = (router.query.board as string[]) || []
-  const { board } = useGetSingleBoard(username, slug)
+  const { board } = useGetBoardDetails(username, slug)
 
   const isAuthenticated = useAuth()
 

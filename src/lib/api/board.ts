@@ -4,7 +4,7 @@ import { request } from '@lib/request'
 import { supabase } from '@lib/supabase'
 import { BaseResponse } from '@models/app'
 import {
-  BoardInput,
+  BoardCreateInput,
   BoardListWithMembers,
   BoardUpdate,
   BoardWithMembers,
@@ -29,7 +29,7 @@ export interface CardInput {
   image_version?: string
 }
 
-export async function createBoard(input: BoardInput) {
+export async function createBoard(input: BoardCreateInput) {
   return request.post('/api/boards', input)
 }
 
@@ -37,7 +37,7 @@ export async function fetchBoards() {
   return request.get<BaseResponse<BoardListWithMembers[]>>('/api/boards')
 }
 
-export async function getSingleBoard(username: string, slug: string) {
+export async function getBoardDetails(username: string, slug: string) {
   return request.get<BoardWithMembers>(`/api/boards/${username}/${slug}`)
 }
 
