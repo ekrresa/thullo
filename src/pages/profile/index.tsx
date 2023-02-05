@@ -1,141 +1,156 @@
-import * as React from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import { IoPersonCircle } from 'react-icons/io5'
+import { useRouter } from 'next/router';
+import Image from 'next/image';
+import { useFormik } from 'formik';
+import { useMutation, useQueryClient } from 'react-query';
+import toast from 'react-hot-toast';
+import { GoPencil } from 'react-icons/go';
+import { IoPersonCircle } from 'react-icons/io5';
 
-import { useFileSelect } from '@hooks/useFileSelect'
-import { useUpdateProfile, useUpdateProfileImage } from '@hooks/user'
-import { useProfileStore } from '@stores/profile'
-import { Input } from '@components/Input'
-import { Spinner } from '@components/Spinner'
-import { Button } from '@components/common/Button'
-import { Layout } from '@components/layout'
-import { ROUTES } from '@lib/constants'
-import { cn } from '@lib/utils'
-import { UserProfileInput, UserProfileInputSchema } from '@models/user'
+import { Footer } from '@components/common/Footer';
+import { Button } from '@components/common/Button';
+import { updateProfile } from '@lib/api/profile';
+import { userQueryKeys, useUserProfile } from '@hooks/user';
+import { getCloudinaryUrl } from '@lib/utils';
+import Logo from '../../../public/logo-small.svg';
 
-export default function Profile() {
-  const userProfile = useProfileStore(state => state.info)
+export default function NewProfile() {
+  const queryClient = useQueryClient();
+  const profileMutation = useMutation((data: any) => updateProfile(data));
+  const userProfile = useUserProfile();
+  const router = useRouter();
 
-  const { updateProfile, updatingProfile } = useUpdateProfile()
-  const { updateProfileImage, updatingProfileImage } = useUpdateProfileImage()
-
-  const { fileString, getInputProps, getRootProps } = useFileSelect({
-    onFileSelect(fileString) {
-      updateProfileImage({ image: fileString })
+  const formik = useFormik({
+    initialValues: {
+      name: userProfile.data?.name || '',
+      username: userProfile.data?.username || '',
+      image: null,
     },
-  })
-
-  const formDefaultValues = React.useMemo(
-    () => ({
-      username: userProfile?.username ?? '',
-      name: userProfile?.name ?? '',
-    }),
-    [userProfile?.username, userProfile?.name]
-  )
-
-  const { register, handleSubmit, reset } = useForm<UserProfileInput>({
-    defaultValues: formDefaultValues,
-    resolver: zodResolver(UserProfileInputSchema),
-  })
-
-  React.useEffect(() => {
-    reset(formDefaultValues)
-  }, [formDefaultValues, reset])
-
-  const submitForm = (values: UserProfileInput) => {
-    updateProfile(values)
-  }
+    onSubmit: values => {
+      profileMutation.mutate(
+        {
+          image: values.image,
+          name: values.name,
+          userId: userProfile.data?.id,
+          username: values.username,
+        },
+        {
+          onError: (error: any) => {
+            toast.error(error.response?.data?.message || error.message, {
+              duration: 3000,
+            });
+          },
+          onSuccess: async () => {
+            toast.success('profile updated successfully', { duration: 3000 });
+            await queryClient.invalidateQueries(userQueryKeys.profile());
+            setTimeout(() => {
+              router.push('/');
+            }, 2000);
+          },
+        }
+      );
+    },
+    enableReinitialize: true,
+  });
 
   return (
-    <div className="container grid grid-cols-1 grid-rows-layout">
-      <section className="mt-24 flex items-start justify-center">
-        <div className="max-w-md flex-1 rounded-lg bg-white px-4 pt-6 pb-12 sm:px-8 sm:shadow-profile">
-          <h1 className="text-center text-3xl font-semibold text-slate-700">
-            Your Profile
-          </h1>
+    <div className="container grid min-h-screen grid-cols-1 grid-rows-layout">
+      <header className="flex flex-col items-center pt-8">
+        <div className="flex items-center">
+          <Logo className="w-10 mr-2" />
+          <span className="font-bold text-5xl text-[#253858]">Thullo</span>
+        </div>
+      </header>
 
-          <form className="mt-12" onSubmit={handleSubmit(submitForm)}>
-            <div className="mb-10 flex flex-col items-center">
-              <div {...getRootProps()}>
-                <input {...getInputProps({ disabled: updatingProfileImage })} />
+      <section className="flex items-start justify-center mt-24">
+        <div className="flex-1 max-w-md px-8 pt-6 pb-12 bg-white rounded-lg shadow-md">
+          <h3 className="text-2xl font-medium text-center text-pencil">
+            Setup your Profile
+          </h3>
 
-                <div
-                  className={cn(
-                    'relative block h-40 w-40 cursor-pointer rounded-full bg-gray-100',
-                    updatingProfileImage ? 'cursor-not-allowed' : ''
-                  )}
-                >
-                  {userProfile?.image || fileString ? (
-                    <Image
-                      src={userProfile?.image || fileString!}
-                      className="h-full w-full rounded-full object-cover"
-                      width={160}
-                      height={160}
-                      alt="profile picture"
-                    />
-                  ) : (
-                    <IoPersonCircle className="h-full w-full" />
-                  )}
+          <form className="mt-12" onSubmit={formik.handleSubmit}>
+            <div className="flex justify-center mb-10">
+              <input
+                type="file"
+                id="image"
+                className="absolute w-[0.1px] h-[0.1px] opacity-0 overflow-hidden -z-10"
+                accept="image/*"
+                onChange={e => {
+                  if (e.currentTarget.files?.length) {
+                    formik.setFieldValue('image', e.currentTarget.files[0]);
+                  }
+                }}
+              />
+              <label
+                htmlFor="image"
+                className="relative w-40 h-40 bg-gray-100 rounded-full cursor-pointer"
+              >
+                {formik.values.image ? (
+                  <Image
+                    src={URL.createObjectURL(formik.values.image)}
+                    alt=""
+                    layout="fill"
+                    className="object-cover w-full h-full rounded-full"
+                  />
+                ) : userProfile.data?.image_id ? (
+                  <Image
+                    src={getCloudinaryUrl(
+                      userProfile.data?.image_id,
+                      userProfile?.data?.image_version
+                    )}
+                    alt=""
+                    layout="fill"
+                    className="object-cover w-full h-full rounded-full"
+                  />
+                ) : (
+                  <IoPersonCircle className="w-full h-full" />
+                )}
 
-                  {updatingProfileImage && (
-                    <Spinner className="absolute top-0 left-0 rounded-full bg-black/50 text-3xl text-white" />
-                  )}
-
-                  {!updatingProfileImage && (
-                    <p className="absolute inset-0 flex items-center justify-center rounded-full bg-black/0 text-sm text-white/0  transition-colors hover:bg-black/50 hover:text-white">
-                      {userProfile?.image ? 'Edit' : 'Upload'}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <p className="mt-2 text-xs font-normal text-slate-500">
-                Click on the box above to {userProfile?.image ? 'edit' : 'upload'} your
-                profile picture
-              </p>
+                <GoPencil
+                  className="absolute text-xl -rotate-90 bottom-2 right-4"
+                  color="#0E7490"
+                />
+              </label>
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm text-gray4" htmlFor="username">
+                Username
+              </label>
+              <input
+                className="w-full px-3 py-3 mt-2 text-sm rounded-md shadow focus:outline-none"
+                id="username"
+                name="username"
+                onChange={formik.handleChange}
+                value={formik.values.username}
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm text-gray4" htmlFor="name">
+                Name
+              </label>
+              <input
+                className="w-full px-3 py-3 mt-2 text-sm rounded-md shadow focus:outline-none"
+                id="name"
+                name="name"
+                onChange={formik.handleChange}
+                value={formik.values.name}
+              />
             </div>
 
-            <Input
-              {...register('username')}
-              label="Username"
-              containerClassName="mb-4"
-              id="username"
-            />
-
-            <Input
-              {...register('name')}
-              label="Name"
-              containerClassName="mb-4"
-              id="name"
-            />
-
-            <div className="mt-8 flex items-center gap-2">
-              <Button
-                as={Link}
-                href={ROUTES.home}
-                className="w-full rounded-md py-3 text-sm"
-                variant="secondary"
-              >
-                Back
-              </Button>
-
-              <Button
-                className="w-full rounded-md py-3 text-sm"
-                loading={updatingProfile}
-                type="submit"
-                variant="primary"
-              >
-                Save
-              </Button>
-            </div>
+            <Button
+              className="justify-center w-full py-4 mt-4 text-white rounded-md shadow bg-corn-blue"
+              type="submit"
+              disabled={profileMutation.isLoading}
+              loading={profileMutation.isLoading}
+            >
+              Continue
+            </Button>
           </form>
         </div>
       </section>
+
+      <Footer />
     </div>
-  )
+  );
 }
 
-Profile.getLayout = (page: React.ReactNode) => <Layout>{page}</Layout>
+NewProfile.protected = true;
