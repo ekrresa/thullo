@@ -10,7 +10,7 @@ import { useCreateBoard } from '@hooks/board'
 import { Input } from '@components/Input'
 import { Modal } from '@components/Modal'
 import { Button } from '@components/common/Button'
-import { BoardCreateSchema, BoardInput } from '@models/index'
+import { BoardCreateInput, BoardCreateSchema } from '@models/index'
 import { VisibilitySelect } from '../../board/NewBoard/VisibilitySelect'
 import { BoardCoverWidget } from './BoardCoverWidget'
 
@@ -19,7 +19,7 @@ export function NewBoard() {
 
   const { createBoard, creatingBoard, reset: resetMutation } = useCreateBoard()
 
-  const formMethods = useForm<BoardInput>({
+  const formMethods = useForm<BoardCreateInput>({
     defaultValues: {
       title: '',
       slug: '',
@@ -30,7 +30,7 @@ export function NewBoard() {
     resolver: zodResolver(BoardCreateSchema),
   })
 
-  const onBoardFormSubmit = (values: BoardInput) => {
+  const onBoardFormSubmit = (values: BoardCreateInput) => {
     if (!values.image && !values.cover) {
       return toast.error('Please select a cover for the board.')
     }
@@ -110,7 +110,9 @@ export function NewBoard() {
             name="visibility"
             render={({ field }) => (
               <VisibilitySelect
-                getVisibility={(val: BoardInput['visibility']) => field.onChange(val)}
+                getVisibility={(val: BoardCreateInput['visibility']) =>
+                  field.onChange(val)
+                }
                 value={field.value}
               />
             )}

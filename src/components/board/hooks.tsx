@@ -67,6 +67,7 @@ export function useUpdateBoard(ownerUsername: string, slug: string) {
         toast.error(errorMessage)
       },
       onSuccess() {
+        toast.success('Board updated!')
         queryClient.invalidateQueries(boardsQueryKeys.board(ownerUsername, slug))
       },
     }

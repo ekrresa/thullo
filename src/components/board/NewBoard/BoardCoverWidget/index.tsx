@@ -6,7 +6,7 @@ import { IoIosArrowBack } from 'react-icons/io'
 
 import { Modal } from '@components/Modal'
 import { Button } from '@components/common/Button'
-import { BoardInput } from '@models/board'
+import { BoardCreateInput } from '@models/board'
 import { ColourGallery } from './ColourGallery'
 import { FileUpload } from './FileUpload'
 import { PictureGallery } from './PictureGallery'
@@ -17,7 +17,7 @@ export function BoardCoverWidget() {
   const [isModalOpen, setModalOpen] = React.useState(false)
   const [view, setView] = React.useState<ImageWidgetView>('none')
 
-  const { control, watch } = useFormContext<BoardInput>()
+  const { control, watch } = useFormContext<BoardCreateInput>()
 
   const boardColour = watch('cover')
   const boardImage = watch('image')

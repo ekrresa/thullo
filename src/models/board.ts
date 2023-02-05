@@ -57,7 +57,7 @@ const boardWithMembers = Prisma.validator<Prisma.BoardArgs>()({
         isOwner: true,
         memberId: true,
         createdAt: true,
-        member: { select: { image: true, name: true, username: true } },
+        member: { select: { id: true, image: true, name: true, username: true } },
       },
     },
   },
