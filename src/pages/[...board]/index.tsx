@@ -3,11 +3,14 @@ import { useRouter } from 'next/router'
 import { QueryClient, dehydrate } from '@tanstack/react-query'
 
 import { boardsQueryKeys } from '@hooks/board'
+import { useProfileStore } from '@stores/profile'
 import { Avatar } from '@components/Avatar'
 import { LoaderWrapper } from '@components/LoaderWrapper'
+import { BoardInvite } from '@components/board/BoardInvite'
 import { SideMenu } from '@components/board/SideMenu'
 import { VisibilitySwitch } from '@components/board/VisibilitySwitch'
 import { useGetBoardDetails } from '@components/board/hooks'
+import { IsOwner } from '@components/common/IsOwner'
 import { Layout } from '@components/layout'
 import { getBoardDetails } from '@lib/api/board'
 
@@ -17,6 +20,7 @@ export default function BoardPage() {
   const [username, slug] = (router.query.board as string[]) || []
 
   // const loggedInUser = useUserProfile();
+  const currentUser = useProfileStore(state => state.info)
   const boardQuery = useGetBoardDetails(username, slug)
 
   const board = boardQuery.board
@@ -53,14 +57,14 @@ export default function BoardPage() {
                   ))} */}
               </div>
 
-              {/* {board.data && (
-                <IsOwner isOwner={board.data.owner.id === loggedInUser.data?.id}>
-                  <BoardInvite board={board.data} members={boardMembers.data ?? []} />
+              {board && (
+                <IsOwner isOwner={boardOwner?.memberId === currentUser?.id}>
+                  <BoardInvite board={board} />
                 </IsOwner>
-              )} */}
+              )}
             </div>
 
-            {/* <SideMenu board={board} /> */}
+            <SideMenu board={board} />
           </div>
 
           {/* <DragDropContext onDragEnd={handleDragEnd}>
