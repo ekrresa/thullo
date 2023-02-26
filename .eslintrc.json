@@ -3,5 +3,8 @@
     "next/core-web-vitals",
     "plugin:@tanstack/eslint-plugin-query/recommended",
     "plugin:tailwindcss/recommended"
-  ]
+  ],
+  "rules": {
+    "tailwindcss/no-custom-classname": "off"
+  }
 }
