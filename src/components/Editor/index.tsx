@@ -8,14 +8,17 @@ import StarterKit from '@tiptap/starter-kit'
 import { Button } from '@components/common/Button'
 import MenuBar from './MenuBar'
 
+type ViewMode = 'edit' | 'preview'
+
 interface Props {
   content?: HTMLContent
-  onSubmit?: (content?: HTMLContent) => void
+  onSubmit?: (content: HTMLContent, onSuccess: VoidFunction) => void
+  loading?: boolean
 }
 export function Editor(props: Props) {
-  const { content, onSubmit } = props
+  const { content, loading, onSubmit } = props
 
-  const [mode, setMode] = React.useState<'preview' | 'edit'>('preview')
+  const [mode, setMode] = React.useState<ViewMode>('preview')
 
   const editor = useEditor({
     extensions: [
@@ -28,11 +31,10 @@ export function Editor(props: Props) {
     ],
     editorProps: {
       attributes: {
-        class: 'px-2 py-4 prose prose-sm sm:prose text-left focus:outline-none',
+        class: 'px-2 py-4 prose-sm text-left focus:outline-none',
       },
     },
     content,
-    editable: mode === 'edit',
   })
 
   React.useEffect(() => {
@@ -45,7 +47,8 @@ export function Editor(props: Props) {
 
   return (
     <div className="rounded-lg border-2 border-slate-500">
-      {editor && <MenuBar editor={editor} />}
+      {editor && mode === 'edit' && <MenuBar editor={editor} />}
+
       <EditorContent editor={editor} />
 
       <footer className="flex items-center justify-end gap-2 border-t-2 border-slate-500 p-2">
@@ -60,9 +63,11 @@ export function Editor(props: Props) {
             </Button>
             <Button
               className="py-2 px-4 text-xs"
+              loading={loading}
               onClick={() => {
-                onSubmit?.(editor?.getHTML())
-                setMode('edit')
+                if (editor) {
+                  onSubmit?.(editor.getHTML(), () => setMode('preview'))
+                }
               }}
               variant="primary"
             >
@@ -73,7 +78,7 @@ export function Editor(props: Props) {
 
         {mode === 'preview' && (
           <Button
-            className="py-2 px-4 text-xs hover:bg-white"
+            className="border-transparent py-1 px-3 text-sm text-brand-500 hover:bg-white"
             onClick={() => setMode('edit')}
             variant="secondary"
           >

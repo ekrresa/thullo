@@ -96,11 +96,17 @@ export function SideMenu({ board }: SideMenuProps) {
         <div className="mt-4">
           <Editor
             content={board.description ?? ''}
-            onSubmit={content => {
-              descriptionMutation.updateBoard({
-                boardId: board.id,
-                payload: { description: content },
-              })
+            loading={descriptionMutation.updatingBoard}
+            onSubmit={(content, onSuccess) => {
+              descriptionMutation.updateBoard(
+                {
+                  boardId: board.id,
+                  payload: { description: content },
+                },
+                {
+                  onSuccess: onSuccess,
+                }
+              )
             }}
           />
         </div>
@@ -203,7 +209,7 @@ export function SideMenu({ board }: SideMenuProps) {
       <IsOwner isOwner={boardOwner?.id === userProfile?.id}>
         <div className="mt-8">
           <Button
-            className="rounded-lg bg-roman-100 px-4 py-2 text-roman-500 shadow shadow-roman-200 ring-1 ring-black/5 hover:bg-roman-400 hover:text-white"
+            className="rounded-lg border border-roman-200 px-4 py-2 text-roman-500 ring-1 ring-black/5 hover:bg-roman-400 hover:text-white"
             variant="plain"
           >
             Delete Board

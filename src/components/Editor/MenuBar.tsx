@@ -8,8 +8,6 @@ import {
   RiArrowGoForwardLine,
   RiBold,
   RiCodeSSlashLine,
-  RiCodeView,
-  RiDoubleQuotesL,
   RiH1,
   RiH2,
   RiH3,
@@ -17,8 +15,6 @@ import {
   RiListOrdered,
   RiListUnordered,
   RiMarkPenLine,
-  RiSeparator,
-  RiStrikethrough,
   RiText,
   RiUnderline,
 } from 'react-icons/ri'
@@ -73,34 +69,6 @@ export default function MenuBar(props: Props) {
         variant="plain"
       >
         <RiUnderline className="text-base" />
-      </Button>
-
-      <Button
-        onClick={() => editor.chain().focus().toggleStrike().run()}
-        disabled={!editor.can().chain().focus().toggleStrike().run()}
-        className={cn(
-          'rounded-md  w-7 h-7 hover:bg-slate-100',
-          editor.isActive('strike')
-            ? 'bg-brand-500 border-brand-500 text-white hover:text-slate-700'
-            : ''
-        )}
-        variant="plain"
-      >
-        <RiStrikethrough className="text-base" />
-      </Button>
-
-      <Button
-        onClick={() => editor.chain().focus().toggleCode().run()}
-        disabled={!editor.can().chain().focus().toggleCode().run()}
-        className={cn(
-          'rounded-md  w-7 h-7 hover:bg-slate-100',
-          editor.isActive('code')
-            ? 'bg-brand-500 border-brand-500 text-white hover:text-slate-700'
-            : ''
-        )}
-        variant="plain"
-      >
-        <RiCodeView className="text-base" />
       </Button>
 
       <Button
@@ -170,6 +138,19 @@ export default function MenuBar(props: Props) {
         <RiH3 className="text-base" />
       </Button>
 
+      <Button
+        onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+        className={cn(
+          'rounded-md w-7 h-7 hover:bg-slate-100',
+          editor.isActive('codeBlock')
+            ? 'bg-brand-500 text-white hover:text-slate-700'
+            : ''
+        )}
+        variant="plain"
+      >
+        <RiCodeSSlashLine className="text-base" />
+      </Button>
+
       <div className="mx-1 h-6 w-[1px] bg-slate-200"></div>
 
       <Button
@@ -236,40 +217,6 @@ export default function MenuBar(props: Props) {
         variant="plain"
       >
         <RiListOrdered className="text-base" />
-      </Button>
-
-      <Button
-        onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-        className={cn(
-          'rounded-md w-7 h-7 hover:bg-slate-100',
-          editor.isActive('codeBlock')
-            ? 'bg-brand-500 text-white hover:text-slate-700'
-            : ''
-        )}
-        variant="plain"
-      >
-        <RiCodeSSlashLine className="text-base" />
-      </Button>
-
-      <Button
-        onClick={() => editor.chain().focus().toggleBlockquote().run()}
-        className={cn(
-          'rounded-md w-7 h-7 hover:bg-slate-100',
-          editor.isActive('codeBlock')
-            ? 'bg-brand-500 text-white hover:text-slate-700'
-            : ''
-        )}
-        variant="plain"
-      >
-        <RiDoubleQuotesL className="text-base" />
-      </Button>
-
-      <Button
-        onClick={() => editor.chain().focus().setHorizontalRule().run()}
-        className={cn('rounded-md w-7 h-7 hover:bg-slate-100')}
-        variant="plain"
-      >
-        <RiSeparator className="text-base" />
       </Button>
 
       <div className="mx-1 h-6 w-[1px] bg-slate-200"></div>
