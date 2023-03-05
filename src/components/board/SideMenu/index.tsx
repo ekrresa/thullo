@@ -1,24 +1,16 @@
 import * as React from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { format } from 'date-fns'
-import { toast } from 'react-hot-toast'
-import {
-  IoClose,
-  IoEllipsisHorizontalSharp,
-  IoMenu,
-  IoPencil,
-  IoPersonCircle,
-} from 'react-icons/io5'
+import { IoClose, IoPencil, IoPersonCircle } from 'react-icons/io5'
 import { MdStickyNote2 } from 'react-icons/md'
 
-import { boardsQueryKeys } from '@hooks/board'
 import { useGetBoardOwner } from '@hooks/useGetBoardOwner'
 import { useIsBoardMember } from '@hooks/useIsBoardMember'
 import { useProfileStore } from '@stores/profile'
 import { Avatar } from '@components/Avatar'
+import { Editor } from '@components/Editor'
 import { Button } from '@components/common/Button'
 import { IsOwner } from '@components/common/IsOwner'
-import { TextArea } from '@components/common/TextArea'
 import { BoardWithMembers } from '@models/index'
 import { useUpdateBoard } from '../hooks'
 import SideMenuDrawer from './SideMenuDrawer'
@@ -27,15 +19,12 @@ interface SideMenuProps {
   board: BoardWithMembers
 }
 export function SideMenu({ board }: SideMenuProps) {
-  const sideMenuRef = React.useRef(null)
   const userProfile = useProfileStore(state => state.info)
-  const queryClient = useQueryClient()
   const isBoardMember = useIsBoardMember(board.members.map(member => member.memberId))
 
   const boardOwner = useGetBoardOwner(board)
 
   const [isEditing, setIsEditing] = React.useState(false)
-  const [description, setDescription] = React.useState('')
 
   const descriptionMutation = useUpdateBoard(boardOwner?.username ?? '', board.slug)
 
@@ -98,9 +87,29 @@ export function SideMenu({ board }: SideMenuProps) {
         </div>
       </div>
 
-      <div className="mt-8 flex items-center text-slate-400">
-        <MdStickyNote2 className="text-xl" />
-        <p className="ml-2 text-xs font-medium">Description</p>
+      <div className="mt-8">
+        <header className="flex items-center text-slate-400">
+          <MdStickyNote2 className="text-xl" />
+          <p className="ml-2 text-xs font-medium">Description</p>
+        </header>
+
+        <div className="mt-4">
+          <Editor
+            content={board.description ?? ''}
+            loading={descriptionMutation.updatingBoard}
+            onSubmit={(content, onSuccess) => {
+              descriptionMutation.updateBoard(
+                {
+                  boardId: board.id,
+                  payload: { description: content },
+                },
+                {
+                  onSuccess: onSuccess,
+                }
+              )
+            }}
+          />
+        </div>
 
         {isBoardMember && (
           <button
@@ -200,7 +209,7 @@ export function SideMenu({ board }: SideMenuProps) {
       <IsOwner isOwner={boardOwner?.id === userProfile?.id}>
         <div className="mt-8">
           <Button
-            className="rounded-lg bg-roman-100 px-4 py-2 text-roman-500 shadow shadow-roman-200 ring-1 ring-black/5 hover:bg-roman-400 hover:text-white"
+            className="rounded-lg border border-roman-200 px-4 py-2 text-roman-500 ring-1 ring-black/5 hover:bg-roman-400 hover:text-white"
             variant="plain"
           >
             Delete Board
